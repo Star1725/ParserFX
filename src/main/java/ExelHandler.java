@@ -12,9 +12,9 @@ import java.util.*;
 
 public class ExelHandler {
 
-    public static List<String> readWorkbook(File file) {
+    public static Map<Integer, ResultProduct> readWorkbook(File file) {
         try {
-            List<String> listQuery = new ArrayList<>();
+            Map<Integer, ResultProduct> resultProductHashMap = new HashMap<>();
             Workbook workbook = new XSSFWorkbook(file);
 
             //получаем страницу

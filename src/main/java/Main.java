@@ -16,7 +16,7 @@ public class Main extends Application implements Controller.ActionInController {
     private Controller controller;
     private List<String> listQuery;
     private List<Product> productList;
-    private Map<Integer, List<Product>> resultMap = new HashMap<>();
+    private static Map<Integer, List<ResultProduct>> resultMap = new HashMap<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -31,14 +31,13 @@ public class Main extends Application implements Controller.ActionInController {
         primaryStage.show();
     }
 
-
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void selectFile(File file) {
-        listQuery = ExelHandler.readWorkbook(file);
+        resultMap = ExelHandler.readWorkbook(file);
         int i = 0;
         for (String s : listQuery) {
 
