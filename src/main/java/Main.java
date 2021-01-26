@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class Main extends Application implements Controller.ActionInController {
     private Controller controller;
     private List<String> listQuery;
     private List<Product> productList;
-    private static Map<Integer, List<ResultProduct>> resultMap = new HashMap<>();
+    private static Map<Integer, ResultProduct> resultMap = new LinkedHashMap<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -37,24 +38,33 @@ public class Main extends Application implements Controller.ActionInController {
 
     @Override
     public void selectFile(File file) {
-        resultMap = ExelHandler.readWorkbook(file);
-        int i = 0;
-        for (String s : listQuery) {
+        resultMap = ExelHandler.readWorkbook(file, controller);
 
-            controller.getAreaLog().appendText(s + "\n");
 
-            try {
-                productList = ParserWildBer.extracted(s);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        for (Map.Entry<Integer, ResultProduct> entry : resultMap.entrySet()) {
+            Integer key = entry.getKey();
+            controller.getAreaLog().appendText(key.toString() + "\n");
 
-            for (Product product : productList) {
-                controller.getAreaLog().appendText(product.toString());
-            }
+            ParserWildBer.getPageForProductName(key);
 
-            resultMap.put(i, productList);
-            i++;
+            //Object value = entry.getValue();
         }
+
+
+//        for (Integer i : resultMap.get) {
+//
+//            controller.getAreaLog().appendText(s + "\n");
+//
+//            try {
+//                productList = ParserWildBer.extracted(s);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            for (Product product : productList) {
+//                controller.getAreaLog().appendText(product.toString());
+//            }
+//
+//        }
     }
 }

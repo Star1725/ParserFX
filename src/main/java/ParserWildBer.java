@@ -19,6 +19,19 @@ public class ParserWildBer {
         return getProductListForCatalog(catalog);
     }
 
+    public static String getPageForProductName(Integer vendorCode){
+        String url = "https://www.wildberries.ru/catalog/" + vendorCode + "/detail.aspx?targetUrl=SP";
+        Document page = null;
+        try {
+            page = Jsoup.parse(new URL(url), 5000);
+        } catch (IOException e) {
+            System.out.println("ошибка загрузки карточки товара");
+        }
+
+        System.out.println(page);
+        return null;
+    }
+
     private static Document getPage(String query) throws IOException {
         String queryUTF8 = URLEncoder.encode(query, "UTF-8");
         System.out.println(queryUTF8);
