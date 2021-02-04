@@ -1,6 +1,4 @@
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -9,7 +7,7 @@ public class ResultProduct extends Product{
     private String myVendorCode;
     private String category;
     private double myLoverPrice;
-    private double myPrice;
+    private double myPriceU;
     private int mySale;
     private int myPromoSale;
     private double recommendedPrice;
@@ -28,7 +26,7 @@ public class ResultProduct extends Product{
                          int rating,
                          String refForRequest,
                          double myLoverPrice,
-                         double myPrice,
+                         double myPriceU,
                          int mySale,
                          int myPromoSale,
                          double recommendedPrice,
@@ -37,7 +35,7 @@ public class ResultProduct extends Product{
         this.myVendorCode = myVendorCode;
         this.category = category;
         this.myLoverPrice = myLoverPrice;
-        this.myPrice = myPrice;
+        this.myPriceU = myPriceU;
         this.mySale = mySale;
         this.myPromoSale = myPromoSale;
         this.recommendedPrice = recommendedPrice;

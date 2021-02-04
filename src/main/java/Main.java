@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +63,7 @@ public class Main extends Application implements Controller.ActionInController {
                 resultProduct.setRefForPage(product.getRefForPage());
                 resultProduct.setRefForImage(product.getRefForImage());
                 resultProduct.setLowerPrice(product.getLowerPrice());
-                resultProduct.setPrice(product.getPrice());
+                resultProduct.setPriceU(product.getPriceU());
                 resultProduct.setSpecAction(product.getSpecAction());
                 resultProduct.setRating(product.getRating());
                 resultProduct.setRefFromRequest(product.getRefFromRequest());
@@ -80,7 +79,7 @@ public class Main extends Application implements Controller.ActionInController {
                     resultProduct.setRecommendedSale(resultProduct.getMySale());
                 } else {
                     resultProduct.setRecommendedPrice(Math.round(resultProduct.getLowerPrice() - resultProduct.getLowerPrice() * present));
-                    resultProduct.setRecommendedSale((int) (100 - Math.round(resultProduct.getRecommendedPrice() / resultProduct.getMyPrice() * 100)));
+                    resultProduct.setRecommendedSale((int) (100 - Math.round(resultProduct.getRecommendedPrice() / resultProduct.getMyPriceU() * 100)));
                 }
             }
         }

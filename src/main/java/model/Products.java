@@ -11,4 +11,8 @@ public class Products {
 
     @SerializedName("extended")
     private Extended extended;
+
+    @SerializedName("priceU")
+    private Extended priceU;
+
 }

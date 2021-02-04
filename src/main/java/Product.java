@@ -12,7 +12,7 @@ public class Product {
     private String refForPage;
     private String refForImage;
     private double lowerPrice;
-    private double price;
+    private double priceU;
     private String specAction;
     private int rating;
     private String refFromRequest;

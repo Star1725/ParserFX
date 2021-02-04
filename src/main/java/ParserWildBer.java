@@ -139,7 +139,7 @@ public class ParserWildBer {
         Element params;
 
         if (category.equals(PRICE_AND_SALE)){
-//            params = page.select("div[class=inner-price]").first();
+//            params = page.select("div[class=inner-priceU]").first();
 //            String text = params.text();
             Element finalCost = page.select("span[class=final-cost]").first();
             String finalPriceBuff1 = finalCost.text().replaceAll(" ", "");
@@ -262,47 +262,8 @@ public class ParserWildBer {
 
 
         //пробую через json
-//        Request request;
-//        int count = productList.size();
-//        if (count > 1){
-//            String ids = "";
-//            for (Product product : productList) {
-//                if (count != 1){
-//                    ids = ids + product.getVendorCode() + ";";
-//                    count--;
-//                } else {
-//                    ids = ids + product.getVendorCode();
-//                }
-//            }
-//            try {
-//                String url = getString("https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?spp=0&regions=69,58,64,40,48,70,1,38,4,30,22,66&stores=119261,121631,1193,119400,116433,117501,507,3158,120762,1733,117986,686,117413,119781&couponsGeo=2,12,6,9&pricemarginCoeff=1.0&reg=0&appType=1&offlineBonus=0&onlineBonus=0&emp=0&locale=ru&lang=ru&nm=",
-//                        ids, "");
-//                URL uri1 = new URL(url);
-//                HttpsURLConnection httpsURLConnection = null;
-//
-//                httpsURLConnection = (HttpsURLConnection) uri1.openConnection();
-//                httpsURLConnection.setRequestMethod("GET");
-//                httpsURLConnection.setReadTimeout(30000);
-//
-//                httpsURLConnection.setRequestProperty("Content-Type", "application/json");
-//                httpsURLConnection.setRequestProperty("CustomHeader", token);
-//
-//                BufferedReader in = new BufferedReader(new InputStreamReader(httpsURLConnection.getInputStream()));
-//                String result = getLines(in);
-//                in.close();
-//                Gson gson = new Gson();
-//                request = gson.fromJson(result, Request.class);
-//
-//                productList = null;
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//            } catch (ProtocolException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
+        HttpUrlConnectionHandler.getCatalog(productList);
+
 
 
         return productList;
@@ -381,7 +342,7 @@ public class ParserWildBer {
             }
 
             //актуальная цена
-//            Element priceGoods = fullProductCard.select("ins[class=lower-price]").first();
+//            Element priceGoods = fullProductCard.select("ins[class=lower-priceU]").first();
 //            int lowerPrice;
 //            try {
 //                String p = priceGoods.text();
@@ -389,12 +350,12 @@ public class ParserWildBer {
 //                String r = p.replaceAll(" ", "").substring(0, s.length() - 1);
 //                lowerPrice = Integer.parseInt(r);
 //            } catch (Exception e) {
-//                priceGoods = fullProductCard.select("span[class=lower-price]").first();
+//                priceGoods = fullProductCard.select("span[class=lower-priceU]").first();
 //                String[] p = priceGoods.text().split(" ");
 //                lowerPrice = Integer.parseInt(p[0]);
 //            }
             //старая цена и скидка
-            Element priceGoods = fullProductCard.select("span[class=price-old-block]").first();
+            Element priceGoods = fullProductCard.select("span[class=priceU-old-block]").first();
             int oldPrice = 0;
             //int sale = 0;
             try {
@@ -430,9 +391,5 @@ public class ParserWildBer {
             productList.add(new Product(id, brandName, name, href, refForImg, lowerPrice, oldPrice, specAction, rating, "-"));
         }
         return productList;
-    }
-
-    private static String getLines(BufferedReader in){
-        return in.lines().collect(Collectors.joining("\n"));
     }
 }
