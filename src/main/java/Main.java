@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,9 +16,12 @@ import java.util.Map;
 public class Main extends Application implements Controller.ActionInController {
 
     private Controller controller;
+    private static final Desktop desktop = Desktop.getDesktop();
     private List<String> listQuery;
     private List<Product> productList;
-    private static Map<Integer, ResultProduct> resultMap = new LinkedHashMap<>();
+    private static Map<String, ResultProduct> resultMap = new LinkedHashMap<>();
+
+    private static final String NOT_FOUND_PAGE = "Не найдена страница товара";
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -41,30 +45,54 @@ public class Main extends Application implements Controller.ActionInController {
         resultMap = ExelHandler.readWorkbook(file, controller);
 
 
-        for (Map.Entry<Integer, ResultProduct> entry : resultMap.entrySet()) {
-            Integer key = entry.getKey();
-            controller.getAreaLog().appendText(key.toString() + "\n");
+        for (Map.Entry<String, ResultProduct> entry : resultMap.entrySet()) {
 
-            ParserWildBer.getPageForProductName(key);
 
-            //Object value = entry.getValue();
+            String key = entry.getKey();
+            //controller.getAreaLog().appendText(key.toString() + "\n");
+            String category = entry.getValue().getCategory();
+            String brand = entry.getValue().getBrand();
+            Product product = ParserWildBer.getResultProduct(key, category, brand);
+            ResultProduct resultProduct = entry.getValue();
+
+            if (product == null){
+                resultProduct.setProductName("-");
+            } else {
+                resultProduct.setVendorCode(product.getVendorCode());
+                resultProduct.setCategory(category);
+                resultProduct.setProductName(product.getProductName());
+                resultProduct.setRefForPage(product.getRefForPage());
+                resultProduct.setRefForImage(product.getRefForImage());
+                resultProduct.setLowerPrice(product.getLowerPrice());
+                resultProduct.setPrice(product.getPrice());
+                resultProduct.setSpecAction(product.getSpecAction());
+                resultProduct.setRating(product.getRating());
+                resultProduct.setRefFromRequest(product.getRefFromRequest());
+
+                int preFld = Integer.parseInt(controller.percentTxtFld.getText());
+
+                double present = (double) preFld / 100;
+
+                //double present = Double.parseDouble(controller.percentTxtFld.getText()) / 100;
+
+                if (resultProduct.getMyVendorCode().equals(resultProduct.getVendorCode())){
+                    resultProduct.setRecommendedPrice(resultProduct.getMyLoverPrice());
+                    resultProduct.setRecommendedSale(resultProduct.getMySale());
+                } else {
+                    resultProduct.setRecommendedPrice(Math.round(resultProduct.getLowerPrice() - resultProduct.getLowerPrice() * present));
+                    resultProduct.setRecommendedSale((int) (100 - Math.round(resultProduct.getRecommendedPrice() / resultProduct.getMyPrice() * 100)));
+                }
+            }
         }
+        File file1 = ExelHandler.writeWorkbook(resultMap);
+        openFile(file1);
+    }
 
-
-//        for (Integer i : resultMap.get) {
-//
-//            controller.getAreaLog().appendText(s + "\n");
-//
-//            try {
-//                productList = ParserWildBer.extracted(s);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            for (Product product : productList) {
-//                controller.getAreaLog().appendText(product.toString());
-//            }
-//
-//        }
+    private static void openFile(File file) {
+        try {
+            desktop.open(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

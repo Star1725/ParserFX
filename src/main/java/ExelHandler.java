@@ -6,17 +6,22 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class ExelHandler {
 
-    public static Map<Integer, ResultProduct> readWorkbook(File file, Controller controller) {
+    private static final String NOT_FOUND_PAGE = "Не найдена страница товара";
+
+    public static Map<String, ResultProduct> readWorkbook(File file, Controller controller) {
         try {
-            Map<Integer, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
+            Map<String, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
             Workbook workbook = new XSSFWorkbook(file);
 
             //получаем страницу
@@ -41,13 +46,17 @@ public class ExelHandler {
 
                 //получаем артикл
                 Cell cell = row.getCell(4);
-                int vendorCode = (int) cell.getNumericCellValue();
-                if (vendorCode == 0){
+                int code = (int) cell.getNumericCellValue();
+                if (code == 0){
                     continue;
                 }
+                String myVendorCode = String.valueOf(code);
                 //получаем бренд
                 cell = row.getCell(0);
                 String brand = cell.getRichStringCellValue().getString();
+                //получаем категорию товара
+                cell = row.getCell(1);
+                String category = cell.getRichStringCellValue().getString();
                 //получаем розничную цену до скидки
                 cell = row.getCell(11);
                 double myPrice = cell.getNumericCellValue();
@@ -58,60 +67,35 @@ public class ExelHandler {
                 cell = row.getCell(16);
                 int myPromoSale = (int) cell.getNumericCellValue();
 
-                double myLowerPrice = 1;
+                double myLowerPrice = 0;
                 if (mySale != 0){
-                    myLowerPrice = myPrice * mySale;
+                    myLowerPrice = myPrice * (1 - (double)mySale/100);
+                } else {
+                    myLowerPrice = myPrice;
                 }
                 if (myPromoSale != 0){
-                    myLowerPrice = myLowerPrice * myPromoSale;
+                    myLowerPrice = myLowerPrice * (1 - (double)myPromoSale/100);
                 }
 
-                resultProductHashMap.put(vendorCode, new ResultProduct(vendorCode, brand, "productName", "refForPage", "refForImage",
-                        0, 0, 0, "specAction", 0,
-                        myLowerPrice,
+                resultProductHashMap.put(myVendorCode, new ResultProduct(
+                        myVendorCode,
+                        "-",
+                        category,
+                        brand,
+                        "-",
+                        "-",
+                        "-",
+                        0,
+                        0,
+                        "-",
+                        0,
+                        "-",
+                        Math.round(myLowerPrice),
                         myPrice,
                         mySale,
                         myPromoSale,
                         0,
                         0));
-//                for (Cell cell : row) {
-//                double myPrice = cell.getNumericCellValue();
-//
-//                    switch (cell.getCellType()) {
-//                        case STRING:
-//                            data.get(new Integer(i)).add(cell.getRichStringCellValue().getString());
-//                            strQuery = strQuery + cell.getRichStringCellValue().getString() + " ";
-//                            break;
-//                        case NUMERIC:
-//                            if (DateUtil.isCellDateFormatted(cell)) {
-//                                data.get(i).add(cell.getDateCellValue() + "");
-//                            } else {
-//                                data.get(i).add(cell.getNumericCellValue() + "");
-//                            }
-//                            break;
-//                        case BOOLEAN:
-//                            data.get(i).add(cell.getBooleanCellValue() + "");
-//                            break;
-//                        case FORMULA:
-//                            data.get(i).add(cell.getCellFormula() + "");
-//                            break;
-//                    }
-//                }
-//
-////                Iterator cellIter = row.cellIterator();
-////                while (cellIter.hasNext()) {
-////                    //получаем ячейку
-////                    Cell cell = (Cell) cellIter.next();
-////                    strQuery = strQuery + cell.getRichStringCellValue().getString() + " ";
-////                }
-//                i++;
-//                listQuery.add(strQuery);
-
-//                double load = i/fullLoad;
-//                System.out.println(load);
-//                Platform.runLater(() -> controller.getProcessingRequest().setProgress(load));
-//                i++;
-//                Thread.sleep(5);
             }
             return resultProductHashMap;
         }
@@ -123,14 +107,148 @@ public class ExelHandler {
 
 
 
-    public static void writeWorkbook(HSSFWorkbook wb, String fileName) {
+    public static File writeWorkbook(Map<String, ResultProduct> productMap) {
+
+        Workbook workbook = new XSSFWorkbook();
+
+        Sheet sheet = workbook.createSheet("Аналитика");
+        sheet.setColumnWidth(0, 6000);
+        sheet.setColumnWidth(1, 4000);
+
+        Row header = sheet.createRow(0);
+
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        //headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short) 11);
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        Cell headerCell = header.createCell(0);
+        headerCell.setCellValue("Бренд");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(1);
+        headerCell.setCellValue("Мой артикул");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(2);
+        headerCell.setCellValue("Товар");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(3);
+        headerCell.setCellValue("Моя тек. роз. цена");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(4);
+        headerCell.setCellValue("Роз. цена конк.");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(5);
+        headerCell.setCellValue("Моя базовая цена");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(6);
+        headerCell.setCellValue("Рекомендуемая скидка");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(7);
+        headerCell.setCellValue("Рекомендуемая роз. цена");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(8);
+        headerCell.setCellValue("Ссылка на конкурента");
+        headerCell.setCellStyle(headerStyle);
+
+
+        CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
+
+        CellStyle styleMyProduct = workbook.createCellStyle();
+        styleMyProduct.setWrapText(true);
+        styleMyProduct.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
+        styleMyProduct.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        CellStyle styleExeption = workbook.createCellStyle();
+        styleExeption.setWrapText(true);
+        styleExeption.setFillForegroundColor(IndexedColors.RED.getIndex());
+        styleExeption.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+
+        ArrayList<ResultProduct> productArrayList = new ArrayList<>(productMap.values());
+
+        for (int i = 0; i < productArrayList.size(); i++) {
+
+            Row row = sheet.createRow(i + 1);
+
+            boolean isMy = productArrayList.get(i).getMyVendorCode().equals(productArrayList.get(i).getVendorCode());
+
+            Cell cell = row.createCell(0);
+            cell.setCellValue(productArrayList.get(i).getBrand());
+            cell.setCellStyle(style);
+
+            cell = row.createCell(1);
+            cell.setCellValue(productArrayList.get(i).getMyVendorCode());
+            cell.setCellStyle(style);
+
+            cell = row.createCell(2);
+            if (productArrayList.get(i).getProductName().equals("-")){
+                cell.setCellValue(NOT_FOUND_PAGE);
+                cell.setCellStyle(styleExeption);
+            } else {
+                cell.setCellValue((productArrayList.get(i).getProductName()));
+                cell.setCellStyle(style);
+            }
+
+            cell = row.createCell(3);
+            cell.setCellValue((productArrayList.get(i).getMyLoverPrice()));
+            cell.setCellStyle(style);
+
+            cell = row.createCell(4);
+            cell.setCellValue((productArrayList.get(i).getLowerPrice()));
+            cell.setCellStyle(style);
+
+            cell = row.createCell(5);
+            cell.setCellValue((productArrayList.get(i).getMyPrice()));
+            cell.setCellStyle(style);
+
+            cell = row.createCell(6);
+            cell.setCellValue((productArrayList.get(i).getRecommendedSale()));
+            cell.setCellStyle(style);
+
+            cell = row.createCell(7);
+            cell.setCellValue((productArrayList.get(i).getRecommendedPrice()));
+            cell.setCellStyle(style);
+
+            cell = row.createCell(8);
+            cell.setCellValue((productArrayList.get(i).getRefForPage()));
+            if (isMy){
+                cell.setCellStyle(styleMyProduct);
+            } else {
+                cell.setCellStyle(style);
+            }
+        }
+
+        for (int columnIndex = 0; columnIndex < 8; columnIndex++) {
+            sheet.autoSizeColumn(columnIndex);
+        }
+
+        File currDir = new File(".");
+        String path = currDir.getAbsolutePath();
+        String fileLocation = path.substring(0, path.length() - 1) + "Analytics.xlsx";
+
+        FileOutputStream outputStream = null;
         try {
-            FileOutputStream fileOut = new FileOutputStream(fileName);
-            wb.write(fileOut);
-            fileOut.close();
+            outputStream = new FileOutputStream(fileLocation);
+            workbook.write(outputStream);
+            workbook.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (Exception e) {
-            //Обработка ошибки
-        }
+        return currDir;
     }
 }

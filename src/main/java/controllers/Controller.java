@@ -13,6 +13,7 @@ import javafx.stage.FileChooser;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ import java.util.ResourceBundle;
 @Getter
 @Setter
 public class Controller implements Initializable {
+
+    @FXML
+    public TextField percentTxtFld;
 
     @FXML
     private TextArea areaLog;
@@ -34,6 +38,8 @@ public class Controller implements Initializable {
 
     @FXML
     private TextField txtFldShowPathFile;
+
+
 
     public interface ActionInController{
         void selectFile(File file);
