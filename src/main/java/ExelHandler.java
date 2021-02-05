@@ -47,48 +47,53 @@ public class ExelHandler {
                 //получаем бренд
                 cell = row.getCell(0);
                 String brand = cell.getRichStringCellValue().getString();
+
                 //получаем категорию товара
                 cell = row.getCell(1);
                 String category = cell.getRichStringCellValue().getString();
+
                 //получаем розничную цену до скидки
                 cell = row.getCell(11);
-                double myPrice = cell.getNumericCellValue();
-                //получаем текущую скидку
+                int myPriceU = (int) (cell.getNumericCellValue() * 100);
+
+                //получаем базоваю скидку
                 cell = row.getCell(13);
-                int mySale = (int) cell.getNumericCellValue();
+                int myBasicSale = (int) cell.getNumericCellValue();
+
+                //получаем розничную цену с базовой скидкой
+                int myBasicPriceU = (int) Math.round(((1 - (double) myBasicSale/100) * myPriceU));
+
                 //получаем промо-скидку
                 cell = row.getCell(16);
                 int myPromoSale = (int) cell.getNumericCellValue();
 
-                double myLowerPrice = 0;
-                if (mySale != 0){
-                    myLowerPrice = myPrice * (1 - (double)mySale/100);
-                } else {
-                    myLowerPrice = myPrice;
-                }
-                if (myPromoSale != 0){
-                    myLowerPrice = myLowerPrice * (1 - (double)myPromoSale/100);
-                }
+                //получаем розничную цену с базовой и промо-скидкой
+                int myPromoPriceU = (int) Math.round(((1 - (double) myPromoSale/100) * myBasicPriceU));
 
                 resultProductHashMap.put(myVendorCode, new ResultProduct(
-                        myVendorCode,
-                        "-",
                         category,
                         brand,
-                        "-",
-                        "-",
-                        "-",
-                        0,
-                        0,
-                        "-",
-                        0,
-                        "-",
-                        Math.round(myLowerPrice),
-                        myPrice,
-                        mySale,
+                        myVendorCode,
+                        myPriceU,
+                        myBasicSale,
+                        myBasicPriceU,
                         myPromoSale,
+                        myPromoPriceU,
+                        "-",
+                        "-",
+                        "-",
+                        "-",
                         0,
-                        0));
+                        0,
+                        0,
+                        0,
+                        0,
+                        "-",
+                        0,
+                        "-",
+                        0,
+                        0
+                        ));
             }
             return resultProductHashMap;
         }
@@ -97,8 +102,6 @@ public class ExelHandler {
             return null;
         }
     }
-
-
 
     public static File writeWorkbook(Map<String, ResultProduct> productMap) {
 
@@ -111,8 +114,8 @@ public class ExelHandler {
         Row header = sheet.createRow(0);
 
         CellStyle headerStyle = workbook.createCellStyle();
-        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
-        //headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         XSSFFont font = ((XSSFWorkbook) workbook).createFont();
         font.setFontName("Arial");
@@ -137,7 +140,7 @@ public class ExelHandler {
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(4);
-        headerCell.setCellValue("Роз. цена конк.");
+        headerCell.setCellValue("Роз. цена конкурента");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(5);
@@ -170,7 +173,6 @@ public class ExelHandler {
         styleExeption.setFillForegroundColor(IndexedColors.RED.getIndex());
         styleExeption.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-
         ArrayList<ResultProduct> productArrayList = new ArrayList<>(productMap.values());
 
         for (int i = 0; i < productArrayList.size(); i++) {
@@ -196,26 +198,32 @@ public class ExelHandler {
                 cell.setCellStyle(style);
             }
 
+            //Моя тек. роз. цена
             cell = row.createCell(3);
-            cell.setCellValue((productArrayList.get(i).getMyLoverPrice()));
+            cell.setCellValue(Math.round(productArrayList.get(i).getMyLowerPriceU() / 100));
             cell.setCellStyle(style);
 
+            //Роз. цена конкурента
             cell = row.createCell(4);
-            cell.setCellValue((productArrayList.get(i).getLowerPrice()));
+            cell.setCellValue(Math.round(productArrayList.get(i).getLowerPriceU() / 100));
             cell.setCellStyle(style);
 
+            //Моя базовая цена
             cell = row.createCell(5);
-            cell.setCellValue((productArrayList.get(i).getMyPriceU()));
+            cell.setCellValue(Math.round(productArrayList.get(i).getMyPriceU() / 100));
             cell.setCellStyle(style);
 
+            //Рекомендуемая скидка
             cell = row.createCell(6);
             cell.setCellValue((productArrayList.get(i).getRecommendedSale()));
             cell.setCellStyle(style);
 
+            //Рекомендуемая роз. цена
             cell = row.createCell(7);
-            cell.setCellValue((productArrayList.get(i).getRecommendedPrice()));
+            cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU() / 100));
             cell.setCellStyle(style);
 
+            //ссылка на конкурента(или самого себя)
             cell = row.createCell(8);
             cell.setCellValue((productArrayList.get(i).getRefForPage()));
             if (isMy){
@@ -225,7 +233,7 @@ public class ExelHandler {
             }
         }
 
-        for (int columnIndex = 0; columnIndex < 8; columnIndex++) {
+        for (int columnIndex = 0; columnIndex < 9; columnIndex++) {
             sheet.autoSizeColumn(columnIndex);
         }
 

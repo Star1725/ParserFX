@@ -1,26 +1,15 @@
-import com.google.gson.Gson;
-import model.Request;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ParserWildBer {
 
@@ -39,6 +28,7 @@ public class ParserWildBer {
     private static final String CATEGORY_13 = "Пылесосы автомобильные";
     private static final String CATEGORY_14 = "Увлажнители";
     private static final String CATEGORY_15 = "Переходники";
+    private static final String CATEGORY_16 = "Пылесосы автомобильные";
 
     private static final String PARAM_1_1 = "Количество предметов в упаковке";
     private static final String PARAM_1_2 = "Модель";
@@ -60,18 +50,19 @@ public class ParserWildBer {
         switch (category){
 
             case CATEGORY_10:
-                //для поиска по маскам надо в запросе передать "Маски одноразовые" и кол-во штук в упаковке
+
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 String count = paramsForRequest.get(0);
+                //для поиска по маскам надо в запросе передать "Маски одноразовые" и кол-во штук в упаковке
                 query = category + " " + count;
-                productList = getProduct(query);
+                productList = getCatalogProducts(query);
                 product = productList.stream().filter(p -> p.getProductName().contains(count)).findAny().orElse(null);
                 break;
 
             case CATEGORY_4:
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 query = paramsForRequest.get(0);
-                productList = getProduct(query);
+                productList = getCatalogProducts(query);
                 product = productList.stream().findFirst().orElse(null);
                 break;
 
@@ -80,23 +71,17 @@ public class ParserWildBer {
                 try {
                     query = paramsForRequest.get(0) + " " + paramsForRequest.get(1);
                 } catch (IndexOutOfBoundsException e) {
-                    System.out.println("Для артикула: " + vendorCode + " ошибка формирования запроса на поиск конкурентов");
+                    System.out.println("Для артикула: " + vendorCode + " - ошибка формирования запроса на поиск конкурентов");
                 }
-                productList = getProduct(query);
+                productList = getCatalogProducts(query);
 
-                product = productList.get(0);
-                for (Product p : productList) {
-                    if (p.getLowerPrice() < product.getLowerPrice()){
-                        product = p;
-                    }
-                }
+                //проходимся по всему списку и находим продукт с наименьшей ценой
+                product = getProductWithLowerPrice(productList);
                 break;
 
                 //для данных категорий запрос формирунтся из бренда и модели
             case CATEGORY_1:
-
             case CATEGORY_2:
-
             case CATEGORY_3:
             case CATEGORY_5:
             case CATEGORY_6:
@@ -114,11 +99,24 @@ public class ParserWildBer {
                 } catch (IndexOutOfBoundsException | NullPointerException e) {
                     System.out.println("Для артикула: " + vendorCode + " ошибка формирования запроса на поиск конкурентов");
                 }
-                productList = getProduct(query);
-                product = productList.stream().findFirst().orElse(null);
+                productList = getCatalogProducts(query);
+                //проходимся по всему списку и находим продукт с наименьшей ценой
+                product = getProductWithLowerPrice(productList);
                 break;
         }
+        assert product != null;
         product.setRefFromRequest(getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&xsearch=true&sort=priceup"));
+        return product;
+    }
+
+    private static Product getProductWithLowerPrice(List<Product> productList) {
+        Product product;
+        product = productList.get(0);
+        for (Product p : productList) {
+            if (p.getLowerPriceU() <= product.getLowerPriceU()) {
+                product = p;
+            }
+        }
         return product;
     }
 
@@ -231,12 +229,6 @@ public class ParserWildBer {
 
             String model = "";
 
-//            for (String s : strBuf3) {
-//                if (s.equalsIgnoreCase(strBuf2[0])){
-//                    model = model + s + " ";
-//                }
-//            }
-
             for (int i = 0; i < strBuf3.length; i++) {
                 if (strBuf3[i].equalsIgnoreCase(strBuf2[0])){
                     for (int j = i + 1; j < strBuf3.length; j++) {
@@ -254,22 +246,19 @@ public class ParserWildBer {
     }
    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    private static List<Product> getProduct(String query) {
+    private static List<Product> getCatalogProducts(String query) {
         List<Product> productList;
         Document page = null;
-        page = getPageForSearch(query);
-        productList = getLowerProductForCatalog(page);
+        page = getPageForSearchQuery(query);
+        productList = getCatalogProductsForPage(page);
 
-
-        //пробую через json
-        HttpUrlConnectionHandler.getCatalog(productList);
-
-
+        //получение цены и скидок через json
+        HttpUrlConnectionHandler.getCatalog(productList, query);
 
         return productList;
     }
 
-    private static Document getPageForSearch(String query) {
+    private static Document getPageForSearchQuery(String query) {
         String url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&xsearch=true&sort=priceup");
 
         Document page = null;
@@ -279,7 +268,6 @@ public class ParserWildBer {
             e.printStackTrace();
             System.out.println("превышено аремя ожидания ответа сервера");
         }
-
         return page;
     }
 
@@ -300,41 +288,41 @@ public class ParserWildBer {
         return queryUTF8;
     }
 
-    private static List<Product> getLowerProductForCatalog(Document page){
+    private static List<Product> getCatalogProductsForPage(Document page){
         List<Product> productList = new ArrayList<>();
         Product product = null;
 
-        Element catalog = page.select("div[class=catalog_main_table j-products-container]").first();
-        Elements goods = catalog.select("div[class=dtList i-dtList j-card-item]");
+        Element catalog = page.select(Constants.ELEMENT_WITH_CATALOG).first();
+        Elements goods = catalog.select(Constants.ELEMENT_WITH_PRODUCT);
         int i = 0;
         for (Element good : goods) {
             //артикул
-            String id = good.attr("data-popup-nm-id");
+            String vendorCode = good.attr(Constants.ATTRIBUTE_WITH_VENDOR_CODE);
 
-            //актуальная цена
-            List<String> finalPrices = getDataForRequestFromCategory(getPageForVendorCode(id), PRICE_AND_SALE);
-            int lowerPrice = 0;
-            try {
-                lowerPrice = Integer.parseInt(finalPrices.get(0));
-            } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                e.printStackTrace();
-                System.out.println("Ошибка при запросе цены на артикул: " + id);
-            }
+//            //актуальная цена
+//            List<String> finalPrices = getDataForRequestFromCategory(getPageForVendorCode(id), PRICE_AND_SALE);
+//            int lowerPrice = 0;
+//            try {
+//                lowerPrice = Integer.parseInt(finalPrices.get(0));
+//            } catch (NumberFormatException | IndexOutOfBoundsException e) {
+//                e.printStackTrace();
+//                System.out.println("Ошибка при запросе цены на артикул: " + id);
+//            }
 
-            Element fullProductCard = good.select("a[class=ref_goods_n_p j-open-full-product-card]").first();
+            Element fullProductCard = good.select(Constants.ELEMENT_WITH_CARD_PRODUCT).first();
 
             //имя товара
-            Element nameGoods = fullProductCard.select("span[class=goods-name c-text-sm]").first();
-            String name = nameGoods.text();
+            Element nameGoods = fullProductCard.select(Constants.ELEMENT_WITH_NAME_PRODUCT).first();
+            String productName = nameGoods.text();
 
             //ссылка на товар
-            String href = "https://www.wildberries.ru" + fullProductCard.attr("href");
+            String refForPage = Constants.MARKETPLACE + fullProductCard.attr(Constants.ATTRIBUTE_WITH_REF_FOR_PAGE_PRODUCT);
 
             //ссылка на картинку товара
-            Element img = fullProductCard.select("img[class=thumbnail]").first();
+            Element img = fullProductCard.select(Constants.ELEMENT_WITH_REF_FOR_IMAGE).first();
             String refForImg = "-";
-            String refForImgTemp1 = img.attr("src");
-            String refForImgTemp2 = img.attr("data-original");
+            String refForImgTemp1 = img.attr(Constants.ATTRIBUTE_WITH_REF_FOR_IMAGE_1);
+            String refForImgTemp2 = img.attr(Constants.ATTRIBUTE_WITH_REF_FOR_IMAGE_2);
             if (refForImgTemp2.equals("")){
                 refForImg = "https:" + refForImgTemp1;
             } else {
@@ -354,27 +342,30 @@ public class ParserWildBer {
 //                String[] p = priceGoods.text().split(" ");
 //                lowerPrice = Integer.parseInt(p[0]);
 //            }
+
             //старая цена и скидка
-            Element priceGoods = fullProductCard.select("span[class=priceU-old-block]").first();
-            int oldPrice = 0;
-            //int sale = 0;
-            try {
-                String oldPriceAndSale = priceGoods.text();
-                System.out.println(oldPriceAndSale);
-                String[] arrayWithOldPriceAndSale = oldPriceAndSale.split(" ₽ -");
-                oldPrice = Integer.parseInt(arrayWithOldPriceAndSale[0].replaceAll(" ", ""));
-                //sale = Integer.parseInt(arrayWithOldPriceAndSale[1].replaceFirst(".$",""));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            Element priceGoods = fullProductCard.select("span[class=priceU-old-block]").first();
+//            int oldPrice = 0;
+//            //int sale = 0;
+//            try {
+//                String oldPriceAndSale = priceGoods.text();
+//                System.out.println(oldPriceAndSale);
+//                String[] arrayWithOldPriceAndSale = oldPriceAndSale.split(" ₽ -");
+//                oldPrice = Integer.parseInt(arrayWithOldPriceAndSale[0].replaceAll(" ", ""));
+//                //sale = Integer.parseInt(arrayWithOldPriceAndSale[1].replaceFirst(".$",""));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+
             //спец-акция
-            priceGoods = fullProductCard.select("span[class=spec-actions-catalog i-spec-action]").first();
+            Element priceGoods = fullProductCard.select(Constants.ELEMENT_WITH_SPEC_ACTION).first();
             String specAction = "-";
             try {
                 specAction = priceGoods.text();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             //рейтинг
             Element star = fullProductCard.getElementsByAttributeValueStarting("class", "c-stars").first();
             int rating = 0;
@@ -384,11 +375,13 @@ public class ParserWildBer {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             //Brand
             Element brand = fullProductCard.select("strong[class=brand-name c-text-sm]").first();
             String string = brand.text();
             String brandName = string.substring(0, string.length() - 2);
-            productList.add(new Product(id, brandName, name, href, refForImg, lowerPrice, oldPrice, specAction, rating, "-"));
+
+            productList.add(new Product(brandName, vendorCode, productName, refForPage, refForImg, 0, 0, 0, 0, 0, specAction, rating, "-"));
         }
         return productList;
     }

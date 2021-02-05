@@ -52,34 +52,40 @@ public class Main extends Application implements Controller.ActionInController {
             String category = entry.getValue().getCategory();
             String brand = entry.getValue().getBrand();
             Product product = ParserWildBer.getResultProduct(key, category, brand);
+            System.out.println("key = " + key);
             ResultProduct resultProduct = entry.getValue();
 
             if (product == null){
                 resultProduct.setProductName("-");
             } else {
+                //resultProduct.setCategory(category);
                 resultProduct.setVendorCode(product.getVendorCode());
-                resultProduct.setCategory(category);
                 resultProduct.setProductName(product.getProductName());
                 resultProduct.setRefForPage(product.getRefForPage());
                 resultProduct.setRefForImage(product.getRefForImage());
-                resultProduct.setLowerPrice(product.getLowerPrice());
                 resultProduct.setPriceU(product.getPriceU());
+                resultProduct.setBasicSale(product.getBasicSale());
+                resultProduct.setBasicPriceU(product.getBasicPriceU());
+                resultProduct.setPromoSale(product.getPromoSale());
+                resultProduct.setPromoPriceU(product.getPromoPriceU());
                 resultProduct.setSpecAction(product.getSpecAction());
                 resultProduct.setRating(product.getRating());
                 resultProduct.setRefFromRequest(product.getRefFromRequest());
 
+                //установка рекомендуемой скидки и розничной цены на основании процента демпинга
                 int preFld = Integer.parseInt(controller.percentTxtFld.getText());
 
-                double present = (double) preFld / 100;
+                double present = 1 - (double) preFld / 100;
 
                 //double present = Double.parseDouble(controller.percentTxtFld.getText()) / 100;
 
                 if (resultProduct.getMyVendorCode().equals(resultProduct.getVendorCode())){
-                    resultProduct.setRecommendedPrice(resultProduct.getMyLoverPrice());
-                    resultProduct.setRecommendedSale(resultProduct.getMySale());
+                    resultProduct.setRecommendedPriceU(resultProduct.getMyPromoPriceU());
+                    resultProduct.setRecommendedSale(resultProduct.getMyLowerSale());
                 } else {
-                    resultProduct.setRecommendedPrice(Math.round(resultProduct.getLowerPrice() - resultProduct.getLowerPrice() * present));
-                    resultProduct.setRecommendedSale((int) (100 - Math.round(resultProduct.getRecommendedPrice() / resultProduct.getMyPriceU() * 100)));
+
+                    resultProduct.setRecommendedPriceU((int) Math.round(resultProduct.getLowerPriceU() * present));
+                    resultProduct.setRecommendedSale((100 - (int)Math.round((double) resultProduct.getRecommendedPriceU() / resultProduct.getMyPriceU() * 100)));
                 }
             }
         }

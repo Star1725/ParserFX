@@ -4,41 +4,66 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResultProduct extends Product{
-    private String myVendorCode;
     private String category;
-    private double myLoverPrice;
-    private double myPriceU;
-    private int mySale;
+    private String myVendorCode;
+    private int myPriceU;
+    private int myBasicSale;
+    private int myBasicPriceU;
     private int myPromoSale;
-    private double recommendedPrice;
+    private int myPromoPriceU;
+    private int recommendedPriceU;
     private int recommendedSale;
 
-    public ResultProduct(String myVendorCode,
-                        String vendorCode,
-                         String category,
-                         String brand,
-                         String productName,
-                         String refForPage,
-                         String refForImage,
-                         double lowerPrice,
-                         double price,
-                         String specAction,
-                         int rating,
-                         String refForRequest,
-                         double myLoverPrice,
-                         double myPriceU,
-                         int mySale,
-                         int myPromoSale,
-                         double recommendedPrice,
-                         int recommendedSale) {
-        super(vendorCode, brand, productName, refForPage, refForImage, lowerPrice, price, specAction, rating, refForRequest);
-        this.myVendorCode = myVendorCode;
+    public ResultProduct(
+            String category,
+            String brand,
+            String myVendorCode,
+            int myPriceU,
+            int myBasicSale,
+            int myBasicPriceU,
+            int myPromoSale,
+            int myPromoPriceU,
+            String vendorCode,
+            String productName,
+            String refForPage,
+            String refForImage,
+            int priceU,
+            int basicSale,
+            int basicPriceU,
+            int promoSale,
+            int promoPriceU,
+            String specAction,
+            int rating,
+            String refForRequest,
+            int recommendedPriceU,
+            int recommendedSale) {
+        super(brand, vendorCode, productName, refForPage, refForImage, priceU, basicSale, basicPriceU, promoSale, promoPriceU, specAction, rating, refForRequest);
         this.category = category;
-        this.myLoverPrice = myLoverPrice;
+        this.myVendorCode = myVendorCode;
         this.myPriceU = myPriceU;
-        this.mySale = mySale;
+        this.myBasicSale = myBasicSale;
+        this.myBasicPriceU = myBasicPriceU;
         this.myPromoSale = myPromoSale;
-        this.recommendedPrice = recommendedPrice;
+        this.myPromoPriceU = myPromoPriceU;
+        this.recommendedPriceU = recommendedPriceU;
         this.recommendedSale = recommendedSale;
+    }
+
+    public int getMyLowerPriceU(){
+        if (this.myPromoPriceU != 0){
+            return myPromoPriceU;
+        } else if (this.myBasicPriceU != 0){
+            return myBasicPriceU;
+        } else {
+            return myPriceU;
+        }
+    }
+
+    public int getMyLowerSale(){
+        if (this.myPromoSale != 0){
+            return myPromoSale;
+        } else {
+            return myBasicSale;
+        }
     }
 }

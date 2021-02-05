@@ -13,6 +13,6 @@ public class Products {
     private Extended extended;
 
     @SerializedName("priceU")
-    private Extended priceU;
+    private int priceU;
 
 }
