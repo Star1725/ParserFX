@@ -35,7 +35,7 @@ public class ParserWildBer {
     private static final String PARAM_1_3 = "Гарантийный срок";
     private static final String PRICE_AND_SALE = "priceAndSale";
 
-    public static Product getResultProduct (String vendorCode, String category, String brand){
+    public static Product getProduct (String vendorCode, String category, String brand){
         List<Product> productList = null;
         Product product = null;
         List<String> paramsForRequest;
@@ -55,14 +55,14 @@ public class ParserWildBer {
                 String count = paramsForRequest.get(0);
                 //для поиска по маскам надо в запросе передать "Маски одноразовые" и кол-во штук в упаковке
                 query = category + " " + count;
-                productList = getCatalogProducts(query);
+                productList = getCatalogProducts(query, vendorCode);
                 product = productList.stream().filter(p -> p.getProductName().contains(count)).findAny().orElse(null);
                 break;
 
             case CATEGORY_4:
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 query = paramsForRequest.get(0);
-                productList = getCatalogProducts(query);
+                productList = getCatalogProducts(query, vendorCode);
                 product = productList.stream().findFirst().orElse(null);
                 break;
 
@@ -73,7 +73,7 @@ public class ParserWildBer {
                 } catch (IndexOutOfBoundsException e) {
                     System.out.println("Для артикула: " + vendorCode + " - ошибка формирования запроса на поиск конкурентов");
                 }
-                productList = getCatalogProducts(query);
+                productList = getCatalogProducts(query, vendorCode);
 
                 //проходимся по всему списку и находим продукт с наименьшей ценой
                 product = getProductWithLowerPrice(productList);
@@ -99,7 +99,7 @@ public class ParserWildBer {
                 } catch (IndexOutOfBoundsException | NullPointerException e) {
                     System.out.println("Для артикула: " + vendorCode + " ошибка формирования запроса на поиск конкурентов");
                 }
-                productList = getCatalogProducts(query);
+                productList = getCatalogProducts(query, vendorCode);
                 //проходимся по всему списку и находим продукт с наименьшей ценой
                 product = getProductWithLowerPrice(productList);
                 break;
@@ -137,8 +137,6 @@ public class ParserWildBer {
         Element params;
 
         if (category.equals(PRICE_AND_SALE)){
-//            params = page.select("div[class=inner-priceU]").first();
-//            String text = params.text();
             Element finalCost = page.select("span[class=final-cost]").first();
             String finalPriceBuff1 = finalCost.text().replaceAll(" ", "");
             finalPriceBuff1 = finalPriceBuff1.substring(0, finalPriceBuff1.length() - 1);
@@ -230,7 +228,7 @@ public class ParserWildBer {
             String model = "";
 
             for (int i = 0; i < strBuf3.length; i++) {
-                if (strBuf3[i].equalsIgnoreCase(strBuf2[0])){
+                if (strBuf3[i].equalsIgnoreCase(strBuf2[0]) || strBuf3[i].startsWith(strBuf2[0].substring(0, 2))){
                     for (int j = i + 1; j < strBuf3.length; j++) {
                         model = model + strBuf3[j] + " ";
                     };
@@ -246,11 +244,11 @@ public class ParserWildBer {
     }
    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    private static List<Product> getCatalogProducts(String query) {
+    private static List<Product> getCatalogProducts(String query, String vendorCodeFromRequest) {
         List<Product> productList;
         Document page = null;
         page = getPageForSearchQuery(query);
-        productList = getCatalogProductsForPage(page);
+        productList = getCatalogProductsForPage(page, vendorCodeFromRequest);
 
         //получение цены и скидок через json
         HttpUrlConnectionHandler.getCatalog(productList, query);
@@ -267,6 +265,7 @@ public class ParserWildBer {
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("превышено аремя ожидания ответа сервера");
+            return null;
         }
         return page;
     }
@@ -288,100 +287,65 @@ public class ParserWildBer {
         return queryUTF8;
     }
 
-    private static List<Product> getCatalogProductsForPage(Document page){
+    private static List<Product> getCatalogProductsForPage(Document page, String vendorCodeFromRequest){
         List<Product> productList = new ArrayList<>();
         Product product = null;
+        if (page != null){
+            Element catalog = page.select(Constants.ELEMENT_WITH_CATALOG).first();
+            Elements goods = catalog.select(Constants.ELEMENT_WITH_PRODUCT);
+            int i = 0;
+            for (Element good : goods) {
+                //артикул
+                String vendorCode = good.attr(Constants.ATTRIBUTE_WITH_VENDOR_CODE);
 
-        Element catalog = page.select(Constants.ELEMENT_WITH_CATALOG).first();
-        Elements goods = catalog.select(Constants.ELEMENT_WITH_PRODUCT);
-        int i = 0;
-        for (Element good : goods) {
-            //артикул
-            String vendorCode = good.attr(Constants.ATTRIBUTE_WITH_VENDOR_CODE);
+                Element fullProductCard = good.select(Constants.ELEMENT_WITH_CARD_PRODUCT).first();
 
-//            //актуальная цена
-//            List<String> finalPrices = getDataForRequestFromCategory(getPageForVendorCode(id), PRICE_AND_SALE);
-//            int lowerPrice = 0;
-//            try {
-//                lowerPrice = Integer.parseInt(finalPrices.get(0));
-//            } catch (NumberFormatException | IndexOutOfBoundsException e) {
-//                e.printStackTrace();
-//                System.out.println("Ошибка при запросе цены на артикул: " + id);
-//            }
+                //имя товара
+                Element nameGoods = fullProductCard.select(Constants.ELEMENT_WITH_NAME_PRODUCT).first();
+                String productName = nameGoods.text();
 
-            Element fullProductCard = good.select(Constants.ELEMENT_WITH_CARD_PRODUCT).first();
+                //ссылка на товар
+                String refForPage = Constants.MARKETPLACE + fullProductCard.attr(Constants.ATTRIBUTE_WITH_REF_FOR_PAGE_PRODUCT);
 
-            //имя товара
-            Element nameGoods = fullProductCard.select(Constants.ELEMENT_WITH_NAME_PRODUCT).first();
-            String productName = nameGoods.text();
+                //ссылка на картинку товара
+                Element img = fullProductCard.select(Constants.ELEMENT_WITH_REF_FOR_IMAGE).first();
+                String refForImg = "-";
+                String refForImgTemp1 = img.attr(Constants.ATTRIBUTE_WITH_REF_FOR_IMAGE_1);
+                String refForImgTemp2 = img.attr(Constants.ATTRIBUTE_WITH_REF_FOR_IMAGE_2);
+                if (refForImgTemp2.equals("")){
+                    refForImg = "https:" + refForImgTemp1;
+                } else {
+                    refForImg = "https:" + refForImgTemp2;
+                }
 
-            //ссылка на товар
-            String refForPage = Constants.MARKETPLACE + fullProductCard.attr(Constants.ATTRIBUTE_WITH_REF_FOR_PAGE_PRODUCT);
+                //спец-акция
+                Element priceGoods = fullProductCard.select(Constants.ELEMENT_WITH_SPEC_ACTION).first();
+                String specAction = "-";
+                try {
+                    specAction = priceGoods.text();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-            //ссылка на картинку товара
-            Element img = fullProductCard.select(Constants.ELEMENT_WITH_REF_FOR_IMAGE).first();
-            String refForImg = "-";
-            String refForImgTemp1 = img.attr(Constants.ATTRIBUTE_WITH_REF_FOR_IMAGE_1);
-            String refForImgTemp2 = img.attr(Constants.ATTRIBUTE_WITH_REF_FOR_IMAGE_2);
-            if (refForImgTemp2.equals("")){
-                refForImg = "https:" + refForImgTemp1;
-            } else {
-                refForImg = "https:" + refForImgTemp2;
+                //рейтинг
+                Element star = fullProductCard.getElementsByAttributeValueStarting("class", "c-stars").first();
+                int rating = 0;
+                try {
+                    String nameClass = star.className();
+                    rating = Integer.parseInt(String.valueOf(nameClass.charAt(nameClass.length() - 1)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //Brand
+                Element brand = fullProductCard.select("strong[class=brand-name c-text-sm]").first();
+                String string = brand.text();
+                String brandName = string.substring(0, string.length() - 2);
+
+                productList.add(new Product(vendorCodeFromRequest, brandName, vendorCode, productName, refForPage, refForImg, 0, 0, 0, 0, 0, specAction, rating, "-"));
             }
-
-            //актуальная цена
-//            Element priceGoods = fullProductCard.select("ins[class=lower-priceU]").first();
-//            int lowerPrice;
-//            try {
-//                String p = priceGoods.text();
-//                String s = p.replaceAll(" ", "");
-//                String r = p.replaceAll(" ", "").substring(0, s.length() - 1);
-//                lowerPrice = Integer.parseInt(r);
-//            } catch (Exception e) {
-//                priceGoods = fullProductCard.select("span[class=lower-priceU]").first();
-//                String[] p = priceGoods.text().split(" ");
-//                lowerPrice = Integer.parseInt(p[0]);
-//            }
-
-            //старая цена и скидка
-//            Element priceGoods = fullProductCard.select("span[class=priceU-old-block]").first();
-//            int oldPrice = 0;
-//            //int sale = 0;
-//            try {
-//                String oldPriceAndSale = priceGoods.text();
-//                System.out.println(oldPriceAndSale);
-//                String[] arrayWithOldPriceAndSale = oldPriceAndSale.split(" ₽ -");
-//                oldPrice = Integer.parseInt(arrayWithOldPriceAndSale[0].replaceAll(" ", ""));
-//                //sale = Integer.parseInt(arrayWithOldPriceAndSale[1].replaceFirst(".$",""));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-
-            //спец-акция
-            Element priceGoods = fullProductCard.select(Constants.ELEMENT_WITH_SPEC_ACTION).first();
-            String specAction = "-";
-            try {
-                specAction = priceGoods.text();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            //рейтинг
-            Element star = fullProductCard.getElementsByAttributeValueStarting("class", "c-stars").first();
-            int rating = 0;
-            try {
-                String nameClass = star.className();
-                rating = Integer.parseInt(String.valueOf(nameClass.charAt(nameClass.length() - 1)));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            //Brand
-            Element brand = fullProductCard.select("strong[class=brand-name c-text-sm]").first();
-            String string = brand.text();
-            String brandName = string.substring(0, string.length() - 2);
-
-            productList.add(new Product(brandName, vendorCode, productName, refForPage, refForImg, 0, 0, 0, 0, 0, specAction, rating, "-"));
+        } else {
+            productList.add(new Product(vendorCodeFromRequest, "-", "-", "-", "-", "-", 0, 0, 0, 0, 0, "-", 0, "-"));
         }
         return productList;
     }

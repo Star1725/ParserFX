@@ -1,6 +1,8 @@
 public class Constants {
     public static final String MARKETPLACE = "https://www.wildberries.ru";
 
+    public static final String NOT_FOUND_PAGE = "Не найдена страница товара";
+
 
 
 

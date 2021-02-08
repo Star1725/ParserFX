@@ -1,4 +1,5 @@
 import controllers.Controller;
+import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -8,11 +9,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class ExelHandler {
+public class ExelTask extends Task<Map> {
 
-    private static final String NOT_FOUND_PAGE = "Не найдена страница товара";
+    public ExelTask(File file) {
+        this.file = file;
+    }
 
-    public static Map<String, ResultProduct> readWorkbook(File file, Controller controller) {
+    private final File file;
+
+    public Map<String, ResultProduct> readWorkbook(File file) {
         try {
             Map<String, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
             Workbook workbook = new XSSFWorkbook(file);
@@ -22,14 +27,11 @@ public class ExelHandler {
 
             Map<Integer, List<String>> data = new HashMap<>();
 
-            double fullLoad = sheet.getLastRowNum();
-            double i = 1;
+            int countRows = sheet.getLastRowNum();
+            int i = 1;
 
             Iterator rowIter = sheet.rowIterator();
             while (rowIter.hasNext()) {
-                String strQuery = "";
-
-               //data.put(i, new ArrayList<String>());
 
                 //получаем строку
                 Row row = (Row) rowIter.next();
@@ -71,6 +73,7 @@ public class ExelHandler {
                 int myPromoPriceU = (int) Math.round(((1 - (double) myPromoSale/100) * myBasicPriceU));
 
                 resultProductHashMap.put(myVendorCode, new ResultProduct(
+                        "-",
                         category,
                         brand,
                         myVendorCode,
@@ -94,6 +97,12 @@ public class ExelHandler {
                         0,
                         0
                         ));
+
+                Thread.sleep(50);
+
+                this.updateProgress(i, countRows);
+                this.updateMessage("i");
+                i++;
             }
             return resultProductHashMap;
         }
@@ -144,7 +153,7 @@ public class ExelHandler {
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(5);
-        headerCell.setCellValue("Моя базовая цена");
+        headerCell.setCellValue("Рекомендуемая роз. цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(6);
@@ -152,7 +161,7 @@ public class ExelHandler {
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(7);
-        headerCell.setCellValue("Рекомендуемая роз. цена");
+        headerCell.setCellValue("Моя базовая цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(8);
@@ -168,10 +177,10 @@ public class ExelHandler {
         styleMyProduct.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
         styleMyProduct.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-        CellStyle styleExeption = workbook.createCellStyle();
-        styleExeption.setWrapText(true);
-        styleExeption.setFillForegroundColor(IndexedColors.RED.getIndex());
-        styleExeption.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        CellStyle styleException = workbook.createCellStyle();
+        styleException.setWrapText(true);
+        styleException.setFillForegroundColor(IndexedColors.RED.getIndex());
+        styleException.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         ArrayList<ResultProduct> productArrayList = new ArrayList<>(productMap.values());
 
@@ -191,8 +200,8 @@ public class ExelHandler {
 
             cell = row.createCell(2);
             if (productArrayList.get(i).getProductName().equals("-")){
-                cell.setCellValue(NOT_FOUND_PAGE);
-                cell.setCellStyle(styleExeption);
+                cell.setCellValue(Constants.NOT_FOUND_PAGE);
+                cell.setCellStyle(styleException);
             } else {
                 cell.setCellValue((productArrayList.get(i).getProductName()));
                 cell.setCellStyle(style);
@@ -208,9 +217,9 @@ public class ExelHandler {
             cell.setCellValue(Math.round(productArrayList.get(i).getLowerPriceU() / 100));
             cell.setCellStyle(style);
 
-            //Моя базовая цена
+            //Рекомендуемая роз. цена
             cell = row.createCell(5);
-            cell.setCellValue(Math.round(productArrayList.get(i).getMyPriceU() / 100));
+            cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU() / 100));
             cell.setCellStyle(style);
 
             //Рекомендуемая скидка
@@ -218,9 +227,9 @@ public class ExelHandler {
             cell.setCellValue((productArrayList.get(i).getRecommendedSale()));
             cell.setCellStyle(style);
 
-            //Рекомендуемая роз. цена
+            //Моя базовая цена
             cell = row.createCell(7);
-            cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU() / 100));
+            cell.setCellValue(Math.round(productArrayList.get(i).getMyPriceU() / 100));
             cell.setCellStyle(style);
 
             //ссылка на конкурента(или самого себя)
@@ -251,5 +260,10 @@ public class ExelHandler {
             e.printStackTrace();
         }
         return currDir;
+    }
+
+    @Override
+    protected Map call() throws Exception {
+        return this.readWorkbook(file);
     }
 }

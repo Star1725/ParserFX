@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -34,11 +35,10 @@ public class Controller implements Initializable {
     private Button btnSelectFile;
 
     @FXML
-    private ProgressBar processingRequest;
+    private ProgressBar progressBar;
 
     @FXML
     private TextField txtFldShowPathFile;
-
 
 
     public interface ActionInController{
@@ -60,7 +60,6 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         final FileChooser fileChooser = new FileChooser();
-
         btnSelectFile.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -70,14 +69,7 @@ public class Controller implements Initializable {
                 Node node = (Node) event.getSource();
                 File file = fileChooser.showOpenDialog(node.getScene().getWindow());
                 notifySubscriber(file);
-
-
                 txtFldShowPathFile.appendText(file.getAbsolutePath() + "\n");
-//                if (file != null) {
-//                    openFile(file);
-//                    List<File> files = Arrays.asList(file);
-//                    printLog(textArea, files);
-//                }
             }
         });
     }

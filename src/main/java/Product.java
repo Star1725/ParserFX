@@ -6,6 +6,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Product {
+    private String vendorCodeFromRequest;
     private String brand;
     private String vendorCode;
     private String productName;
