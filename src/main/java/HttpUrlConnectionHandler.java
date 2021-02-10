@@ -57,15 +57,12 @@ public class HttpUrlConnectionHandler {
                             product.setBasicPriceU(request.getData().getProducts()[i].getExtended().getBasicPriceU());
                             product.setPromoSale(request.getData().getProducts()[i].getExtended().getPromoSale());
                             product.setPromoPriceU(request.getData().getProducts()[i].getExtended().getPromoPriceU());
-                        } else {
-                            return productList;
                         }
                     }
                 }
             }
             return productList;
         } catch (IOException e) {
-            e.printStackTrace();
             System.out.println("Для запроса - " + query + " выподает ошибка \"NullPointerException\"");
             return productList;
         }

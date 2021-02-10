@@ -1,3 +1,4 @@
+import javafx.concurrent.Task;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,6 +11,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ParserWildBer {
 
@@ -28,52 +30,59 @@ public class ParserWildBer {
     private static final String CATEGORY_13 = "Пылесосы автомобильные";
     private static final String CATEGORY_14 = "Увлажнители";
     private static final String CATEGORY_15 = "Переходники";
-    private static final String CATEGORY_16 = "Пылесосы автомобильные";
+    private static final String CATEGORY_16 = "Термометры медицинские";
+    private static final String CATEGORY_17 = "Адаптеры";
+    private static final String CATEGORY_18 = "Подставки для мобильных устройств";
 
     private static final String PARAM_1_1 = "Количество предметов в упаковке";
     private static final String PARAM_1_2 = "Модель";
     private static final String PARAM_1_3 = "Гарантийный срок";
-    private static final String PRICE_AND_SALE = "priceAndSale";
 
-    public static Product getProduct (String vendorCode, String category, String brand){
+    public Product getProduct (String vendorCodeFromRequest, String category, String brand){
         List<Product> productList = null;
-        Product product = null;
-        List<String> paramsForRequest;
+        Product product = new Product(vendorCodeFromRequest, "-", "-","-", "-", "-", "-", "-", 0, 0, 0, 0, 0, "-", 0, "-");
+        List<String> paramsForRequest = null;
 
-        Document page = getPageForVendorCode(vendorCode);
+        String url = getString("https://www.wildberries.ru/catalog/", vendorCodeFromRequest, "/detail.aspx?targetUrl=SP");
+        Document page = null;
+        try {
+            page = Jsoup.parse(new URL(url), 30000);
+        } catch (IOException e) {
+            System.out.println(Constants.NOT_FOUND_PAGE);
+        }
 
         if (page == null){
-            return null;
+            return product;
         }
 
         String query = null;
+
+
         switch (category){
-
             case CATEGORY_10:
-
                 paramsForRequest = getDataForRequestFromCategory(page, category);
-                String count = paramsForRequest.get(0);
+                String count = paramsForRequest.get(1);
                 //для поиска по маскам надо в запросе передать "Маски одноразовые" и кол-во штук в упаковке
                 query = category + " " + count;
-                productList = getCatalogProducts(query, vendorCode);
+                productList = getCatalogProducts(query, vendorCodeFromRequest, brand);
                 product = productList.stream().filter(p -> p.getProductName().contains(count)).findAny().orElse(null);
                 break;
 
             case CATEGORY_4:
                 paramsForRequest = getDataForRequestFromCategory(page, category);
-                query = paramsForRequest.get(0);
-                productList = getCatalogProducts(query, vendorCode);
+                query = paramsForRequest.get(1);
+                productList = getCatalogProducts(query, vendorCodeFromRequest, brand);
                 product = productList.stream().findFirst().orElse(null);
                 break;
 
             case CATEGORY_7:
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 try {
-                    query = paramsForRequest.get(0) + " " + paramsForRequest.get(1);
+                    query = paramsForRequest.get(1) + " " + paramsForRequest.get(2);
                 } catch (IndexOutOfBoundsException e) {
-                    System.out.println("Для артикула: " + vendorCode + " - ошибка формирования запроса на поиск конкурентов");
+                    System.out.println("Для артикула: " + vendorCodeFromRequest + " - ошибка формирования запроса на поиск конкурентов");
                 }
-                productList = getCatalogProducts(query, vendorCode);
+                productList = getCatalogProducts(query, vendorCodeFromRequest, brand);
 
                 //проходимся по всему списку и находим продукт с наименьшей ценой
                 product = getProductWithLowerPrice(productList);
@@ -92,26 +101,38 @@ public class ParserWildBer {
             case CATEGORY_13:
             case CATEGORY_14:
             case CATEGORY_15:
+            case CATEGORY_16:
+            case CATEGORY_17:
+            case CATEGORY_18:
 
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 try {
-                    query = brand + " " + paramsForRequest.get(0);
+                    if (paramsForRequest.get(1).equals("")){
+                        product.setRefFromRequest("Мало данных для формирования поискового запроса");
+                        break;
+                    }
+                    query = brand + " " + paramsForRequest.get(1);
                 } catch (IndexOutOfBoundsException | NullPointerException e) {
-                    System.out.println("Для артикула: " + vendorCode + " ошибка формирования запроса на поиск конкурентов");
+                    System.out.println("Для артикула: " + vendorCodeFromRequest + " ошибка формирования запроса на поиск конкурентов");
                 }
-                productList = getCatalogProducts(query, vendorCode);
+                productList = getCatalogProducts(query, vendorCodeFromRequest, brand);
                 //проходимся по всему списку и находим продукт с наименьшей ценой
                 product = getProductWithLowerPrice(productList);
                 break;
         }
-        assert product != null;
-        product.setRefFromRequest(getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&xsearch=true&sort=priceup"));
+        //устанавливаем спецакцию, если она есть
+        product.setMySpecAction(paramsForRequest.get(0));
+
+        if (!paramsForRequest.get(1).equals("")){
+            product.setRefFromRequest(getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&xsearch=true&sort=priceup"));
+        }
+        product.setMyRefForPage(getString("https://www.wildberries.ru/catalog/", vendorCodeFromRequest, "/detail.aspx?targetUrl=SP"));
         return product;
     }
 
     private static Product getProductWithLowerPrice(List<Product> productList) {
-        Product product;
-        product = productList.get(0);
+        Product product = productList.get(0);
+
         for (Product p : productList) {
             if (p.getLowerPriceU() <= product.getLowerPriceU()) {
                 product = p;
@@ -126,7 +147,7 @@ public class ParserWildBer {
         try {
             page = Jsoup.parse(new URL(url), 30000);
         } catch (IOException e) {
-            System.out.println("превышено аремя ожидания ответа сервера");
+            System.out.println(Constants.NOT_FOUND_PAGE);
         }
         return page;
     }
@@ -134,91 +155,107 @@ public class ParserWildBer {
     //метод читающий на странице продукта характеристики, по которым будет осуществляться запрос на поиск аналогов!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private static List<String> getDataForRequestFromCategory(Document page, String category){
         List<String> paramsForRequest = new ArrayList<>();
-        Element params;
 
-        if (category.equals(PRICE_AND_SALE)){
-            Element finalCost = page.select("span[class=final-cost]").first();
-            String finalPriceBuff1 = finalCost.text().replaceAll(" ", "");
-            finalPriceBuff1 = finalPriceBuff1.substring(0, finalPriceBuff1.length() - 1);
-            paramsForRequest.add(finalPriceBuff1);
-            return paramsForRequest;
+        //формирование запроса на основании названия модели товара, которое находится в заголовке как аправило сразу после бренда
+        Element elementBrandAndNameTitle = page.select("div[class=brand-and-name j-product-title]").first();
+
+        //по наличию этого параметра определяем есть ли акция
+        Element specAction = page.select("div[class=j-big-sale-icon-card-wrapper i-spec-action-v1]").first();
+        try {
+            String mySpecAction = specAction.text();
+            paramsForRequest.add(mySpecAction);
+        } catch (Exception e) {
+            paramsForRequest.add("-");
         }
 
         switch (category){
             case CATEGORY_4:
                 try {
-                    params = page.select("div[class=brand-and-name j-product-title]").first();
+                    String tittle = elementBrandAndNameTitle.text();
+                    paramsForRequest.add(tittle);
+                    return paramsForRequest;
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
                 }
-                String tittle4 = params.text();
-                paramsForRequest.add(tittle4);
-                return paramsForRequest;
 
             case CATEGORY_7:
                 try {
-                    params = page.select("div[class=brand-and-name j-product-title]").first();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-                String tittle7 = params.text();
-                String[] strBuf = tittle7.split(", ");
-                paramsForRequest.add(strBuf[0]);
+                    String tittle = elementBrandAndNameTitle.text();
+                    String[] strBuf = tittle.split(", ");
+                    paramsForRequest.add(strBuf[0]);
 
-                for (int i = 1; i < strBuf.length; i++) {
-                    if (strBuf[i].contains("D") || strBuf[i].contains("EYE PROTECTION")){
-                        paramsForRequest.add(strBuf[i]);
+                    for (int i = 1; i < strBuf.length; i++) {
+                        if (strBuf[i].contains("D") || strBuf[i].contains("EYE PROTECTION")){
+                            paramsForRequest.add(strBuf[i]);
+                        }
                     }
+                    return paramsForRequest;
+                } catch (Exception e) {
                 }
-                return paramsForRequest;
+
+            case CATEGORY_16:
+                try {
+                    String tittle = elementBrandAndNameTitle.text();
+                    String[] strBuf1 = tittle.split(", ");
+                    String[] strBuf2 = strBuf1[0].split(" ");
+                    paramsForRequest.add(strBuf2[strBuf2.length - 1]);
+
+                    return paramsForRequest;
+                } catch (Exception e) {
+                }
+
+            case CATEGORY_8:
+                try {
+                    //определение параметров запроса
+                    String tittle = elementBrandAndNameTitle.text();
+                    String[] strBuf1 = tittle.split(", ");
+                    String[] strBuf2 = strBuf1[0].split(" / ");
+                    paramsForRequest.add(strBuf2[1]);
+                    return paramsForRequest;
+                } catch (Exception e) {
+                }
+
         }
+
+
+
+
+        Element params = page.select("div[class=params]").first();
 
         try {
-            params = page.select("div[class=params]").first();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        Elements elements = params.getAllElements();
-        String param4 = elements.get(4).text();
+            Elements elements = params.getAllElements();
+            String param4 = elements.get(4).text();
+            if (param4.equals(PARAM_1_1)){
+                String countItemsFromPackage = elements.get(5).text();
+                String[] array = countItemsFromPackage.split(" ");
+                String count = array[0];
+                paramsForRequest.add(count);
+            }
+            if (param4.equals(PARAM_1_2)){
+                String model = elements.get(5).text();
+                paramsForRequest.add(model);
+            }
+            if (param4.equals(PARAM_1_3)){
+                try {
+                    params = page.select("div[class=brand-and-name j-product-title]").first();
+                    String[] strs1 = params.text().split(",");
+                    String model = strs1[1].trim();
 
-        if (param4.equals(PARAM_1_1)){
-            String countItemsFromPackage = elements.get(5).text();
-            String[] array = countItemsFromPackage.split(" ");
-            String count = array[0];
-            paramsForRequest.add(count);
-        }
-        if (param4.equals(PARAM_1_2)){
-            String model = elements.get(5).text();
-            paramsForRequest.add(model);
-        }
-        if (param4.equals(PARAM_1_3)){
-            try {
-                params = page.select("div[class=brand-and-name j-product-title]").first();
-                String[] strs1 = params.text().split(",");
-                String model = strs1[1].trim();
+                    Element description = page.select("div[class=j-description description-text collapsable-content]").first();
+                    List<String> strs2 = Arrays.asList(description.text().replaceAll(",", "").split(" "));
+                    if (strs2.contains(model)){
+                        paramsForRequest.add(model);
+                    }
 
-                Element description = page.select("div[class=j-description description-text collapsable-content]").first();
-                List<String> strs2 = Arrays.asList(description.text().replaceAll(",", "").split(" "));
-                if (strs2.contains(model)){
-                    paramsForRequest.add(model);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
         }
 
-        if (paramsForRequest.size() == 0){
-            try {
-                params = page.select("div[class=brand-and-name j-product-title]").first();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-            String tittle7 = params.text();
+        if (paramsForRequest.size() == 1){
+
+            String tittle7 = elementBrandAndNameTitle.text();
             String[] strBuf = tittle7.split(", ");
 
             String[] strBuf2 = strBuf[0].split(" / ");
@@ -236,19 +273,25 @@ public class ParserWildBer {
                 }
             }
 
+            if (model.equals("")){
+                try {
+                    model = strBuf[1];
+                } catch (Exception e) {
+                }
+            }
+
             paramsForRequest.add(model);
         }
-
 
         return paramsForRequest;
     }
    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    private static List<Product> getCatalogProducts(String query, String vendorCodeFromRequest) {
+    private static List<Product> getCatalogProducts(String query, String vendorCodeFromRequest, String brand) {
         List<Product> productList;
         Document page = null;
         page = getPageForSearchQuery(query);
-        productList = getCatalogProductsForPage(page, vendorCodeFromRequest);
+        productList = getCatalogProductsForPage(page, vendorCodeFromRequest, brand);
 
         //получение цены и скидок через json
         HttpUrlConnectionHandler.getCatalog(productList, query);
@@ -263,9 +306,7 @@ public class ParserWildBer {
         try {
             page = Jsoup.parse(new URL(url), 30000);
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("превышено аремя ожидания ответа сервера");
-            return null;
+            return page;
         }
         return page;
     }
@@ -281,13 +322,12 @@ public class ParserWildBer {
             //замена символа "+" на код "%20"
             queryUTF8 = queryUTF8.replace("+", "%20");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
             System.out.println("Ошибка декодирования в UTF8");
         }
         return queryUTF8;
     }
 
-    private static List<Product> getCatalogProductsForPage(Document page, String vendorCodeFromRequest){
+    private static List<Product> getCatalogProductsForPage(Document page, String vendorCodeFromRequest, String myBrand){
         List<Product> productList = new ArrayList<>();
         Product product = null;
         if (page != null){
@@ -324,7 +364,6 @@ public class ParserWildBer {
                 try {
                     specAction = priceGoods.text();
                 } catch (Exception e) {
-                    e.printStackTrace();
                 }
 
                 //рейтинг
@@ -334,18 +373,16 @@ public class ParserWildBer {
                     String nameClass = star.className();
                     rating = Integer.parseInt(String.valueOf(nameClass.charAt(nameClass.length() - 1)));
                 } catch (Exception e) {
-                    e.printStackTrace();
                 }
 
                 //Brand
                 Element brand = fullProductCard.select("strong[class=brand-name c-text-sm]").first();
                 String string = brand.text();
                 String brandName = string.substring(0, string.length() - 2);
+                if (!brandName.equals(myBrand)) continue;
 
-                productList.add(new Product(vendorCodeFromRequest, brandName, vendorCode, productName, refForPage, refForImg, 0, 0, 0, 0, 0, specAction, rating, "-"));
+                productList.add(new Product(vendorCodeFromRequest, "-", "-", brandName, vendorCode, productName, refForPage, refForImg, 0, 0, 0, 0, 0, specAction, rating, "-"));
             }
-        } else {
-            productList.add(new Product(vendorCodeFromRequest, "-", "-", "-", "-", "-", 0, 0, 0, 0, 0, "-", 0, "-"));
         }
         return productList;
     }

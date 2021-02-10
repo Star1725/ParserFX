@@ -74,6 +74,8 @@ public class ExelTask extends Task<Map> {
 
                 resultProductHashMap.put(myVendorCode, new ResultProduct(
                         "-",
+                        "-",
+                        "-",
                         category,
                         brand,
                         myVendorCode,
@@ -95,10 +97,11 @@ public class ExelTask extends Task<Map> {
                         0,
                         "-",
                         0,
+                        0,
                         0
                         ));
 
-                Thread.sleep(50);
+                Thread.sleep(10);
 
                 this.updateProgress(i, countRows);
                 this.updateMessage("i");
@@ -128,7 +131,7 @@ public class ExelTask extends Task<Map> {
 
         XSSFFont font = ((XSSFWorkbook) workbook).createFont();
         font.setFontName("Arial");
-        font.setFontHeightInPoints((short) 11);
+        font.setFontHeightInPoints((short) 10);
         font.setBold(true);
         headerStyle.setFont(font);
 
@@ -141,31 +144,43 @@ public class ExelTask extends Task<Map> {
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(2);
-        headerCell.setCellValue("Товар");
+        headerCell.setCellValue("SpecAction для моего артикула");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(3);
-        headerCell.setCellValue("Моя тек. роз. цена");
+        headerCell.setCellValue("Товар");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(4);
-        headerCell.setCellValue("Роз. цена конкурента");
+        headerCell.setCellValue("Моя тек. роз. цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(5);
-        headerCell.setCellValue("Рекомендуемая роз. цена");
+        headerCell.setCellValue("Роз. цена конкурента");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(6);
-        headerCell.setCellValue("Рекомендуемая скидка");
+        headerCell.setCellValue("Рекомендуемая роз. цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(7);
-        headerCell.setCellValue("Моя базовая цена");
+        headerCell.setCellValue("Реком. согласованная скидка");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(8);
+        headerCell.setCellValue("Реком. новая скидка по промокоду");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(9);
+        headerCell.setCellValue("Моя базовая цена");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(10);
         headerCell.setCellValue("Ссылка на конкурента");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(11);
+        headerCell.setCellValue("Ссылка на мой товар");
         headerCell.setCellStyle(headerStyle);
 
 
@@ -177,10 +192,17 @@ public class ExelTask extends Task<Map> {
         styleMyProduct.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
         styleMyProduct.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
+        CellStyle styleMyProductAnalog = workbook.createCellStyle();
+        styleMyProductAnalog.setWrapText(true);
+        styleMyProductAnalog.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        styleMyProductAnalog.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
         CellStyle styleException = workbook.createCellStyle();
         styleException.setWrapText(true);
         styleException.setFillForegroundColor(IndexedColors.RED.getIndex());
         styleException.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        Set<String> myVendorCodesSet = new HashSet<>(productMap.keySet());
 
         ArrayList<ResultProduct> productArrayList = new ArrayList<>(productMap.values());
 
@@ -190,6 +212,8 @@ public class ExelTask extends Task<Map> {
 
             boolean isMy = productArrayList.get(i).getMyVendorCode().equals(productArrayList.get(i).getVendorCode());
 
+            boolean isMyAnalog = myVendorCodesSet.contains(productArrayList.get(i).getVendorCode());
+
             Cell cell = row.createCell(0);
             cell.setCellValue(productArrayList.get(i).getBrand());
             cell.setCellStyle(style);
@@ -198,7 +222,12 @@ public class ExelTask extends Task<Map> {
             cell.setCellValue(productArrayList.get(i).getMyVendorCode());
             cell.setCellStyle(style);
 
+
             cell = row.createCell(2);
+            cell.setCellValue(productArrayList.get(i).getMySpecAction());
+            cell.setCellStyle(style);
+
+            cell = row.createCell(3);
             if (productArrayList.get(i).getProductName().equals("-")){
                 cell.setCellValue(Constants.NOT_FOUND_PAGE);
                 cell.setCellStyle(styleException);
@@ -208,41 +237,78 @@ public class ExelTask extends Task<Map> {
             }
 
             //Моя тек. роз. цена
-            cell = row.createCell(3);
+            cell = row.createCell(4);
             cell.setCellValue(Math.round(productArrayList.get(i).getMyLowerPriceU() / 100));
             cell.setCellStyle(style);
 
             //Роз. цена конкурента
-            cell = row.createCell(4);
+            cell = row.createCell(5);
             cell.setCellValue(Math.round(productArrayList.get(i).getLowerPriceU() / 100));
             cell.setCellStyle(style);
 
             //Рекомендуемая роз. цена
-            cell = row.createCell(5);
-            cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU() / 100));
+            cell = row.createCell(6);
+            if (isMyAnalog){
+                cell.setCellValue(Math.round(productArrayList.get(i).getLowerPriceU() / 100));
+            } else {
+                cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU() / 100));
+            }
             cell.setCellStyle(style);
 
-            //Рекомендуемая скидка
-            cell = row.createCell(6);
-            cell.setCellValue((productArrayList.get(i).getRecommendedSale()));
+            //"Реком. согласованная скидка"
+            cell = row.createCell(7);
+            if (isMyAnalog){
+                cell.setCellValue((productArrayList.get(i).getMyBasicSale()));
+            } else {
+                cell.setCellValue((productArrayList.get(i).getRecommendedSale()));
+            }
+            cell.setCellStyle(style);
+
+            //"Реком. новая скидка по промокоду"
+            cell = row.createCell(8);
+            if (isMyAnalog){
+                cell.setCellValue((productArrayList.get(i).getMyPromoSale()));
+            } else {
+                cell.setCellValue((productArrayList.get(i).getRecommendedPromoSale()));
+            }
             cell.setCellStyle(style);
 
             //Моя базовая цена
-            cell = row.createCell(7);
+            cell = row.createCell(9);
             cell.setCellValue(Math.round(productArrayList.get(i).getMyPriceU() / 100));
             cell.setCellStyle(style);
 
             //ссылка на конкурента(или самого себя)
-            cell = row.createCell(8);
-            cell.setCellValue((productArrayList.get(i).getRefForPage()));
-            if (isMy){
+            cell = row.createCell(10);
+            if (!productArrayList.get(i).getRefFromRequest().startsWith("https")){
+                cell.setCellValue(productArrayList.get(i).getRefFromRequest());
+                cell.setCellStyle(styleException);
+            } else {
+                cell.setCellValue(productArrayList.get(i).getRefForPage());
+                if (isMy && isMyAnalog){
+                    cell.setCellStyle(styleMyProduct);
+                } else if (!isMy && isMyAnalog){
+                    cell.setCellStyle(styleMyProductAnalog);
+                } else {
+                    cell.setCellStyle(style);
+                }
+            }
+
+
+            //ссылка на мой товар (или самого себя)
+            cell = row.createCell(11);
+            cell.setCellValue((productArrayList.get(i).getMyRefForPage()));
+            if (isMy && isMyAnalog){
                 cell.setCellStyle(styleMyProduct);
+            } else if (!isMy && isMyAnalog){
+                cell.setCellStyle(styleMyProductAnalog);
             } else {
                 cell.setCellStyle(style);
             }
         }
 
-        for (int columnIndex = 0; columnIndex < 9; columnIndex++) {
+        //настройка автоширины ячейки по содержимому
+        for (int columnIndex = 0; columnIndex < 12; columnIndex++) {
             sheet.autoSizeColumn(columnIndex);
         }
 

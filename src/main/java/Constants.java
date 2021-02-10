@@ -1,11 +1,7 @@
 public class Constants {
     public static final String MARKETPLACE = "https://www.wildberries.ru";
 
-    public static final String NOT_FOUND_PAGE = "Не найдена страница товара";
-
-
-
-
+    public static final String NOT_FOUND_PAGE = "Превышено время ожидания ответа сервера либо не найдена страница товара";
 
     public static final String ELEMENT_WITH_CATALOG = "div[class=catalog_main_table j-products-container]";
     public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList i-dtList j-card-item]";

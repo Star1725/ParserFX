@@ -7,6 +7,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Product {
     private String vendorCodeFromRequest;
+    private String myRefForPage;
+    private String mySpecAction;
     private String brand;
     private String vendorCode;
     private String productName;
