@@ -46,7 +46,11 @@ public class ParserWildBer {
         String url = getString("https://www.wildberries.ru/catalog/", vendorCodeFromRequest, "/detail.aspx?targetUrl=SP");
         Document page = null;
         try {
-            page = Jsoup.parse(new URL(url), 30000);
+            page = Jsoup.connect(url)
+                    .userAgent("Mozilla")
+                    .timeout(6000)
+                    .referrer("https://google.com")
+                    .get();
         } catch (IOException e) {
             System.out.println(Constants.NOT_FOUND_PAGE);
         }
@@ -56,7 +60,6 @@ public class ParserWildBer {
         }
 
         String query = null;
-
 
         switch (category){
             case CATEGORY_10:
@@ -111,7 +114,10 @@ public class ParserWildBer {
                         product.setRefFromRequest("Мало данных для формирования поискового запроса");
                         break;
                     }
-                    query = brand + " " + paramsForRequest.get(1);
+                    query = brand;
+                    for (int i = 1; i < paramsForRequest.size(); i++) {
+                        query = query + " " + paramsForRequest.get(i);
+                    }
                 } catch (IndexOutOfBoundsException | NullPointerException e) {
                     System.out.println("Для артикула: " + vendorCodeFromRequest + " ошибка формирования запроса на поиск конкурентов");
                 }
@@ -141,31 +147,61 @@ public class ParserWildBer {
         return product;
     }
 
-    private static Document getPageForVendorCode(String vendorCode){
-        String url = getString("https://www.wildberries.ru/catalog/", vendorCode, "/detail.aspx?targetUrl=SP");
-        Document page = null;
-        try {
-            page = Jsoup.parse(new URL(url), 30000);
-        } catch (IOException e) {
-            System.out.println(Constants.NOT_FOUND_PAGE);
-        }
-        return page;
-    }
-
     //метод читающий на странице продукта характеристики, по которым будет осуществляться запрос на поиск аналогов!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private static List<String> getDataForRequestFromCategory(Document page, String category){
         List<String> paramsForRequest = new ArrayList<>();
 
-        //формирование запроса на основании названия модели товара, которое находится в заголовке как аправило сразу после бренда
+        //для формирования запроса на основании названия модели товара, которое находится в заголовке как аправило сразу после бренда
         Element elementBrandAndNameTitle = page.select("div[class=brand-and-name j-product-title]").first();
 
         //по наличию этого параметра определяем есть ли акция
-        Element specAction = page.select("div[class=j-big-sale-icon-card-wrapper i-spec-action-v1]").first();
+        Element specAction = page.select("div[class=i-spec-action-v1 ]").first();
         try {
             String mySpecAction = specAction.text();
             paramsForRequest.add(mySpecAction);
         } catch (Exception e) {
             paramsForRequest.add("-");
+        }
+
+        Element params = page.select("div[class=params]").first();
+
+        try {
+            Elements elements = params.getAllElements();
+            String param4 = elements.get(4).text();
+            if (param4.equals(PARAM_1_1)){
+                String countItemsFromPackage = elements.get(5).text();
+                String[] array = countItemsFromPackage.split(" ");
+                String count = array[0];
+                paramsForRequest.add(count);
+            } else if (param4.equals(PARAM_1_2)){
+                String model = elements.get(5).text();
+                paramsForRequest.add(model);
+                if (category.equals(CATEGORY_8)){
+                    for (String type: Constants.listForType){
+                        if(elementBrandAndNameTitle.text().contains(type)){
+                            paramsForRequest.add(type);
+                        }
+                    }
+                }
+//            } else if (param4.equals(PARAM_1_3)){
+//                try {
+//                    params = page.select("div[class=brand-and-name j-product-title]").first();
+//                    String[] strs1 = params.text().split(",");
+//                    String model = strs1[1].trim();
+//
+//                    Element description = page.select("div[class=j-description description-text collapsable-content]").first();
+//                    List<String> strs2 = Arrays.asList(description.text().replaceAll(",", "").split(" "));
+//                    if (strs2.contains(model)){
+//                        paramsForRequest.add(model);
+//                    }
+//                } catch (Exception e) {
+//                }
+//            }
+            if (paramsForRequest.size() > 1){
+                return paramsForRequest;
+            }
+            }
+        } catch (Exception e) {
         }
 
         switch (category){
@@ -198,7 +234,6 @@ public class ParserWildBer {
                     String[] strBuf1 = tittle.split(", ");
                     String[] strBuf2 = strBuf1[0].split(" ");
                     paramsForRequest.add(strBuf2[strBuf2.length - 1]);
-
                     return paramsForRequest;
                 } catch (Exception e) {
                 }
@@ -207,85 +242,64 @@ public class ParserWildBer {
                 try {
                     //определение параметров запроса
                     String tittle = elementBrandAndNameTitle.text();
-                    String[] strBuf1 = tittle.split(", ");
-                    String[] strBuf2 = strBuf1[0].split(" / ");
-                    paramsForRequest.add(strBuf2[1]);
+
+                    String model = getProductModel(elementBrandAndNameTitle);
+                    paramsForRequest.add(model);
+
+//                    String[] strBuf1 = tittle.split(", ");
+//                    String[] strBuf2 = strBuf1[0].split(" / ");
+//                    paramsForRequest.add(strBuf2[1]);
+
+                    for (String type: Constants.listForType){
+                        if(tittle.contains(type)){
+                            paramsForRequest.add(type);
+                        }
+                    }
+
                     return paramsForRequest;
                 } catch (Exception e) {
                 }
-
         }
 
-
-
-
-        Element params = page.select("div[class=params]").first();
-
-        try {
-            Elements elements = params.getAllElements();
-            String param4 = elements.get(4).text();
-            if (param4.equals(PARAM_1_1)){
-                String countItemsFromPackage = elements.get(5).text();
-                String[] array = countItemsFromPackage.split(" ");
-                String count = array[0];
-                paramsForRequest.add(count);
-            }
-            if (param4.equals(PARAM_1_2)){
-                String model = elements.get(5).text();
-                paramsForRequest.add(model);
-            }
-            if (param4.equals(PARAM_1_3)){
-                try {
-                    params = page.select("div[class=brand-and-name j-product-title]").first();
-                    String[] strs1 = params.text().split(",");
-                    String model = strs1[1].trim();
-
-                    Element description = page.select("div[class=j-description description-text collapsable-content]").first();
-                    List<String> strs2 = Arrays.asList(description.text().replaceAll(",", "").split(" "));
-                    if (strs2.contains(model)){
-                        paramsForRequest.add(model);
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (Exception e) {
-        }
 
         if (paramsForRequest.size() == 1){
 
-            String tittle7 = elementBrandAndNameTitle.text();
-            String[] strBuf = tittle7.split(", ");
-
-            String[] strBuf2 = strBuf[0].split(" / ");
-
-            String[] strBuf3 = strBuf2[1].split(" ");
-
-            String model = "";
-
-            for (int i = 0; i < strBuf3.length; i++) {
-                if (strBuf3[i].equalsIgnoreCase(strBuf2[0]) || strBuf3[i].startsWith(strBuf2[0].substring(0, 2))){
-                    for (int j = i + 1; j < strBuf3.length; j++) {
-                        model = model + strBuf3[j] + " ";
-                    };
-                    break;
-                }
-            }
-
-            if (model.equals("")){
-                try {
-                    model = strBuf[1];
-                } catch (Exception e) {
-                }
-            }
+            String model = getProductModel(elementBrandAndNameTitle);
 
             paramsForRequest.add(model);
         }
 
         return paramsForRequest;
     }
-   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    private static String getProductModel(Element elementBrandAndNameTitle) {
+        String tittle7 = elementBrandAndNameTitle.text();
+        String[] strBuf = tittle7.split(", ");
+
+        String[] strBuf2 = strBuf[0].split(" / ");
+
+        String[] strBuf3 = strBuf2[1].split(" ");
+
+        String model = "";
+
+        for (int i = 0; i < strBuf3.length; i++) {
+            if (strBuf3[i].equalsIgnoreCase(strBuf2[0]) || strBuf3[i].startsWith(strBuf2[0].substring(0, 2))){
+                for (int j = i + 1; j < strBuf3.length; j++) {
+                    model = model + strBuf3[j] + " ";
+                };
+                break;
+            }
+        }
+
+        if (model.equals("")){
+            try {
+                model = strBuf[1];
+            } catch (Exception e) {
+            }
+        }
+        return model;
+    }
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     private static List<Product> getCatalogProducts(String query, String vendorCodeFromRequest, String brand) {
         List<Product> productList;

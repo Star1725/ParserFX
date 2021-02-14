@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Constants {
     public static final String MARKETPLACE = "https://www.wildberries.ru";
 
@@ -17,4 +20,14 @@ public class Constants {
     public static final String URL_FOR_JSON = "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?spp=0&regions=69,58,64,40,48,70,1,38,4,30,22,66&" +
             "stores=119261,121631,1193,119400,116433,117501,507,3158,120762,1733,117986,686,117413,119781&" +
             "couponsGeo=2,12,6,9&pricemarginCoeff=1.0&reg=0&appType=1&offlineBonus=0&onlineBonus=0&emp=0&locale=ru&lang=ru&nm=";
+
+    public static final ArrayList<String> listForType = new ArrayList<>();
+    static {
+        listForType.add("Type-C");
+        listForType.add("8-pin");
+        listForType.add("8 pin");
+        listForType.add("микро USB");
+        listForType.add("Apple");
+        listForType.add("угловой");
+    }
 }
