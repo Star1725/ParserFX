@@ -21,13 +21,38 @@ public class Constants {
             "stores=119261,121631,1193,119400,116433,117501,507,3158,120762,1733,117986,686,117413,119781&" +
             "couponsGeo=2,12,6,9&pricemarginCoeff=1.0&reg=0&appType=1&offlineBonus=0&onlineBonus=0&emp=0&locale=ru&lang=ru&nm=";
 
-    public static final ArrayList<String> listForType = new ArrayList<>();
+    public static final ArrayList<String> listForTypeConnect = new ArrayList<>();
+    public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
+    public static final ArrayList<String> listForCabel = new ArrayList<>();
+
     static {
-        listForType.add("Type-C");
-        listForType.add("8-pin");
-        listForType.add("8 pin");
-        listForType.add("микро USB");
-        listForType.add("Apple");
-        listForType.add("угловой");
+        listForTypeConnect.add("Type-C");
+        listForTypeConnect.add("8-pin");
+        listForTypeConnect.add("8 pin");
+        listForTypeConnect.add("микро USB");
+        listForTypeConnect.add("Apple");
+        listForTypeConnect.add("угловой");
+        listForTypeConnect.add("lightning");
+        listForTypeConnect.add("Lightning");
+
+        listForTypeGlass.add("EYE PROTECTION");
+        listForTypeGlass.add("5D");
+        listForTypeGlass.add("5 D");
+        listForTypeGlass.add("11D");
+        listForTypeGlass.add("11 D");
+        listForTypeGlass.add("2.5D");
+        listForTypeGlass.add("2.5 D");
+        listForTypeGlass.add("SuperD");
+        listForTypeGlass.add("Super D");
+        listForTypeGlass.add("EYE");
+        listForTypeGlass.add("Privacy");
+
+        listForCabel.add("кабелем");
+        listForCabel.add("кабель");
+        listForCabel.add("Микро");
+        listForCabel.add("USB");
+        listForCabel.add("Apple");
+        listForCabel.add("8");
+        listForCabel.add("pin");
     }
 }

@@ -1,6 +1,5 @@
 import controllers.Controller;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +20,8 @@ public class Main extends Application implements Controller.ActionInController {
 
     private Controller controller;
 
-    ExelTask exelTask;
+    TaskReadExel taskReadExel;
+    TaskWriteExel taskWriteExel;
 
     static ParserWildBer parserWildBer = new ParserWildBer();
 
@@ -52,7 +52,7 @@ public class Main extends Application implements Controller.ActionInController {
 
     @Override
     public void selectFile(File file) {
-        exelTask = new ExelTask(file);
+        taskReadExel = new TaskReadExel(file);
 
         controller.getAreaLog().appendText("Чтение файла \"" + file.getName() + "\"");
 
@@ -60,34 +60,30 @@ public class Main extends Application implements Controller.ActionInController {
         // Unbind progress property
         controller.getProgressBar().progressProperty().unbind();
         // Bind progress property
-        controller.getProgressBar().progressProperty().bind(exelTask.progressProperty());
-
+        controller.getProgressBar().progressProperty().bind(taskReadExel.progressProperty());
 
         // When completed tasks
-        exelTask.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+        taskReadExel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
-                resultMap = exelTask.getValue();
-                exelTask.cancel(true);
+                resultMap = taskReadExel.getValue();
+                taskReadExel.cancel(true);
                 controller.getAreaLog().appendText(" - ok!\n");
-
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        controller.getProgressBar().setProgress(0);
-                    }
-                });
-                // Unbind progress property
+                controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
                 controller.getProgressBar().progressProperty().unbind();
+//                Platform.runLater(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        controller.getProgressBar().setProgress(0);
+//                    }
+//                });
 
-                controller.getAreaLog().appendText("анализ артикулов:\n");
+                controller.getAreaLog().appendText("Анализ артикулов:\n");
 
                 getResultProduct(resultMap);
-
             }
         });
-
-        new Thread(exelTask).start();
+        new Thread(taskReadExel).start();
     }
 
     private static void openFile(File file) {
@@ -99,6 +95,18 @@ public class Main extends Application implements Controller.ActionInController {
     }
 
     private void getResultProduct(Map<String, ResultProduct> resultMap){
+
+        taskWriteExel = new TaskWriteExel(resultMap);
+
+        controller.getProgressBar().progressProperty().bind(taskWriteExel.progressProperty());
+
+        taskWriteExel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                openFile(taskWriteExel.writeWorkbook(resultMap));
+            }
+        });
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -128,12 +136,14 @@ public class Main extends Application implements Controller.ActionInController {
 
                         String myVendorCode = resultProduct.getVendorCodeFromRequest();
                         String myRefForPage = resultProduct.getMyRefForPage();
+                        String myRefForImage = resultProduct.getMyRefForImage();
+                        String myProductName = resultProduct.getMyProductName();
                         String mySpecAction = resultProduct.getMySpecAction();
                         String vendorCode = resultProduct.getVendorCode();
                         String productName = resultProduct.getProductName();
                         String refForPage = resultProduct.getRefForPage();
                         String refForImage = resultProduct.getRefForImage();
-                        String refFromRequest = resultProduct.getRefFromRequest();
+                        String refFromRequest = resultProduct.getQueryForSearch();
                         int priceU = resultProduct.getPriceU();
                         int basicSale = resultProduct.getBasicSale();
                         int basicPriceU = resultProduct.getBasicPriceU();
@@ -145,12 +155,14 @@ public class Main extends Application implements Controller.ActionInController {
                         ResultProduct resultProductTemp = resultMap.get(myVendorCode);
 
                         resultProductTemp.setMyRefForPage(myRefForPage);
+                        resultProductTemp.setMyRefForImage(myRefForImage);
+                        resultProductTemp.setMyProductName(myProductName);
                         resultProductTemp.setMySpecAction(mySpecAction);
                         resultProductTemp.setVendorCode(vendorCode);
                         resultProductTemp.setProductName(productName);
                         resultProductTemp.setRefForPage(refForPage);
                         resultProductTemp.setRefForImage(refForImage);
-                        resultProductTemp.setRefFromRequest(refFromRequest);
+                        resultProductTemp.setQueryForSearch(refFromRequest);
                         resultProductTemp.setPriceU(priceU);
                         resultProductTemp.setBasicSale(basicSale);
                         resultProductTemp.setBasicPriceU(basicPriceU);
@@ -198,14 +210,14 @@ public class Main extends Application implements Controller.ActionInController {
 
                         resultMap.put(resultProductTemp.getMyVendorCode(), resultProductTemp);
 
-                        int finalI = i;
+                        int finalI = i + 1;
 
-                        controller.getProgressBar().setProgress(finalI /futureList.size());
+                        //controller.getProgressBar().setProgress(finalI /futureList.size());
 
                         if (vendorCode.equals("-")){
-                            controller.getAreaLog().appendText("- " + myVendorCode + " - ошибка\n");
+                            controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
                         } else {
-                            controller.getAreaLog().appendText("- " + myVendorCode + " - ok\n");
+                            controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");
                         }
                     } catch (InterruptedException | ExecutionException | NullPointerException e) {
                         e.printStackTrace();
@@ -213,10 +225,10 @@ public class Main extends Application implements Controller.ActionInController {
                 }
                 controller.getAreaLog().appendText("Количество проанализированных позицый - " + futureList.size() + "\n");
                 executorService.shutdown();
-                openFile(ExelTask.writeWorkbook(resultMap));
+                controller.getAreaLog().appendText("Загрузка изображений...");
+                taskWriteExel.run();
             }
         }).start();
-
     }
 
     //колобэл, который выполняет запросы на wildberries

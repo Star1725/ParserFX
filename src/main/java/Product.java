@@ -8,6 +8,8 @@ import lombok.Setter;
 public class Product {
     private String vendorCodeFromRequest;
     private String myRefForPage;
+    private String myRefForImage;
+    private String myProductName;
     private String mySpecAction;
     private String brand;
     private String vendorCode;
@@ -21,7 +23,7 @@ public class Product {
     private int promoPriceU;
     private String specAction;
     private int rating;
-    private String refFromRequest;
+    private String queryForSearch;
 
     public int getLowerPriceU(){
         if (this.promoPriceU != 0){

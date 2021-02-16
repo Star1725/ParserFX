@@ -18,6 +18,8 @@ public class ResultProduct extends Product{
     public ResultProduct(
             String vendorCodeFromRequest,
             String myRefForPage,
+            String myRefForImage,
+            String myProductName,
             String mySpecAction,
             String category,
             String brand,
@@ -42,7 +44,7 @@ public class ResultProduct extends Product{
             int recommendedPriceU,
             int recommendedSale,
             int recommendedPromoSale) {
-        super(vendorCodeFromRequest, myRefForPage, mySpecAction, brand, vendorCode, productName, refForPage, refForImage, priceU, basicSale, basicPriceU, promoSale, promoPriceU, specAction, rating, refForRequest);
+        super(vendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction, brand, vendorCode, productName, refForPage, refForImage, priceU, basicSale, basicPriceU, promoSale, promoPriceU, specAction, rating, refForRequest);
         this.category = category;
         this.myVendorCode = myVendorCode;
         this.myPriceU = myPriceU;
