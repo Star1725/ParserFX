@@ -37,22 +37,21 @@ public class Constants {
 
         listForTypeGlass.add("EYE PROTECTION");
         listForTypeGlass.add("5D");
-        listForTypeGlass.add("5 D");
         listForTypeGlass.add("11D");
-        listForTypeGlass.add("11 D");
         listForTypeGlass.add("2.5D");
-        listForTypeGlass.add("2.5 D");
         listForTypeGlass.add("SuperD");
-        listForTypeGlass.add("Super D");
         listForTypeGlass.add("EYE");
         listForTypeGlass.add("Privacy");
 
         listForCabel.add("кабелем");
         listForCabel.add("кабель");
         listForCabel.add("Микро");
+        listForCabel.add("микро");
+        listForCabel.add("Micro");
+        listForCabel.add("micro");
         listForCabel.add("USB");
         listForCabel.add("Apple");
-        listForCabel.add("8");
         listForCabel.add("pin");
+        listForCabel.add("Type-C");
     }
 }

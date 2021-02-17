@@ -326,7 +326,7 @@ public class TaskWriteExel extends Task<File> {
 
     private void setImageForCell(String url, int columnIndex, int rowIndex, double scaleX, double scaleY) {
         try {
-            byte[] bytes = Jsoup.connect(url).timeout(20000).ignoreContentType(true).execute().bodyAsBytes();
+            byte[] bytes = Jsoup.connect(url).timeout(30000).ignoreContentType(true).execute().bodyAsBytes();
 
             int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
 

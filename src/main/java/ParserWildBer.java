@@ -15,7 +15,7 @@ public class ParserWildBer {
     private static final String CATEGORY_1 = "Автомобильные зарядные устройства";//
     private static final String CATEGORY_2 = "Внешние аккумуляторы";//
     private static final String CATEGORY_3 = "Гарнитуры";//
-    private static final String CATEGORY_4 = "Гироскутеры";//
+    private static final String CATEGORY_4 = "Гироскутеры";
     private static final String CATEGORY_5 = "Держатели в авто";//
     private static final String CATEGORY_6 = "Зарядные устройства";//
     private static final String CATEGORY_7 = "Защитные стекла";//
@@ -27,7 +27,7 @@ public class ParserWildBer {
     private static final String CATEGORY_13 = "Пылесосы автомобильные";//
     private static final String CATEGORY_14 = "Увлажнители";//
     private static final String CATEGORY_15 = "Переходники";//
-    private static final String CATEGORY_16 = "Термометры медицинские";//
+    private static final String CATEGORY_16 = "Термометры медицинские";
     private static final String CATEGORY_17 = "Адаптеры";//
     private static final String CATEGORY_18 = "Подставки для мобильных устройств";//
     private static final String CATEGORY_19 = "Чехлы для телефонов";
@@ -79,7 +79,7 @@ public class ParserWildBer {
             case CATEGORY_7:
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 try {
-                    query = paramsForRequest.get(3) + " " + paramsForRequest.get(4);
+                    query = brand + " " + paramsForRequest.get(3) + " " + paramsForRequest.get(4);
                 } catch (IndexOutOfBoundsException e) {
                     System.out.println("Для артикула: " + vendorCodeFromRequest + " - ошибка формирования запроса на поиск конкурентов");
                 }
@@ -204,6 +204,7 @@ public class ParserWildBer {
                 //определяем дополнительные параметры запроса в зависимости от категории
                 switch (category){
                     case CATEGORY_1:
+                    case CATEGORY_6:
                         for (String param: Constants.listForCabel){
                             if(title.contains(param)){
                                 paramsForRequest.add(param);
@@ -242,11 +243,16 @@ public class ParserWildBer {
                     String modelPhone = getProductModelFromTitle(title);
                     paramsForRequest.add(modelPhone);
 
-                    for (String type: Constants.listForTypeGlass){
-                        if(title.contains(type)){
-                            paramsForRequest.add(type);
+                    String[] array = title.split(",");
+                    for (String s : array) {
+                        for (String type: Constants.listForTypeGlass){
+                            if(s.trim().equals(type)){
+                                paramsForRequest.add(type);
+                                break;
+                            }
                         }
                     }
+
                     return paramsForRequest;
                 } catch (Exception e) {
                 }
@@ -262,16 +268,26 @@ public class ParserWildBer {
                 }
 
             case CATEGORY_1:
+            case CATEGORY_2:
             case CATEGORY_3:
+            case CATEGORY_5:
+            case CATEGORY_6:
             case CATEGORY_8:
+            case CATEGORY_9:
+            case CATEGORY_11:
             case CATEGORY_12:
+            case CATEGORY_13:
+            case CATEGORY_14:
+            case CATEGORY_15:
+            case CATEGORY_17:
+            case CATEGORY_18:
                 try {
                     //определение параметров запроса
                     String model = getProductModelFromTitle(title);
                     paramsForRequest.add(model);
 
-                    if (category.equalsIgnoreCase(CATEGORY_1)){
-                        for (String withCable: Constants.listForTypeConnect){
+                    if (category.equalsIgnoreCase(CATEGORY_1) || category.equalsIgnoreCase(CATEGORY_6)){
+                        for (String withCable: Constants.listForCabel){
                             if(title.contains(withCable)){
                                 paramsForRequest.add(withCable);
                             }
@@ -301,7 +317,7 @@ public class ParserWildBer {
         String[] strBuf2 = strBuf1[1].trim().split(",");
         String model = "";
         for (int i = 0; i < strBuf2.length; i++){
-            if (strBuf2[i].toLowerCase().contains(brand)){
+            if ((strBuf2[i].toLowerCase().contains(brand)) || strBuf2[i].toLowerCase().contains(brand.substring(0, 2))){
 
                 String[] strBuf3 = strBuf2[i].trim().split(" ");
 
@@ -311,7 +327,7 @@ public class ParserWildBer {
                             model = model + strBuf3[j] + " ";
                         }
                         break;
-                    } else if(strBuf3[z].startsWith(brand.substring(0, 1))){
+                    } else if(strBuf3[z].toLowerCase().startsWith(brand.substring(0, 2))){
                         for (int j = z; j < strBuf3.length; j++){
                             model = model + strBuf3[j] + " ";
                         }
