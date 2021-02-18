@@ -42,7 +42,7 @@ public class Controller implements Initializable {
 
 
     public interface ActionInController{
-        void selectFile(File file);
+        void selectFile(List<File> files);
     }
 
     private static final List<ActionInController> listSubscribers = new ArrayList<>();
@@ -51,9 +51,9 @@ public class Controller implements Initializable {
         listSubscribers.add(subscriber);
     }
 
-    private void notifySubscriber(File file){
+    private void notifySubscriber(List<File> files){
         for (ActionInController subscriber : listSubscribers) {
-            subscriber.selectFile(file);
+            subscriber.selectFile(files);
         }
     }
 
@@ -67,9 +67,9 @@ public class Controller implements Initializable {
                 areaLog.clear();
                 txtFldShowPathFile.clear();
                 Node node = (Node) event.getSource();
-                File file = fileChooser.showOpenDialog(node.getScene().getWindow());
-                notifySubscriber(file);
-                txtFldShowPathFile.appendText(file.getAbsolutePath() + "\n");
+                List<File> files = fileChooser.showOpenMultipleDialog(node.getScene().getWindow());
+                notifySubscriber(files);
+                txtFldShowPathFile.appendText(files.get(0).getAbsolutePath() + " " + files.get(1).getAbsolutePath());
             }
         });
     }

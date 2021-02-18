@@ -21,9 +21,17 @@ public class Constants {
             "stores=119261,121631,1193,119400,116433,117501,507,3158,120762,1733,117986,686,117413,119781&" +
             "couponsGeo=2,12,6,9&pricemarginCoeff=1.0&reg=0&appType=1&offlineBonus=0&onlineBonus=0&emp=0&locale=ru&lang=ru&nm=";
 
+    public static final String BRAND_NAME = "Бренд";
+
+
     public static final ArrayList<String> listForTypeConnect = new ArrayList<>();
     public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
     public static final ArrayList<String> listForCabel = new ArrayList<>();
+    public static final String CATEGORY_NAME = "Предмет";
+    public static final String CODE_1C = "Артикул поставщика";
+    public static final String VENDOR_CODE = "Номенклатура (код 1С)";
+    public static final String VENDOR_CODE_1C = "Последний баркод";
+    public static final String PRICE_U = "Текущая розн. цена (до скидки)";
 
     static {
         listForTypeConnect.add("Type-C");

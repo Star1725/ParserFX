@@ -20,7 +20,7 @@ public class Main extends Application implements Controller.ActionInController {
 
     private Controller controller;
 
-    TaskReadExel taskReadExel;
+    TaskReadExcel taskReadExcel;
     TaskWriteExel taskWriteExel;
 
     static ParserWildBer parserWildBer = new ParserWildBer();
@@ -51,23 +51,23 @@ public class Main extends Application implements Controller.ActionInController {
     }
 
     @Override
-    public void selectFile(File file) {
-        taskReadExel = new TaskReadExel(file);
+    public void selectFile(List<File> files) {
+        taskReadExcel = new TaskReadExcel(files);
 
-        controller.getAreaLog().appendText("Чтение файла \"" + file.getName() + "\"");
+        controller.getAreaLog().appendText("Чтение файлов \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
 
         controller.getProgressBar().setProgress(0);
         // Unbind progress property
         controller.getProgressBar().progressProperty().unbind();
         // Bind progress property
-        controller.getProgressBar().progressProperty().bind(taskReadExel.progressProperty());
+        controller.getProgressBar().progressProperty().bind(taskReadExcel.progressProperty());
 
         // When completed tasks
-        taskReadExel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+        taskReadExcel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
-                resultMap = taskReadExel.getValue();
-                taskReadExel.cancel(true);
+                resultMap = taskReadExcel.getValue();
+                taskReadExcel.cancel(true);
                 controller.getAreaLog().appendText(" - ok!\n");
                 controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
                 controller.getProgressBar().progressProperty().unbind();
@@ -83,7 +83,7 @@ public class Main extends Application implements Controller.ActionInController {
                 getResultProduct(resultMap);
             }
         });
-        new Thread(taskReadExel).start();
+        new Thread(taskReadExcel).start();
     }
 
     private static void openFile(File file) {
