@@ -162,13 +162,13 @@ public class TaskWriteExel extends Task<File> {
             Row row = sheet.createRow(i + 1);
             row.setHeightInPoints(70);
 
-            boolean isMy = productArrayList.get(i).getMyVendorCodeForWildberies().equals(productArrayList.get(i).getVendorCode());
+            boolean isMy = productArrayList.get(i).getMyVendorCodeForWildberies().equals(productArrayList.get(i).getCompetitorVendorCode());
 
-            boolean isMyAnalog = myVendorCodesSet.contains(productArrayList.get(i).getVendorCode());
+            boolean isMyAnalog = myVendorCodesSet.contains(productArrayList.get(i).getCompetitorVendorCode());
 
             //Бренд
             Cell cell = row.createCell(0);
-            cell.setCellValue(productArrayList.get(i).getBrand());
+            cell.setCellValue(productArrayList.get(i).getCompetitorBrand());
             cell.setCellStyle(style);
 
             //Категория товара
@@ -219,11 +219,11 @@ public class TaskWriteExel extends Task<File> {
 
             //наименование продукта конкурента(если нашли)
             cell = row.createCell(7);
-            if (productArrayList.get(i).getProductName().equals("-")){
+            if (productArrayList.get(i).getCompetitorProductName().equals("-")){
                 cell.setCellValue(Constants.NOT_FOUND_PAGE);
                 cell.setCellStyle(styleException);
             } else {
-                cell.setCellValue((productArrayList.get(i).getProductName()));
+                cell.setCellValue((productArrayList.get(i).getCompetitorProductName()));
                 if (isMy && isMyAnalog){
                     cell.setCellStyle(styleMyProduct);
                 } else if (!isMy && isMyAnalog){
@@ -235,7 +235,7 @@ public class TaskWriteExel extends Task<File> {
 
             //ссылка на конкурента, или самого себя, или мой аналогичный товар
             cell = row.createCell(8);
-            cell.setCellValue(productArrayList.get(i).getRefForPage());
+            cell.setCellValue(productArrayList.get(i).getCompetitorRefForPage());
             if (isMy && isMyAnalog){
                 cell.setCellStyle(styleMyProduct);
             } else if (!isMy && isMyAnalog){
@@ -300,7 +300,7 @@ public class TaskWriteExel extends Task<File> {
             }
 
             //установка картинки для конкурента
-            String imageUrl = productArrayList.get(i).getRefForImage();
+            String imageUrl = productArrayList.get(i).getCompetitorRefForImage();
             if (!imageUrl.equals("-")){
                 setImageForCell(imageUrl, 8, i, 0.25, 0.25);
             }

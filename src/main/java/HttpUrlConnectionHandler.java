@@ -5,10 +5,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +16,7 @@ public class HttpUrlConnectionHandler {
 
         String ids = "";
         for (Product product : productList) {
-            ids = ids + product.getVendorCode() + ";";
+            ids = ids + product.getCompetitorVendorCode() + ";";
         }
 
         ids = ids.substring(0, ids.length() - 1);
@@ -49,14 +46,14 @@ public class HttpUrlConnectionHandler {
             request = gson.fromJson(result, Request.class);
             for (Product product : productList) {
                 for (int i = 0; i < request.getData().getProducts().length; i++) {
-                    if (Integer.parseInt(product.getVendorCode()) == (request.getData().getProducts()[i].getId())){
-                        product.setPriceU(request.getData().getProducts()[i].getPriceU());
+                    if (Integer.parseInt(product.getCompetitorVendorCode()) == (request.getData().getProducts()[i].getId())){
+                        product.setCompetitorPriceU(request.getData().getProducts()[i].getPriceU());
 
                         if (request.getData().getProducts()[i].getExtended() != null){
-                            product.setBasicSale(request.getData().getProducts()[i].getExtended().getBasicSale());
-                            product.setBasicPriceU(request.getData().getProducts()[i].getExtended().getBasicPriceU());
-                            product.setPromoSale(request.getData().getProducts()[i].getExtended().getPromoSale());
-                            product.setPromoPriceU(request.getData().getProducts()[i].getExtended().getPromoPriceU());
+                            product.setCompetitorBasicSale(request.getData().getProducts()[i].getExtended().getBasicSale());
+                            product.setCompetitorBasicPriceU(request.getData().getProducts()[i].getExtended().getBasicPriceU());
+                            product.setCompetitorPromoSale(request.getData().getProducts()[i].getExtended().getPromoSale());
+                            product.setCompetitorPromoPriceU(request.getData().getProducts()[i].getExtended().getPromoPriceU());
                         }
                     }
                 }

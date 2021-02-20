@@ -10,6 +10,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Comparator.comparing;
+
 public class ParserWildBer {
 
     private static final String CATEGORY_1 = "Автомобильные зарядные устройства";//
@@ -36,12 +38,35 @@ public class ParserWildBer {
     private static final String PARAM_1_2 = "Модель";
     private static final String PARAM_1_3 = "Гарантийный срок";
 
-    public Product getProduct (String vendorCodeFromRequest, String category, String brand){
-        List<Product> productList = null;
-        Product product = new Product(vendorCodeFromRequest, "-", "-","-", "-","-", "-", "-", "-", "-", 0, 0, 0, 0, 0, "-", 0, "-");
+    public Product getProduct (String myVendorCodeFromRequest, String category, String brand){
+        List<Product> productList;
+        Product product = new Product(myVendorCodeFromRequest,
+                "-",
+                "-",
+                "-",
+                "-",
+
+                "-",
+
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                0,
+
+                0,
+                0,
+                0,
+                0,
+                0,
+
+                "-");
         List<String> paramsForRequest = null;
 
-        String url = getString("https://www.wildberries.ru/catalog/", vendorCodeFromRequest, "/detail.aspx?targetUrl=SP");
+        //получение html-страницы для моего артикула
+        String url = getString("https://www.wildberries.ru/catalog/", myVendorCodeFromRequest, "/detail.aspx?targetUrl=SP");
         Document page = null;
         try {
             page = Jsoup.connect(url)
@@ -59,20 +84,21 @@ public class ParserWildBer {
 
         String query = null;
 
+        //в заввисимости от категории определяем параметры запроса для поиска конкурентов
         switch (category){
             case CATEGORY_10:
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 String count = paramsForRequest.get(3);
                 //для поиска по маскам надо в запросе передать "Маски одноразовые" и кол-во штук в упаковке
                 query = category + " " + count;
-                productList = getCatalogProducts(query.toLowerCase(), vendorCodeFromRequest, brand);
-                product = productList.stream().filter(p -> p.getProductName().contains(count)).findAny().orElse(null);
+                productList = getCatalogProducts(query.toLowerCase(), brand);
+                product = productList.stream().filter(p -> p.getCompetitorProductName().contains(count)).findAny().orElse(null);
                 break;
 
             case CATEGORY_4:
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 query = paramsForRequest.get(3);
-                productList = getCatalogProducts(query.toLowerCase(), vendorCodeFromRequest, brand);
+                productList = getCatalogProducts(query.toLowerCase(), brand);
                 product = productList.stream().findFirst().orElse(null);
                 break;
 
@@ -81,12 +107,12 @@ public class ParserWildBer {
                 try {
                     query = brand + " " + paramsForRequest.get(3) + " " + paramsForRequest.get(4);
                 } catch (IndexOutOfBoundsException e) {
-                    System.out.println("Для артикула: " + vendorCodeFromRequest + " - ошибка формирования запроса на поиск конкурентов");
+                    System.out.println("Для артикула: " + myVendorCodeFromRequest + " - ошибка формирования запроса на поиск конкурентов");
                 }
-                productList = getCatalogProducts(query.toLowerCase(), vendorCodeFromRequest, brand);
+                productList = getCatalogProducts(query.toLowerCase(), brand);
 
                 //проходимся по всему списку и находим продукт с наименьшей ценой
-                product = getProductWithLowerPrice(productList);
+                product = getProductWithLowerPrice(productList, myVendorCodeFromRequest);
                 break;
 
                 //для данных категорий запрос формирунтся из бренда и модели
@@ -117,14 +143,20 @@ public class ParserWildBer {
                         query = query + " " + paramsForRequest.get(i);
                     }
                     query = query.toLowerCase();
-                    productList = getCatalogProducts(query, vendorCodeFromRequest, brand);
+                    productList = getCatalogProducts(query, brand);
                     //проходимся по всему списку и находим продукт с наименьшей ценой
-                    product = getProductWithLowerPrice(productList);
+                    product = getProductWithLowerPrice(productList, myVendorCodeFromRequest);
                 } catch (IndexOutOfBoundsException | NullPointerException e) {
-                    System.out.println("Для артикула: " + vendorCodeFromRequest + " ошибка формирования запроса на поиск конкурентов");
+                    System.out.println("Для артикула: " + myVendorCodeFromRequest + " ошибка формирования запроса на поиск конкурентов");
                 }
                 break;
         }
+
+        assert product != null;
+        //устанавливаем имя продовца
+        String sellerName = getSellerName(product.getCompetitorVendorCode());
+        product.setCompetitorName(sellerName);
+
         //устанавливаем спецакцию, если она есть
         product.setMySpecAction(paramsForRequest.get(0));
 
@@ -138,19 +170,41 @@ public class ParserWildBer {
         product.setMyProductName(paramsForRequest.get(2));
 
         //устанавливаем ссылку на артикул моего товара
-        product.setMyRefForPage(getString("https://www.wildberries.ru/catalog/", vendorCodeFromRequest, "/detail.aspx?targetUrl=SP"));
+        product.setMyRefForPage(getString("https://www.wildberries.ru/catalog/", myVendorCodeFromRequest, "/detail.aspx?targetUrl=SP"));
+
         return product;
     }
 
-    private static Product getProductWithLowerPrice(List<Product> productList) {
-        Product product = productList.get(0);
-
-        for (Product p : productList) {
-            if (p.getLowerPriceU() <= product.getLowerPriceU()) {
-                product = p;
+    private static Product getProductWithLowerPrice(List<Product> productList, String myVendorCodeFromRequest) {
+        if (productList.size() == 1){
+            return productList.get(0);
+        } else {
+            Product product = null;
+            productList.sort(comparing(Product::getLowerPriceU));
+            for (Product p : productList) {
+                if (!p.getCompetitorVendorCode().equals(myVendorCodeFromRequest)) {
+                    product = p;
+                }
             }
+            return product;
         }
-        return product;
+    }
+
+    private String getSellerName(String vendorCode){
+        String url = getString("https://www.wildberries.ru/catalog/", vendorCode, "/detail.aspx?targetUrl=SP");
+        Document page = null;
+        try {
+            page = Jsoup.connect(url)
+                    .userAgent("Mozilla")
+                    .timeout(20000)
+                    .referrer("https://google.com")
+                    .get();
+        } catch (IOException e) {
+            System.out.println(Constants.NOT_FOUND_PAGE);
+        }
+
+        Element elementSellerName = page.select("span[class=seller__text]").first();
+        return elementSellerName.text();
     }
 
     //метод читающий на странице продукта характеристики, по которым будет осуществляться запрос на поиск аналогов!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -348,11 +402,13 @@ public class ParserWildBer {
     }
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    private static List<Product> getCatalogProducts(String query, String vendorCodeFromRequest, String brand) {
+    private static List<Product> getCatalogProducts(String query, String brand) {
         List<Product> productList;
         Document page = null;
         page = getPageForSearchQuery(query);
-        productList = getCatalogProductsForPage(page, vendorCodeFromRequest, brand);
+
+        //получение бренда, артикула, имени товара, ссылки на страницу товара, ссылки на картинкау товара, спец-акции, рейтинга
+        productList = getCatalogProductsForPageRequest(page, brand);
 
         //получение цены и скидок через json
         HttpUrlConnectionHandler.getCatalog(productList, query);
@@ -388,7 +444,7 @@ public class ParserWildBer {
         return queryUTF8;
     }
 
-    private static List<Product> getCatalogProductsForPage(Document page, String vendorCodeFromRequest, String myBrand){
+    private static List<Product> getCatalogProductsForPageRequest(Document page, String myBrand){
         List<Product> productList = new ArrayList<>();
         Product product = null;
         if (page != null){
@@ -442,7 +498,29 @@ public class ParserWildBer {
                 String brandName = string.substring(0, string.length() - 2).toLowerCase();
                 if (!brandName.contains(myBrand.toLowerCase())) continue;
 
-                productList.add(new Product(vendorCodeFromRequest, "-", "-", "-", "-", brandName, vendorCode, productName, refForPage, refForImg, 0, 0, 0, 0, 0, specAction, rating, "-"));
+                productList.add(new Product("-",
+                        "-",
+                        "-",
+                        "-",
+                        "-",
+
+                        "-",
+
+                        brandName,
+                        vendorCode,
+                        productName,
+                        refForPage,
+                        refForImg,
+                        specAction,
+                        rating,
+
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+
+                        "-"));
             }
         }
         return productList;

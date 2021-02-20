@@ -119,7 +119,7 @@ public class Main extends Application implements Controller.ActionInController {
                 for (Map.Entry<String, ResultProduct> entry : resultMap.entrySet()) {
                     String key = entry.getKey();
                     String category = entry.getValue().getCategory();
-                    String brand = entry.getValue().getBrand();
+                    String brand = entry.getValue().getCompetitorBrand();
 
                     myCalls.add(new MyCall(key, category, brand));
                 }
@@ -134,23 +134,23 @@ public class Main extends Application implements Controller.ActionInController {
                     try {
                         Product resultProduct = executorCompletionService.take().get();
 
-                        String myVendorCode = resultProduct.getVendorCodeFromRequest();
+                        String myVendorCode = resultProduct.getMyVendorCodeFromRequest();
                         String myRefForPage = resultProduct.getMyRefForPage();
                         String myRefForImage = resultProduct.getMyRefForImage();
                         String myProductName = resultProduct.getMyProductName();
                         String mySpecAction = resultProduct.getMySpecAction();
-                        String vendorCode = resultProduct.getVendorCode();
-                        String productName = resultProduct.getProductName();
-                        String refForPage = resultProduct.getRefForPage();
-                        String refForImage = resultProduct.getRefForImage();
+                        String vendorCode = resultProduct.getCompetitorVendorCode();
+                        String productName = resultProduct.getCompetitorProductName();
+                        String refForPage = resultProduct.getCompetitorRefForPage();
+                        String refForImage = resultProduct.getCompetitorRefForImage();
                         String refFromRequest = resultProduct.getQueryForSearch();
-                        int priceU = resultProduct.getPriceU();
-                        int basicSale = resultProduct.getBasicSale();
-                        int basicPriceU = resultProduct.getBasicPriceU();
-                        int promoSale = resultProduct.getPromoSale();
-                        int promoPriceU = resultProduct.getPromoPriceU();
-                        String specAction = resultProduct.getSpecAction();
-                        int rating = resultProduct.getRating();
+                        int priceU = resultProduct.getCompetitorPriceU();
+                        int basicSale = resultProduct.getCompetitorBasicSale();
+                        int basicPriceU = resultProduct.getCompetitorBasicPriceU();
+                        int promoSale = resultProduct.getCompetitorPromoSale();
+                        int promoPriceU = resultProduct.getCompetitorPromoPriceU();
+                        String specAction = resultProduct.getCompetitorSpecAction();
+                        int rating = resultProduct.getCompetitorRating();
 
                         ResultProduct resultProductTemp = resultMap.get(myVendorCode);
 
@@ -158,19 +158,19 @@ public class Main extends Application implements Controller.ActionInController {
                         resultProductTemp.setMyRefForImage(myRefForImage);
                         resultProductTemp.setMyProductName(myProductName);
                         resultProductTemp.setMySpecAction(mySpecAction);
-                        resultProductTemp.setVendorCode(vendorCode);
-                        resultProductTemp.setProductName(productName);
-                        resultProductTemp.setRefForPage(refForPage);
-                        resultProductTemp.setRefForImage(refForImage);
+                        resultProductTemp.setCompetitorVendorCode(vendorCode);
+                        resultProductTemp.setCompetitorProductName(productName);
+                        resultProductTemp.setCompetitorRefForPage(refForPage);
+                        resultProductTemp.setCompetitorRefForImage(refForImage);
                         resultProductTemp.setQueryForSearch(refFromRequest);
-                        resultProductTemp.setPriceU(priceU);
-                        resultProductTemp.setBasicSale(basicSale);
-                        resultProductTemp.setBasicPriceU(basicPriceU);
-                        resultProductTemp.setPromoSale(promoSale);
-                        resultProductTemp.setPromoPriceU(promoPriceU);
-                        resultProductTemp.setSpecAction(specAction);
-                        resultProductTemp.setSpecAction(specAction);
-                        resultProductTemp.setRating(rating);
+                        resultProductTemp.setCompetitorPriceU(priceU);
+                        resultProductTemp.setCompetitorBasicSale(basicSale);
+                        resultProductTemp.setCompetitorBasicPriceU(basicPriceU);
+                        resultProductTemp.setCompetitorPromoSale(promoSale);
+                        resultProductTemp.setCompetitorPromoPriceU(promoPriceU);
+                        resultProductTemp.setCompetitorSpecAction(specAction);
+                        resultProductTemp.setCompetitorSpecAction(specAction);
+                        resultProductTemp.setCompetitorRating(rating);
 
                         //установка рекомендуемой скидки и розничной цены на основании процента демпинга
                         double preFld = Double.parseDouble(controller.percentTxtFld.getText());

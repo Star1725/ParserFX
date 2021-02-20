@@ -6,34 +6,37 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Product {
-    private String vendorCodeFromRequest;
-    private String vendorCode;
-
+    private String myVendorCodeFromRequest;
     private String myRefForPage;
     private String myRefForImage;
     private String myProductName;
     private String mySpecAction;
-    private String brand;
 
-    private String productName;
-    private String refForPage;
-    private String refForImage;
-    private int priceU;
-    private int basicSale;
-    private int basicPriceU;
-    private int promoSale;
-    private int promoPriceU;
-    private String specAction;
-    private int rating;
     private String queryForSearch;
 
+    private String competitorBrand;
+    private String competitorVendorCode;
+    private String competitorProductName;
+    private String competitorRefForPage;
+    private String competitorRefForImage;
+    private String competitorSpecAction;
+    private int competitorRating;
+
+    private int competitorPriceU;
+    private int competitorBasicSale;
+    private int competitorBasicPriceU;
+    private int competitorPromoSale;
+    private int competitorPromoPriceU;
+
+    private String competitorName;
+
     public int getLowerPriceU(){
-        if (this.promoPriceU != 0){
-            return promoPriceU;
-        } else if (this.basicPriceU != 0){
-            return basicPriceU;
+        if (this.competitorPromoPriceU != 0){
+            return competitorPromoPriceU;
+        } else if (this.competitorBasicPriceU != 0){
+            return competitorBasicPriceU;
         } else {
-            return priceU;
+            return competitorPriceU;
         }
     }
 }
