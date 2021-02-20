@@ -7,12 +7,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Product {
     private String vendorCodeFromRequest;
+    private String vendorCode;
+
     private String myRefForPage;
     private String myRefForImage;
     private String myProductName;
     private String mySpecAction;
     private String brand;
-    private String vendorCode;
+
     private String productName;
     private String refForPage;
     private String refForImage;

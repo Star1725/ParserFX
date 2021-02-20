@@ -21,17 +21,24 @@ public class Constants {
             "stores=119261,121631,1193,119400,116433,117501,507,3158,120762,1733,117986,686,117413,119781&" +
             "couponsGeo=2,12,6,9&pricemarginCoeff=1.0&reg=0&appType=1&offlineBonus=0&onlineBonus=0&emp=0&locale=ru&lang=ru&nm=";
 
-    public static final String BRAND_NAME = "Бренд";
+    //статика для проверки заговков столбцов файла отчёта Wildberies
+    public static final String BRAND_NAME_IN_FILE_WILDBERIES = "Бренд";//0-й столбец
+    public static final String CATEGORY_NAME_IN_FILE_WILDBERIES = "Предмет";//1-й столбец
+    public static final String CODE_1C_IN_FILE_WILDBERIES = "Артикул поставщика";//3-й столбец
+    public static final String VENDOR_CODE_IN_FILE_WILDBERIES = "Номенклатура (код 1С)";//4-й столбец
+    public static final String VENDOR_CODE_1C_IN_FILE_WILDBERIES = "Последний баркод";//5-й столбец
+    public static final String PRICE_U_IN_FILE_WILDBERIES = "Текущая розн. цена (до скидки)";//11-й столбец
+    public static final String BASIC_SALE_IN_FILE_WILDBERIES = "Текущая скидка на сайте, %";//13-й столбец
+    public static final String PROMO_SALE_IN_FILE_WILDBERIES = "Текущая скидка по промокоду, %";//16-й столбец
 
+    //статика для проверки заговков столбцов файла отчёта 1С
+    public static final String CODE_1C = "Код";//0-й столбец
+    public static final String VENDOR_CODE_1C = "Артикул";//0-й столбец
+    public static final String SPEC_PRICE_1C = "Цена";//0-й столбец
 
     public static final ArrayList<String> listForTypeConnect = new ArrayList<>();
     public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
     public static final ArrayList<String> listForCabel = new ArrayList<>();
-    public static final String CATEGORY_NAME = "Предмет";
-    public static final String CODE_1C = "Артикул поставщика";
-    public static final String VENDOR_CODE = "Номенклатура (код 1С)";
-    public static final String VENDOR_CODE_1C = "Последний баркод";
-    public static final String PRICE_U = "Текущая розн. цена (до скидки)";
 
     static {
         listForTypeConnect.add("Type-C");

@@ -208,7 +208,7 @@ public class Main extends Application implements Controller.ActionInController {
                             }
                         }
 
-                        resultMap.put(resultProductTemp.getMyVendorCode(), resultProductTemp);
+                        resultMap.put(resultProductTemp.getMyVendorCodeForWildberies(), resultProductTemp);
 
                         int finalI = i + 1;
 
