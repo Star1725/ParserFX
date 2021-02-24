@@ -20,7 +20,6 @@ public class TaskReadExcel extends Task<Map> {
 
 
             //читаем файл отчёта Wildberies и файл 1С
-
             Workbook workbookWildberies = new XSSFWorkbook(files.get(0));
             Workbook workbook_1C = new XSSFWorkbook(files.get(1));
 
@@ -100,20 +99,20 @@ public class TaskReadExcel extends Task<Map> {
                 int myPromoPriceU = (int) Math.round(((1 - (double) myPromoSale/100) * myBasicPriceU));
 
                 resultProductHashMap.put(myVendorCodeWildberies, new ResultProduct(
-                        brand,
-                        category,
-                        code_1C,
-                        myVendorCodeWildberies,
-                        vendorCode_1C,
-                        0,
-                        myPriceU,
-                        myBasicSale,
-                        myBasicPriceU,
-                        myPromoSale,
-                        myPromoPriceU,
-                        0,
-                        0,
-                        0
+//                        brand,
+//                        category,
+//                        code_1C,
+//                        myVendorCodeWildberies,
+//                        vendorCode_1C,
+//                        0,
+//                        myPriceU,
+//                        myBasicSale,
+//                        myBasicPriceU,
+//                        myPromoSale,
+//                        myPromoPriceU,
+//                        0,
+//                        0,
+//                        0
                 ));
 
                 this.updateProgress(i, countFull);

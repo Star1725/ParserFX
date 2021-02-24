@@ -1,10 +1,12 @@
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Product {
     private String myVendorCodeFromRequest;
     private String myRefForPage;
@@ -27,8 +29,13 @@ public class Product {
     private int competitorBasicPriceU;
     private int competitorPromoSale;
     private int competitorPromoPriceU;
+    private int competitorPremiumPriceU;
 
     private String competitorName;
+
+    public Product(String queryForSearch) {
+        this.queryForSearch = queryForSearch;
+    }
 
     public int getLowerPriceU(){
         if (this.competitorPromoPriceU != 0){

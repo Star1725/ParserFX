@@ -38,15 +38,16 @@ public class ParserWildBer {
     private static final String PARAM_1_2 = "Модель";
     private static final String PARAM_1_3 = "Гарантийный срок";
 
-    public Product getProduct (String myVendorCodeFromRequest, String category, String brand){
+    public Product getProduct (String myVendorCodeFromRequest, String category, String querySearch, String brand, int marketPlaceFlag){
         List<Product> productList;
-        Product product = new Product(myVendorCodeFromRequest,
+        Product product = new Product(
+                myVendorCodeFromRequest,
                 "-",
                 "-",
                 "-",
                 "-",
 
-                "-",
+                querySearch,
 
                 "-",
                 "-",
@@ -61,44 +62,44 @@ public class ParserWildBer {
                 0,
                 0,
                 0,
+                0,
 
-                "-");
+                "-"
+                );
         List<String> paramsForRequest = null;
-
-        //получение html-страницы для моего артикула
-        String url = getString("https://www.wildberries.ru/catalog/", myVendorCodeFromRequest, "/detail.aspx?targetUrl=SP");
         Document page = null;
-        try {
-            page = Jsoup.connect(url)
-                    .userAgent("Mozilla")
-                    .timeout(20000)
-                    .referrer("https://google.com")
-                    .get();
-        } catch (IOException e) {
-            System.out.println(Constants.NOT_FOUND_PAGE);
-        }
-
-        if (page == null){
-            return product;
-        }
-
         String query = null;
 
+        //получение html-страницы для моего артикула
+        page = getPageForMyVendorCode(myVendorCodeFromRequest, marketPlaceFlag);
+
+        //если страница пустая то возвращаем нулевой product
+        if (returnNullProductIfPageNull(product, page)) return product;
+
+        //для Ozon нужно ещё один запрос, чтобы получить конкретную страницу товара
+        if (marketPlaceFlag == 1){
+            page = getPageForMyVendorCodeOzon(page);
+            if (returnNullProductIfPageNull(product, page)) return product;
+            //для Ozon на странице ищем категорию товара
+            String categoryOzon = getCategoryForOzon(page);
+            category = categoryOzon;
+        }
+
         //в заввисимости от категории определяем параметры запроса для поиска конкурентов
-        switch (category){
+        switch (category) {
             case CATEGORY_10:
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 String count = paramsForRequest.get(3);
                 //для поиска по маскам надо в запросе передать "Маски одноразовые" и кол-во штук в упаковке
                 query = category + " " + count;
-                productList = getCatalogProducts(query.toLowerCase(), brand);
+                productList = getCatalogProducts(query.toLowerCase(), brand, 0);
                 product = productList.stream().filter(p -> p.getCompetitorProductName().contains(count)).findAny().orElse(null);
                 break;
 
             case CATEGORY_4:
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 query = paramsForRequest.get(3);
-                productList = getCatalogProducts(query.toLowerCase(), brand);
+                productList = getCatalogProducts(query.toLowerCase(), brand, 0);
                 product = productList.stream().findFirst().orElse(null);
                 break;
 
@@ -109,13 +110,13 @@ public class ParserWildBer {
                 } catch (IndexOutOfBoundsException e) {
                     System.out.println("Для артикула: " + myVendorCodeFromRequest + " - ошибка формирования запроса на поиск конкурентов");
                 }
-                productList = getCatalogProducts(query.toLowerCase(), brand);
+                productList = getCatalogProducts(query.toLowerCase(), brand, 0);
 
                 //проходимся по всему списку и находим продукт с наименьшей ценой
                 product = getProductWithLowerPrice(productList, myVendorCodeFromRequest);
                 break;
 
-                //для данных категорий запрос формирунтся из бренда и модели
+            //для данных категорий запрос формирунтся из бренда и модели
             case CATEGORY_1:
             case CATEGORY_2:
             case CATEGORY_3:
@@ -134,7 +135,7 @@ public class ParserWildBer {
 
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 try {
-                    if (paramsForRequest.size() == 3){
+                    if (paramsForRequest.size() == 3) {
                         product.setQueryForSearch("Мало данных для формирования поискового запроса");
                         break;
                     }
@@ -143,7 +144,7 @@ public class ParserWildBer {
                         query = query + " " + paramsForRequest.get(i);
                     }
                     query = query.toLowerCase();
-                    productList = getCatalogProducts(query, brand);
+                    productList = getCatalogProducts(query, brand, 0);
                     //проходимся по всему списку и находим продукт с наименьшей ценой
                     product = getProductWithLowerPrice(productList, myVendorCodeFromRequest);
                 } catch (IndexOutOfBoundsException | NullPointerException e) {
@@ -151,6 +152,7 @@ public class ParserWildBer {
                 }
                 break;
         }
+
 
         assert product != null;
         //устанавливаем имя продовца
@@ -175,6 +177,73 @@ public class ParserWildBer {
         return product;
     }
 
+    private String getCategoryForOzon(Document page) {
+        //ищем элемент, содержащий категорию
+        Element elementCategory = page.select("ol[class=b6z4]").first();
+        try {
+            Elements elements = elementCategory.getAllElements();
+            return elements.get(elements.size() - 2).text();
+        } catch (NullPointerException e) {
+           return "-";
+        }
+    }
+
+    private boolean returnNullProductIfPageNull(Product product, Document page) {
+        if (page == null) {
+            return true;
+        }
+        return false;
+    }
+
+    private Document getPageForMyVendorCodeOzon(Document page) {
+        //Мы получили обзорную страницу товара. На ней нужно получить элемент, содержащий ссылку на товар
+        Element myRef = page.select("a[class=a0v2 tile-hover-target]").first();
+        Document pageForOzon = null;
+        try {
+            String hrefMyVendorCode = myRef.attr("href");
+            String url = "https://www.ozon.ru" + hrefMyVendorCode;
+            pageForOzon = getDocumentFromJsoup(page, url);
+        } catch (Exception e) {
+            System.out.println("не нашлась ссылка на товар");
+            return null;
+        }
+        return pageForOzon;
+    }
+
+    private Document getPageForMyVendorCode(String myVendorCodeFromRequest, int marketPlaceFlag) {
+        Document page = null;
+        String url = null;
+        //получаем страницу wildberies
+        if (marketPlaceFlag == 0){
+            url = getString("https://www.wildberries.ru/catalog/", myVendorCodeFromRequest, "/detail.aspx?targetUrl=SP");
+        }
+        //получаем страницу ozon
+        else if (marketPlaceFlag == 1){
+            url = getString("https://www.ozon.ru/search/?from_global=true&text=", myVendorCodeFromRequest, "");
+        }
+        page = getDocumentFromJsoup(page, url);
+        return page;
+    }
+
+    private Document getDocumentFromJsoup(Document page, String url) {
+        Document pageIn = null;
+        try {
+            page = Jsoup.connect(url)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36")
+                    .header("cookie","incap_ses_1317_1101384=F+lJcJycywTtX9mqmuxGEk4sLmAAAAAAVGqGYeRywNJUGPpkVx9wtQ==")
+                    .timeout(20000)
+                    //.referrer("https://google.ru")
+                    .get();
+        } catch (IOException e) {
+            System.out.println(Constants.NOT_FOUND_PAGE);
+        }
+        Element innerPage = page.select("iframe[id=main-iframe]").first();
+        String source = innerPage.attr("src");
+        String sourceUrl = "https://www.ozon.ru/" + source;
+        getDocumentFromJsoup(pageIn, sourceUrl);
+        return page;
+    }
+
     private static Product getProductWithLowerPrice(List<Product> productList, String myVendorCodeFromRequest) {
         if (productList.size() == 1){
             return productList.get(0);
@@ -193,15 +262,7 @@ public class ParserWildBer {
     private String getSellerName(String vendorCode){
         String url = getString("https://www.wildberries.ru/catalog/", vendorCode, "/detail.aspx?targetUrl=SP");
         Document page = null;
-        try {
-            page = Jsoup.connect(url)
-                    .userAgent("Mozilla")
-                    .timeout(20000)
-                    .referrer("https://google.com")
-                    .get();
-        } catch (IOException e) {
-            System.out.println(Constants.NOT_FOUND_PAGE);
-        }
+        page = getDocumentFromJsoup(page, url);
 
         Element elementSellerName = page.select("span[class=seller__text]").first();
         return elementSellerName.text();
@@ -402,10 +463,10 @@ public class ParserWildBer {
     }
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    private static List<Product> getCatalogProducts(String query, String brand) {
+    private static List<Product> getCatalogProducts(String query, String brand, int marketPlaceFlag) {
         List<Product> productList;
         Document page = null;
-        page = getPageForSearchQuery(query);
+        page = getPageForSearchQuery(query, marketPlaceFlag);
 
         //получение бренда, артикула, имени товара, ссылки на страницу товара, ссылки на картинкау товара, спец-акции, рейтинга
         productList = getCatalogProductsForPageRequest(page, brand);
@@ -416,8 +477,14 @@ public class ParserWildBer {
         return productList;
     }
 
-    private static Document getPageForSearchQuery(String query) {
-        String url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&xsearch=true&sort=priceup");
+    private static Document getPageForSearchQuery(String query, int marketPlaceFlag) {
+        String url = "-";
+        if (marketPlaceFlag == 0){
+            url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&xsearch=true&sort=priceup");
+        } else if (marketPlaceFlag == 1){
+            String example = "https://www.ozon.ru/category/aksessuary-dlya-elektroniki-15879/?from_global=true&sorting=price&text=%D0%B0%D0%BA%D0%BA%D1%83%D0%BC%D1%83%D0%BB%D1%8F%D1%82%D0%BE%D1%80+%D0%B2%D0%BD%D0%B5%D1%88%D0%BD%D0%B8%D0%B9+borofone+bt17";
+            url = getString("https://www.ozon.ru/category/aksessuary-dlya-elektroniki-15879/?from_global=true&sorting=price&text=", getQueryUTF8(query), "");
+        }
 
         Document page = null;
         try {
@@ -498,29 +565,31 @@ public class ParserWildBer {
                 String brandName = string.substring(0, string.length() - 2).toLowerCase();
                 if (!brandName.contains(myBrand.toLowerCase())) continue;
 
-                productList.add(new Product("-",
-                        "-",
-                        "-",
-                        "-",
-                        "-",
-
-                        "-",
-
-                        brandName,
-                        vendorCode,
-                        productName,
-                        refForPage,
-                        refForImg,
-                        specAction,
-                        rating,
-
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-
-                        "-"));
+                productList.add(new Product(
+//                        "-",
+//                        "-",
+//                        "-",
+//                        "-",
+//                        "-",
+//
+//                        "-",
+//
+//                        brandName,
+//                        vendorCode,
+//                        productName,
+//                        refForPage,
+//                        refForImg,
+//                        specAction,
+//                        rating,
+//
+//                        0,
+//                        0,
+//                        0,
+//                        0,
+//                        0,
+//
+//                        "-"
+                ));
             }
         }
         return productList;

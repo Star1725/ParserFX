@@ -69,7 +69,11 @@ public class Controller implements Initializable {
                 Node node = (Node) event.getSource();
                 List<File> files = fileChooser.showOpenMultipleDialog(node.getScene().getWindow());
                 notifySubscriber(files);
-                txtFldShowPathFile.appendText(files.get(0).getAbsolutePath() + " " + files.get(1).getAbsolutePath());
+                if (files.size() == 1){
+                    txtFldShowPathFile.appendText(files.get(0).getAbsolutePath());
+                } else if (files.size() == 2){
+                    txtFldShowPathFile.appendText(files.get(0).getAbsolutePath() + " " + files.get(1).getAbsolutePath());
+                }
             }
         });
     }

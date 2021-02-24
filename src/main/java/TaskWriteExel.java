@@ -162,7 +162,7 @@ public class TaskWriteExel extends Task<File> {
             Row row = sheet.createRow(i + 1);
             row.setHeightInPoints(70);
 
-            boolean isMy = productArrayList.get(i).getMyVendorCodeForWildberies().equals(productArrayList.get(i).getCompetitorVendorCode());
+            boolean isMy = productArrayList.get(i).getMyVendorCodeForMarketPlace().equals(productArrayList.get(i).getCompetitorVendorCode());
 
             boolean isMyAnalog = myVendorCodesSet.contains(productArrayList.get(i).getCompetitorVendorCode());
 
@@ -180,7 +180,7 @@ public class TaskWriteExel extends Task<File> {
 
             //Мой артикул по Wildberies
             cell = row.createCell(3);
-            cell.setCellValue(productArrayList.get(i).getMyVendorCodeForWildberies());
+            cell.setCellValue(productArrayList.get(i).getMyVendorCodeForMarketPlace());
             if (isMy && isMyAnalog){
                 cell.setCellStyle(styleMyProduct);
             } else if (!isMy && isMyAnalog){

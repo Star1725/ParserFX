@@ -21,6 +21,7 @@ public class Main extends Application implements Controller.ActionInController {
     private Controller controller;
 
     TaskReadExcel taskReadExcel;
+    TaskReadExcelForOzon taskReadExcelForOzon;
     TaskWriteExel taskWriteExel;
 
     static ParserWildBer parserWildBer = new ParserWildBer();
@@ -52,38 +53,55 @@ public class Main extends Application implements Controller.ActionInController {
 
     @Override
     public void selectFile(List<File> files) {
-        taskReadExcel = new TaskReadExcel(files);
+//        taskReadExcel = new TaskReadExcel(files);
+        taskReadExcelForOzon = new TaskReadExcelForOzon(files);
 
-        controller.getAreaLog().appendText("Чтение файлов \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
+        if (files.size() == 1){
+            controller.getAreaLog().appendText("Чтение файла \"" + files.get(0).getName() + "\"");
+        } else if (files.size() == 2){
+            controller.getAreaLog().appendText("Чтение файлов \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
+        }
 
         controller.getProgressBar().setProgress(0);
         // Unbind progress property
         controller.getProgressBar().progressProperty().unbind();
         // Bind progress property
-        controller.getProgressBar().progressProperty().bind(taskReadExcel.progressProperty());
+//        controller.getProgressBar().progressProperty().bind(taskReadExcel.progressProperty());
+        controller.getProgressBar().progressProperty().bind(taskReadExcelForOzon.progressProperty());
 
-        // When completed tasks
-        taskReadExcel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+        // When completed taskReadExcel
+//        taskReadExcel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+//            @Override
+//            public void handle(WorkerStateEvent event) {
+//                resultMap = taskReadExcel.getValue();
+//                taskReadExcel.cancel(true);
+//                controller.getAreaLog().appendText(" - ok!\n");
+//                controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
+//                controller.getProgressBar().progressProperty().unbind();
+//
+//                controller.getAreaLog().appendText("Анализ артикулов:\n");
+//
+//                getResultProduct(resultMap);
+//            }
+//        });
+//        new Thread(taskReadExcel).start();
+
+        // When completed taskReadExcelForOzon
+        taskReadExcelForOzon.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
-                resultMap = taskReadExcel.getValue();
-                taskReadExcel.cancel(true);
+                resultMap = taskReadExcelForOzon.getValue();
+                taskReadExcelForOzon.cancel(true);
                 controller.getAreaLog().appendText(" - ok!\n");
                 controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
                 controller.getProgressBar().progressProperty().unbind();
-//                Platform.runLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        controller.getProgressBar().setProgress(0);
-//                    }
-//                });
 
                 controller.getAreaLog().appendText("Анализ артикулов:\n");
 
                 getResultProduct(resultMap);
             }
         });
-        new Thread(taskReadExcel).start();
+        new Thread(taskReadExcelForOzon).start();
     }
 
     private static void openFile(File file) {
@@ -119,9 +137,10 @@ public class Main extends Application implements Controller.ActionInController {
                 for (Map.Entry<String, ResultProduct> entry : resultMap.entrySet()) {
                     String key = entry.getKey();
                     String category = entry.getValue().getCategory();
+                    String querySearch = entry.getValue().getQueryForSearch();
                     String brand = entry.getValue().getCompetitorBrand();
 
-                    myCalls.add(new MyCall(key, category, brand));
+                    myCalls.add(new MyCall(key, category ,querySearch, brand));
                 }
 
                 List<Future<Product>> futureList = new ArrayList<>();
@@ -208,7 +227,7 @@ public class Main extends Application implements Controller.ActionInController {
                             }
                         }
 
-                        resultMap.put(resultProductTemp.getMyVendorCodeForWildberies(), resultProductTemp);
+                        resultMap.put(resultProductTemp.getMyVendorCodeForMarketPlace(), resultProductTemp);
 
                         int finalI = i + 1;
 
@@ -231,22 +250,26 @@ public class Main extends Application implements Controller.ActionInController {
         }).start();
     }
 
-    //колобэл, который выполняет запросы на wildberries
+    //колобэл, который выполняет запросы на MarketPlace
     static class MyCall implements Callable<Product> {
 
-        String key;
-        String category;
-        String brand;
+        private String key;
+        private String category;
+        private String querySearch;
+        private String brand;
 
-        public MyCall(String key, String category, String brand) {
+        public MyCall(String key, String category, String querySearch, String brand) {
             this.key = key;
             this.category = category;
+            this.querySearch = querySearch;
             this.brand = brand;
         }
 
         @Override
+        //0 - флаг для Wildberies
+        //1 - флаг для Ozon
         public Product call() throws Exception {
-            return parserWildBer.getProduct(key, category, brand);
+            return parserWildBer.getProduct(key, category, querySearch, brand, 1);
         }
     }
 }
