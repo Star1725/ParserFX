@@ -33,10 +33,29 @@ public class ParserWildBer {
     private static final String CATEGORY_17 = "Адаптеры";//
     private static final String CATEGORY_18 = "Подставки для мобильных устройств";//
     private static final String CATEGORY_19 = "Чехлы для телефонов";
+    private static final String CATEGORY_20 = "Дезинфицирующие средства";
+    private static final String CATEGORY_21 = "Защитные кейсы";
+    private static final String CATEGORY_22 = "Лампы автомобильные";
+    private static final String CATEGORY_23 = "Массажеры электрические";
+    private static final String CATEGORY_24 = "Мусорные ведра";
+    private static final String CATEGORY_25 = "Мухобойки механические";
+    private static final String CATEGORY_26 = "Мыльницы";
+    private static final String CATEGORY_27 = "Подсветка для ноутбука";
+    private static final String CATEGORY_28 = "Подстаканники электрические";
+    private static final String CATEGORY_29 = "Подушки автомобильные";
+    private static final String CATEGORY_30 = "Пульты дистанционной съемки";
+    private static final String CATEGORY_31 = "Ремешки для умных часов";
+    private static final String CATEGORY_32 = "Салфетки для авто";
+    private static final String CATEGORY_33 = "Светильники";
+    private static final String CATEGORY_34 = "Сумки для ноутбуков";
+    private static final String CATEGORY_35 = "Таблички для авто";
+    private static final String CATEGORY_36 = "Фильтры воздушные";
+    private static final String CATEGORY_37 = "Автомобильные ароматизаторы";
 
     private static final String PARAM_1_1 = "Количество предметов в упаковке";
     private static final String PARAM_1_2 = "Модель";
     private static final String PARAM_1_3 = "Гарантийный срок";
+
 
     public Product getProduct (String myVendorCodeFromRequest, String category, String brand){
         List<Product> productList;
@@ -131,6 +150,24 @@ public class ParserWildBer {
             case CATEGORY_16:
             case CATEGORY_17:
             case CATEGORY_18:
+            case CATEGORY_20:
+            case CATEGORY_21:
+            case CATEGORY_22:
+            case CATEGORY_23:
+            case CATEGORY_24:
+            case CATEGORY_25:
+            case CATEGORY_26:
+            case CATEGORY_27:
+            case CATEGORY_28:
+            case CATEGORY_29:
+            case CATEGORY_30:
+            case CATEGORY_31:
+            case CATEGORY_32:
+            case CATEGORY_33:
+            case CATEGORY_34:
+            case CATEGORY_35:
+            case CATEGORY_36:
+            case CATEGORY_37:
 
                 paramsForRequest = getDataForRequestFromCategory(page, category);
                 try {
@@ -335,6 +372,24 @@ public class ParserWildBer {
             case CATEGORY_15:
             case CATEGORY_17:
             case CATEGORY_18:
+            case CATEGORY_20:
+            case CATEGORY_21:
+            case CATEGORY_22:
+            case CATEGORY_23:
+            case CATEGORY_24:
+            case CATEGORY_25:
+            case CATEGORY_26:
+            case CATEGORY_27:
+            case CATEGORY_28:
+            case CATEGORY_29:
+            case CATEGORY_30:
+            case CATEGORY_31:
+            case CATEGORY_32:
+            case CATEGORY_33:
+            case CATEGORY_34:
+            case CATEGORY_35:
+            case CATEGORY_36:
+            case CATEGORY_37:
                 try {
                     //определение параметров запроса
                     String model = getProductModelFromTitle(title);
@@ -388,18 +443,18 @@ public class ParserWildBer {
                         break;
                     }
                 }
-
-                if (model.equals("")){
-                    try {
-                        model = strBuf2[i];
-                    } catch (Exception e) {
-                    }
-                }
+            }
+        }
+        if (model.equals("")){
+            if (strBuf2[0].toLowerCase().contains(brand)){
+                model = strBuf2[1].trim();
             }
         }
 
-        return model.replaceAll("()", "");
+        return model.replaceAll("()", "").trim();
     }
+
+
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     private static List<Product> getCatalogProducts(String query, String brand) {
