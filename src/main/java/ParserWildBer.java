@@ -191,8 +191,8 @@ public class ParserWildBer {
 
         assert product != null;
         //устанавливаем имя продовца
-        String sellerName = getSellerName(product.getCompetitorVendorCode());
-        product.setCompetitorName(sellerName);
+//        String sellerName = getSellerName(product.getCompetitorVendorCode());
+//        product.setCompetitorName(sellerName);
 
         //устанавливаем спецакцию, если она есть
         product.setMySpecAction(paramsForRequest.get(0));

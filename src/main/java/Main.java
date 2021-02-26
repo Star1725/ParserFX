@@ -18,6 +18,8 @@ import java.util.concurrent.*;
 
 public class Main extends Application implements Controller.ActionInController {
 
+    private Object mon = new Object();
+
     private Controller controller;
 
     TaskReadExcel taskReadExcel;
@@ -119,7 +121,7 @@ public class Main extends Application implements Controller.ActionInController {
                 for (Map.Entry<String, ResultProduct> entry : resultMap.entrySet()) {
                     String key = entry.getKey();
                     String category = entry.getValue().getCategory();
-                    String brand = entry.getValue().getCompetitorBrand();
+                    String brand = entry.getValue().getMyBrand();
 
                     myCalls.add(new MyCall(key, category, brand));
                 }
@@ -212,12 +214,12 @@ public class Main extends Application implements Controller.ActionInController {
 
                         int finalI = i + 1;
 
-                        //controller.getProgressBar().setProgress(finalI /futureList.size());
-
-                        if (vendorCode.equals("-")){
-                            controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
-                        } else {
-                            controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");
+                        synchronized (mon) {
+                            if (vendorCode.equals("-")){
+                                controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
+                            } else {
+                                controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");
+                            }
                         }
                     } catch (InterruptedException | ExecutionException | NullPointerException e) {
                         e.printStackTrace();

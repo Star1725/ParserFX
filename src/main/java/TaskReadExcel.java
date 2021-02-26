@@ -144,7 +144,13 @@ public class TaskReadExcel extends Task<Map> {
 
                 //получаем артикул товара по 1С(последний баркод по Wildberies)
                 cell = row.getCell(2);
-                String vendorCode_1C = String.valueOf((long)cell.getNumericCellValue());
+
+                String vendorCode_1C = null;
+                try {
+                    vendorCode_1C = String.valueOf((long)cell.getNumericCellValue());
+                } catch (Exception e) {
+                    vendorCode_1C = cell.getRichStringCellValue().getString();
+                }
 
                 //получаем спец-цену
                 cell = row.getCell(5);
