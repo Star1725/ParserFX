@@ -33,8 +33,8 @@ public class Constants {
 
     //статика для проверки заговков столбцов файла отчёта 1С
     public static final String CODE_1C = "Код";//0-й столбец
-    public static final String VENDOR_CODE_1C = "Артикул";//0-й столбец
-    public static final String SPEC_PRICE_1C = "Цена";//0-й столбец
+    public static final String VENDOR_CODE_1C = "Артикул";//1-й столбец
+    public static final String SPEC_PRICE_1C = "Цена";//5-й столбец
 
     public static final ArrayList<String> listForTypeConnect = new ArrayList<>();
     public static final ArrayList<String> listForTypeGlass = new ArrayList<>();

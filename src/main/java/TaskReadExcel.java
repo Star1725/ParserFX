@@ -79,7 +79,16 @@ public class TaskReadExcel extends Task<Map> {
 
                 //получаем последний баркод (vendorCode_1C)
                 cell = row.getCell(5);
-                String vendorCode_1C = String.valueOf(cell.getRichStringCellValue().getString());
+                String vendorCode_1C;
+                if (cell == null){
+                    vendorCode_1C = String.valueOf(i);
+                } else {
+                    try {
+                        vendorCode_1C = cell.getRichStringCellValue().getString();
+                    } catch (Exception e) {
+                        vendorCode_1C = String.valueOf(cell.getNumericCellValue());
+                    }
+                }
 
                 //получаем розничную цену до скидки
                 cell = row.getCell(11);
@@ -135,11 +144,11 @@ public class TaskReadExcel extends Task<Map> {
 
                 //получаем артикул товара по 1С(последний баркод по Wildberies)
                 cell = row.getCell(2);
-                String vendorCode_1C = cell.getRichStringCellValue().getString();
+                String vendorCode_1C = String.valueOf((long)cell.getNumericCellValue());
 
                 //получаем спец-цену
                 cell = row.getCell(5);
-                int specPrice_1C = (int) cell.getNumericCellValue();
+                int specPrice_1C = (int) cell.getNumericCellValue() * 100;
 
                 supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPrice(code_1C, vendorCode_1C, specPrice_1C));
                 supplierSpecPriceHashMapWithKeyVendorCode_1C.put(vendorCode_1C, new SupplierSpecPrice(code_1C, vendorCode_1C, specPrice_1C));
@@ -170,23 +179,42 @@ public class TaskReadExcel extends Task<Map> {
 
     private boolean checkFileWildberies(Sheet sheet){
         Row headRow = sheet.getRow(0);
-        boolean checkBrand = headRow.getCell(0).getRichStringCellValue().getString().equals(Constants.BRAND_NAME_IN_FILE_WILDBERIES);
-        boolean checkCategory = headRow.getCell(1).getRichStringCellValue().getString().equals(Constants.CATEGORY_NAME_IN_FILE_WILDBERIES);
-        boolean checkCode_1C = headRow.getCell(3).getRichStringCellValue().getString().equals(Constants.CODE_1C_IN_FILE_WILDBERIES);
-        boolean checkVendorCode = headRow.getCell(4).getRichStringCellValue().getString().equals(Constants.VENDOR_CODE_IN_FILE_WILDBERIES);
-        boolean checkVendorCode_1C = headRow.getCell(5).getRichStringCellValue().getString().equals(Constants.VENDOR_CODE_1C_IN_FILE_WILDBERIES);
-        boolean checkPriceU = headRow.getCell(11).getRichStringCellValue().getString().equals(Constants.PRICE_U_IN_FILE_WILDBERIES);
-        boolean checkBasicSale = headRow.getCell(13).getRichStringCellValue().getString().equals(Constants.BASIC_SALE_IN_FILE_WILDBERIES);
-        boolean checkPromoSale = headRow.getCell(16).getRichStringCellValue().getString().equals(Constants.PROMO_SALE_IN_FILE_WILDBERIES);
+        boolean checkBrand = false;
+        boolean checkCategory = false;
+        boolean checkCode_1C = false;
+        boolean checkVendorCode = false;
+        boolean checkVendorCode_1C = false;
+        boolean checkPriceU = false;
+        boolean checkBasicSale = false;
+        boolean checkPromoSale = false;
+        try {
+            checkBrand = headRow.getCell(0).getRichStringCellValue().getString().equals(Constants.BRAND_NAME_IN_FILE_WILDBERIES);
+            checkCategory = headRow.getCell(1).getRichStringCellValue().getString().equals(Constants.CATEGORY_NAME_IN_FILE_WILDBERIES);
+            checkCode_1C = headRow.getCell(3).getRichStringCellValue().getString().equals(Constants.CODE_1C_IN_FILE_WILDBERIES);
+            checkVendorCode = headRow.getCell(4).getRichStringCellValue().getString().equals(Constants.VENDOR_CODE_IN_FILE_WILDBERIES);
+            checkVendorCode_1C = headRow.getCell(5).getRichStringCellValue().getString().equals(Constants.VENDOR_CODE_1C_IN_FILE_WILDBERIES);
+            checkPriceU = headRow.getCell(11).getRichStringCellValue().getString().equals(Constants.PRICE_U_IN_FILE_WILDBERIES);
+            checkBasicSale = headRow.getCell(13).getRichStringCellValue().getString().equals(Constants.BASIC_SALE_IN_FILE_WILDBERIES);
+            checkPromoSale = headRow.getCell(16).getRichStringCellValue().getString().equals(Constants.PROMO_SALE_IN_FILE_WILDBERIES);
+        } catch (Exception e) {
+            return false;
+        }
 
         return checkBrand & checkCategory & checkCode_1C & checkVendorCode & checkVendorCode_1C & checkPriceU & checkBasicSale & checkPromoSale;
     }
 
     private boolean checkFile_1C(Sheet sheet){
         Row headRow = sheet.getRow(0);
-        boolean checkCode_1C = headRow.getCell(1).getRichStringCellValue().getString().equals(Constants.CODE_1C);
-        boolean checkVendorCode = headRow.getCell(2).getRichStringCellValue().getString().equals(Constants.VENDOR_CODE_1C);
-        boolean checkSpecPrice = headRow.getCell(3).getRichStringCellValue().getString().equals(Constants.SPEC_PRICE_1C);
+        boolean checkCode_1C = false;
+        boolean checkVendorCode = false;
+        boolean checkSpecPrice = false;
+        try {
+            checkCode_1C = headRow.getCell(1).getRichStringCellValue().getString().equals(Constants.CODE_1C);
+            checkVendorCode = headRow.getCell(2).getRichStringCellValue().getString().equals(Constants.VENDOR_CODE_1C);
+            checkSpecPrice = headRow.getCell(5).getRichStringCellValue().getString().equals(Constants.SPEC_PRICE_1C);
+        } catch (Exception e) {
+            return false;
+        }
 
         return checkCode_1C & checkVendorCode & checkSpecPrice;
     }
