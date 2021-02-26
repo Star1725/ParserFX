@@ -33,7 +33,7 @@ public class TaskReadExcel extends Task<Map> {
                 Sheet sheetBuff = sheet_1C;
                 sheet_1C = sheetWildberies;
                 sheetWildberies = sheetBuff;
-                if (!checkFileWildberies(sheet_1C) || !checkFile_1C(sheetWildberies)){
+                if (!checkFileWildberies(sheetWildberies) || !checkFile_1C(sheet_1C)){
                     System.out.println("ошибка чтения файлов Excel. Проверьте правильность написания названий столбцов, и их очерёдность\n" +
                             "");
                     resultProductHashMap.put("Ошибка чтения файло Excel", null);
