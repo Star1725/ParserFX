@@ -10,10 +10,8 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 
 public class Main extends Application implements Controller.ActionInController {
@@ -21,6 +19,7 @@ public class Main extends Application implements Controller.ActionInController {
     private Object mon = new Object();
 
     private Controller controller;
+    private static double preFld;
 
     TaskReadExcel taskReadExcel;
     TaskWriteExel taskWriteExel;
@@ -44,6 +43,8 @@ public class Main extends Application implements Controller.ActionInController {
         primaryStage.setScene(new Scene(mainRoot, 700, 350));
         Controller.subscribe(this);
         controller = mainWindowLoader.getController();
+        preFld = Double.parseDouble(controller.percentTxtFld.getText());
+
         primaryStage.show();
 
     }
@@ -117,6 +118,7 @@ public class Main extends Application implements Controller.ActionInController {
                 CompletionService<Product> executorCompletionService= new ExecutorCompletionService<>(executorService);
 
                 List<MyCall> myCalls = new ArrayList<>();
+                Set<String> setMyVendorCodes = resultMap.keySet();
 
                 for (Map.Entry<String, ResultProduct> entry : resultMap.entrySet()) {
                     String key = entry.getKey();
@@ -135,24 +137,26 @@ public class Main extends Application implements Controller.ActionInController {
                 for (int i =0; i < futureList.size(); i++) {
                     try {
                         Product resultProduct = executorCompletionService.take().get();
-
+                        //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                         String myVendorCode = resultProduct.getMyVendorCodeFromRequest();
+
                         String myRefForPage = resultProduct.getMyRefForPage();
                         String myRefForImage = resultProduct.getMyRefForImage();
                         String myProductName = resultProduct.getMyProductName();
                         String mySpecAction = resultProduct.getMySpecAction();
-                        String vendorCode = resultProduct.getCompetitorVendorCode();
-                        String productName = resultProduct.getCompetitorProductName();
-                        String refForPage = resultProduct.getCompetitorRefForPage();
-                        String refForImage = resultProduct.getCompetitorRefForImage();
-                        String refFromRequest = resultProduct.getQueryForSearch();
-                        int priceU = resultProduct.getCompetitorPriceU();
-                        int basicSale = resultProduct.getCompetitorBasicSale();
-                        int basicPriceU = resultProduct.getCompetitorBasicPriceU();
-                        int promoSale = resultProduct.getCompetitorPromoSale();
-                        int promoPriceU = resultProduct.getCompetitorPromoPriceU();
+                        String competitorVendorCode = resultProduct.getCompetitorVendorCode();
+                        String competitorProductName = resultProduct.getCompetitorProductName();
+                        String competitorRefForPage = resultProduct.getCompetitorRefForPage();
+                        String competitorRefForImage = resultProduct.getCompetitorRefForImage();
+                        String queryForSearch = resultProduct.getQueryForSearch();
+                        int countSearch = resultProduct.getCountSearch();
+                        int competitorPriceU = resultProduct.getCompetitorPriceU();
+                        int competitorBasicSale = resultProduct.getCompetitorBasicSale();
+                        int competitorBasicPriceU = resultProduct.getCompetitorBasicPriceU();
+                        int competitorPromoSale = resultProduct.getCompetitorPromoSale();
+                        int competitorPromoPriceU = resultProduct.getCompetitorPromoPriceU();
                         String specAction = resultProduct.getCompetitorSpecAction();
-                        int rating = resultProduct.getCompetitorRating();
+                        int competitorRating = resultProduct.getCompetitorRating();
 
                         ResultProduct resultProductTemp = resultMap.get(myVendorCode);
 
@@ -160,26 +164,26 @@ public class Main extends Application implements Controller.ActionInController {
                         resultProductTemp.setMyRefForImage(myRefForImage);
                         resultProductTemp.setMyProductName(myProductName);
                         resultProductTemp.setMySpecAction(mySpecAction);
-                        resultProductTemp.setCompetitorVendorCode(vendorCode);
-                        resultProductTemp.setCompetitorProductName(productName);
-                        resultProductTemp.setCompetitorRefForPage(refForPage);
-                        resultProductTemp.setCompetitorRefForImage(refForImage);
-                        resultProductTemp.setQueryForSearch(refFromRequest);
-                        resultProductTemp.setCompetitorPriceU(priceU);
-                        resultProductTemp.setCompetitorBasicSale(basicSale);
-                        resultProductTemp.setCompetitorBasicPriceU(basicPriceU);
-                        resultProductTemp.setCompetitorPromoSale(promoSale);
-                        resultProductTemp.setCompetitorPromoPriceU(promoPriceU);
+                        resultProductTemp.setCompetitorVendorCode(competitorVendorCode);
+                        resultProductTemp.setCompetitorProductName(competitorProductName);
+                        resultProductTemp.setCompetitorRefForPage(competitorRefForPage);
+                        resultProductTemp.setCompetitorRefForImage(competitorRefForImage);
+                        resultProductTemp.setQueryForSearch(queryForSearch);
+                        resultProductTemp.setCountSearch(countSearch);
+                        resultProductTemp.setCompetitorPriceU(competitorPriceU);
+                        resultProductTemp.setCompetitorBasicSale(competitorBasicSale);
+                        resultProductTemp.setCompetitorBasicPriceU(competitorBasicPriceU);
+                        resultProductTemp.setCompetitorPromoSale(competitorPromoSale);
+                        resultProductTemp.setCompetitorPromoPriceU(competitorPromoPriceU);
                         resultProductTemp.setCompetitorSpecAction(specAction);
                         resultProductTemp.setCompetitorSpecAction(specAction);
-                        resultProductTemp.setCompetitorRating(rating);
+                        resultProductTemp.setCompetitorRating(competitorRating);
 
                         //установка рекомендуемой скидки и розничной цены на основании процента демпинга
-                        double preFld = Double.parseDouble(controller.percentTxtFld.getText());
 
                         double present = 1 - preFld / 100;
 
-                        if (myVendorCode.equals(vendorCode) || vendorCode.equals("-")){
+                        if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-")){
                             resultProductTemp.setRecommendedPriceU(resultProductTemp.getMyPromoPriceU());
                             resultProductTemp.setRecommendedSale(resultProductTemp.getMyBasicSale());
                             resultProductTemp.setRecommendedPromoSale(resultProductTemp.getMyPromoSale());
@@ -215,7 +219,7 @@ public class Main extends Application implements Controller.ActionInController {
                         int finalI = i + 1;
 
                         synchronized (mon) {
-                            if (vendorCode.equals("-")){
+                            if (competitorVendorCode.equals("-")){
                                 controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
                             } else {
                                 controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");

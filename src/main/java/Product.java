@@ -15,6 +15,7 @@ public class Product {
     private String mySpecAction;
 
     private String queryForSearch;
+    private int countSearch;
 
     private String competitorBrand;
     private String competitorVendorCode;

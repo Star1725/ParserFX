@@ -27,6 +27,7 @@ public class ResultProduct extends Product{
                          String mySpecAction,
 
                          String queryForSearch,
+                         int countSearch,
 
                          String competitorBrand,
                          String competitorVendorCode,
@@ -44,7 +45,7 @@ public class ResultProduct extends Product{
 
                          String competitorName
                          ) {
-        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorName);
+        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorName);
     }
 
 
@@ -71,6 +72,7 @@ public class ResultProduct extends Product{
             String mySpecAction,
 
             String queryForSearch,
+            int countSearch,
 
             String competitorBrand,
             String competitorVendorCode,
@@ -88,7 +90,7 @@ public class ResultProduct extends Product{
 
             String competitorName
             ) {
-        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorName);
+        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorName);
         this.myBrand = myBrand;
         this.category = category;
         this.code_1C = code_1C;
@@ -144,14 +146,6 @@ public class ResultProduct extends Product{
             return myBasicPriceU;
         } else {
             return myPriceU;
-        }
-    }
-
-    public int getMyLowerSale(){
-        if (this.myPromoSale != 0){
-            return myPromoSale;
-        } else {
-            return myBasicSale;
         }
     }
 }

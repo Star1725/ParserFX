@@ -49,7 +49,7 @@ public class TaskWriteExel extends Task<File> {
         font.setFontHeightInPoints((short) 11);
         font.setBold(true);
         headerStyle.setFont(font);
-
+////////вывод столбцов
         Cell headerCell = header.createCell(0);
         headerCell.setCellValue("Бренд");
         headerCell.setCellStyle(headerStyle);
@@ -57,7 +57,7 @@ public class TaskWriteExel extends Task<File> {
         headerCell = header.createCell(1);
         headerCell.setCellValue("Предмет (категория товара)");
         headerCell.setCellStyle(headerStyle);
-////////
+
         headerCell = header.createCell(2);
         headerCell.setCellValue("Мой артикул поставщика (по 1С)");
         headerCell.setCellStyle(headerStyle);
