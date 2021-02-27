@@ -16,9 +16,10 @@ public class ResultProduct extends Product{
     private int myPromoSale;
     private int myPromoPriceU;
 
-    private int recommendedPriceU;
+    private int recommendedPromoPriceU;
     private int recommendedSale;
     private int recommendedPromoSale;
+    private int recommendedPriceU;
 
     public ResultProduct(String myVendorCodeFromRequest,
                          String myRefForPage,
@@ -61,9 +62,10 @@ public class ResultProduct extends Product{
             int myBasicPriceU,
             int myPromoSale,
             int myPromoPriceU,
-            int recommendedPriceU,
+            int recommendedPromoPriceU,
             int recommendedSale,
             int recommendedPromoSale,
+            int recommendedPriceU,
 
             String myVendorCodeFromRequest,
             String myRefForPage,
@@ -102,9 +104,10 @@ public class ResultProduct extends Product{
         this.myBasicPriceU = myBasicPriceU;
         this.myPromoSale = myPromoSale;
         this.myPromoPriceU = myPromoPriceU;
-        this.recommendedPriceU = recommendedPriceU;
+        this.recommendedPromoPriceU = recommendedPromoPriceU;
         this.recommendedSale = recommendedSale;
         this.recommendedPromoSale = recommendedPromoSale;
+        this.recommendedPriceU = recommendedPriceU;
     }
 
     public ResultProduct(
@@ -119,9 +122,10 @@ public class ResultProduct extends Product{
             int myBasicPriceU,
             int myPromoSale,
             int myPromoPriceU,
-            int recommendedPriceU,
+            int recommendedPromoPriceU,
             int recommendedSale,
-            int recommendedPromoSale
+            int recommendedPromoSale,
+            int recommendedPriceU
     ) {
         this.myBrand = myBrand;
         this.category = category;
@@ -134,9 +138,10 @@ public class ResultProduct extends Product{
         this.myBasicPriceU = myBasicPriceU;
         this.myPromoSale = myPromoSale;
         this.myPromoPriceU = myPromoPriceU;
-        this.recommendedPriceU = recommendedPriceU;
+        this.recommendedPromoPriceU = recommendedPromoPriceU;
         this.recommendedSale = recommendedSale;
         this.recommendedPromoSale = recommendedPromoSale;
+        this.recommendedPriceU = recommendedPriceU;
     }
 
     public int getMyLowerPriceU(){

@@ -266,7 +266,7 @@ public class TaskWriteExel extends Task<File> {
             if (isMyAnalog){
                 cell.setCellValue(Math.round(productArrayList.get(i).getLowerPriceU() / 100));
             } else {
-                cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU() / 100));
+                cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPromoPriceU() / 100));
             }
             cell.setCellStyle(style);
 

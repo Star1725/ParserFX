@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Comparator.comparing;
 
@@ -54,7 +55,7 @@ public class ParserWildBer {
     private static final String CATEGORY_38 = "FM-трансмиттеры";
 
 
-    public Product getProduct (String myVendorCodeFromRequest, String category, String brand){
+    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, Set myVendorCodes){
         List<Product> productList;
         Product product = new Product(myVendorCodeFromRequest,
                 "-",
@@ -120,7 +121,7 @@ public class ParserWildBer {
                 productList = getCatalogProducts(query.toLowerCase(), brand);
 
                 //проходимся по всему списку и находим продукт с наименьшей ценой
-                product = getProductWithLowerPrice(productList, myVendorCodeFromRequest);
+                product = getProductWithLowerPrice(productList, myVendorCodes);
                 break;
 
                 //для данных категорий запрос формирунтся из бренда и модели
@@ -166,7 +167,7 @@ public class ParserWildBer {
                 query = query.toLowerCase();
                 productList = getCatalogProducts(query, brand);
                 //проходимся по всему списку и находим продукт с наименьшей ценой
-                product = getProductWithLowerPrice(productList, myVendorCodeFromRequest);
+                product = getProductWithLowerPrice(productList, myVendorCodes);
 
                 break;
         }
@@ -209,16 +210,20 @@ public class ParserWildBer {
         return page;
     }
 
-    private static Product getProductWithLowerPrice(List<Product> productList, String myVendorCodeFromRequest) {
+    private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes) {
         if (productList.size() == 1){
             return productList.get(0);
         } else {
             Product product = null;
             productList.sort(comparing(Product::getLowerPriceU));
             for (Product p : productList) {
-                if (!p.getCompetitorVendorCode().equals(myVendorCodeFromRequest)) {
+                if (!myVendorCodes.contains(p.getCompetitorVendorCode())) {
                     product = p;
+                    break;
                 }
+            }
+            if (product == null){
+                product = productList.get(0);
             }
             return product;
         }

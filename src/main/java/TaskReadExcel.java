@@ -132,6 +132,7 @@ public class TaskReadExcel extends Task<Map> {
                         myPromoPriceU,
                         0,
                         0,
+                        0,
                         0
                 ));
 

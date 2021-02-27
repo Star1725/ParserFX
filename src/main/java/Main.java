@@ -125,7 +125,7 @@ public class Main extends Application implements Controller.ActionInController {
                     String category = entry.getValue().getCategory();
                     String brand = entry.getValue().getMyBrand();
 
-                    myCalls.add(new MyCall(key, category, brand));
+                    myCalls.add(new MyCall(key, category, brand, setMyVendorCodes));
                 }
 
                 List<Future<Product>> futureList = new ArrayList<>();
@@ -183,35 +183,57 @@ public class Main extends Application implements Controller.ActionInController {
 
                         double present = 1 - preFld / 100;
 
-                        if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-")){
-                            resultProductTemp.setRecommendedPriceU(resultProductTemp.getMyPromoPriceU());
+                        //если аналог это мой товар, то всё оставляю без изменений
+                        if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-")) {
+                            resultProductTemp.setRecommendedPromoPriceU(resultProductTemp.getMyPromoPriceU());
                             resultProductTemp.setRecommendedSale(resultProductTemp.getMyBasicSale());
                             resultProductTemp.setRecommendedPromoSale(resultProductTemp.getMyPromoSale());
 
-                        } else {
+                        }
+                        //иначе
+                        //если розничная цена конкурента меньше моей розничной цены
+                        else if (resultProductTemp.getLowerPriceU() < resultProductTemp.getMyLowerPriceU()) {
+                            //расчитываем рекомендованню розничную цену с учётом процента демпинга
                             int recommendedPriceU = (int) Math.round(resultProductTemp.getLowerPriceU() * present);
-                            resultProductTemp.setRecommendedPriceU(recommendedPriceU);
-
-                            if ((resultProductTemp.getMyBasicSale() == 0 & resultProductTemp.getMyPromoSale() == 0) || (resultProductTemp.getMyBasicSale() == 0 & resultProductTemp.getMyPromoSale() != 0) ){
-
+                            resultProductTemp.setRecommendedPromoPriceU(recommendedPriceU);
+                            //и на основании этой рекомендованной цены расчитываем базоваю скидку и промо-скидку
+                            //если у моего товара нет ни базовой ни промо скидки или есть только промо скидка
+                            if ((resultProductTemp.getMyBasicSale() == 0 & resultProductTemp.getMyPromoSale() == 0) || (resultProductTemp.getMyBasicSale() == 0 & resultProductTemp.getMyPromoSale() != 0)) {
+                                //пробуем базоваю скидку = 25%
                                 int recommendedSale = 25;
-                                int recommendedPromoSale = 100 - (int)Math.round((double) resultProductTemp.getRecommendedPriceU() / (resultProductTemp.getMyPriceU() * 0.75) * 100);
-                                if (recommendedPromoSale < 0){
-                                    recommendedSale = 100 - (int)Math.round((double) resultProductTemp.getRecommendedPriceU() / (resultProductTemp.getMyPriceU()) * 100);
+                                //и расчитываем промо скидку
+                                int recommendedPromoSale = 100 - (int) Math.round((double) resultProductTemp.getRecommendedPromoPriceU() / (resultProductTemp.getMyPriceU() * 0.75) * 100);
+                                //если промо скидка получается отрицательной
+                                if (recommendedPromoSale < 0) {
+                                    //то расчитываем только базоваю скидку
+                                    recommendedSale = 100 - (int) Math.round((double) resultProductTemp.getRecommendedPromoPriceU() / (resultProductTemp.getMyPriceU()) * 100);
+                                    //и устанавливаем её в качестве рекомендованной базовой скидки
                                     resultProductTemp.setRecommendedSale(recommendedSale);
+                                    //а рекомендованную промо устанавливаем в 0
                                     resultProductTemp.setRecommendedPromoSale(0);
+                                    //иначе устанавливаем рекомендованную базоваю в 25% и рекомендованную расчитанную промо
                                 } else {
                                     resultProductTemp.setRecommendedSale(recommendedSale);
                                     resultProductTemp.setRecommendedPromoSale(recommendedPromoSale);
                                 }
-
-                            } else if (resultProductTemp.getMyBasicSale() != 0 & resultProductTemp.getMyPromoSale() == 0) {
+                                //если у моего товара есть только базовая скидка или есть и базовая и промо
+                            } else if ((resultProductTemp.getMyBasicSale() != 0 & resultProductTemp.getMyPromoSale() == 0) || (resultProductTemp.getMyBasicSale() != 0 & resultProductTemp.getMyPromoSale() != 0)) {
+                                //установливаем рекомендованную базоваю без изменений
                                 resultProductTemp.setRecommendedSale(resultProductTemp.getMyBasicSale());
-                                resultProductTemp.setRecommendedPromoSale((100 - (int)Math.round((double) resultProductTemp.getRecommendedPriceU() / resultProductTemp.getMyBasicPriceU() * 100)));
-                            } else if (resultProductTemp.getMyBasicSale() != 0 & resultProductTemp.getMyPromoSale() != 0) {
-                                resultProductTemp.setRecommendedSale(resultProductTemp.getMyBasicSale());
-                                resultProductTemp.setRecommendedPromoSale((100 - (int)Math.round((double) resultProductTemp.getRecommendedPriceU() / resultProductTemp.getMyBasicPriceU() * 100)));
+                                //а рекомендованную промо расчитываем
+                                resultProductTemp.setRecommendedPromoSale((100 - (int) Math.round((double) resultProductTemp.getRecommendedPromoPriceU() / resultProductTemp.getMyBasicPriceU() * 100)));
                             }
+                        }
+                        //иначе (если розничная цена конкурента больше моей розничной цены) --- Стратегия на повышение
+                        else {
+                            //расчитываем рекомендованню розничную цену с учётом процента демпинга
+                            int recommendedPriceU = (int) Math.round(resultProductTemp.getLowerPriceU() * present);
+                            resultProductTemp.setRecommendedPromoPriceU(recommendedPriceU);
+                            //устанавливаем рекомендованную базоваю скидку = 25% и промо в 10%
+                            //и на основании этих данных расчитывае новую рекомендованнюую цену до скидки
+                            int basicPriceU = Math.toIntExact(Math.round(recommendedPriceU / (0.9)));
+                            int priceU = Math.toIntExact(Math.round(basicPriceU / (0.75)));
+                            resultProductTemp.setRecommendedPriceU(priceU);
                         }
 
                         resultMap.put(resultProductTemp.getMyVendorCodeForWildberies(), resultProductTemp);
@@ -239,20 +261,21 @@ public class Main extends Application implements Controller.ActionInController {
 
     //колобэл, который выполняет запросы на wildberries
     static class MyCall implements Callable<Product> {
-
         String key;
         String category;
         String brand;
+        Set myVendorCodes;
 
-        public MyCall(String key, String category, String brand) {
+        public MyCall(String key, String category, String brand, Set myVendorCodes) {
             this.key = key;
             this.category = category;
             this.brand = brand;
+            this.myVendorCodes = myVendorCodes;
         }
 
         @Override
         public Product call() throws Exception {
-            return parserWildBer.getProduct(key, category, brand);
+            return parserWildBer.getProduct(key, category, brand, myVendorCodes);
         }
     }
 }
