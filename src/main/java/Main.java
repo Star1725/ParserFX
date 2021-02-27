@@ -185,7 +185,7 @@ public class Main extends Application implements Controller.ActionInController {
 
                         //если аналог это мой товар, то всё оставляю без изменений
                         if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-")) {
-                            resultProductTemp.setRecommendedPromoPriceU(resultProductTemp.getMyPromoPriceU());
+                            resultProductTemp.setRecommendedPromoPriceU(resultProductTemp.getMyLowerPriceU());
                             resultProductTemp.setRecommendedSale(resultProductTemp.getMyBasicSale());
                             resultProductTemp.setRecommendedPromoSale(resultProductTemp.getMyPromoSale());
 

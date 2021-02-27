@@ -165,7 +165,7 @@ public class TaskReadExcel extends Task<Map> {
 
                 //получаем спец-цену
                 cell = row.getCell(5);
-                int specPrice_1C = (int) cell.getNumericCellValue() * 100;
+                int specPrice_1C = (int) cell.getNumericCellValue();
 
                 supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPrice(code_1C, vendorCode_1C, specPrice_1C));
                 supplierSpecPriceHashMapWithKeyVendorCode_1C.put(vendorCode_1C, new SupplierSpecPrice(code_1C, vendorCode_1C, specPrice_1C));
