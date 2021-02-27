@@ -65,9 +65,19 @@ public class TaskReadExcel extends Task<Map> {
                 cell = row.getCell(1);
                 String category = cell.getRichStringCellValue().getString();
 
-                //получаем артикул поставщика (code_1C)
+                //получаем артикул поставщика (code_1C)!!!
                 cell = row.getCell(3);
-                String code_1C = cell.getRichStringCellValue().getString();
+                String buffStr = cell.getRichStringCellValue().getString();
+                String code_1C = "0";
+                if (buffStr.length() == 24) {
+                    code_1C = buffStr.substring(13);
+                } else if (buffStr.length() == 22 && (buffStr.startsWith("AA-") || buffStr.startsWith("RD-"))){
+                    code_1C = buffStr.substring(11);
+                } else if (buffStr.startsWith("AA-") || buffStr.startsWith("RD-")){
+                    code_1C = buffStr.substring(0, 11);
+                }
+
+
 
                 //получаем артикл wildberies
                 cell = row.getCell(4);
@@ -180,7 +190,6 @@ public class TaskReadExcel extends Task<Map> {
             System.out.println("ошибка при чтении файла .xls");
             return null;
         }
-
     }
 
     private boolean checkFileWildberies(Sheet sheet){
