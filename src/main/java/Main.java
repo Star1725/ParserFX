@@ -43,7 +43,6 @@ public class Main extends Application implements Controller.ActionInController {
         primaryStage.setScene(new Scene(mainRoot, 700, 350));
         Controller.subscribe(this);
         controller = mainWindowLoader.getController();
-        preFld = Double.parseDouble(controller.percentTxtFld.getText());
 
         primaryStage.show();
 
@@ -98,6 +97,8 @@ public class Main extends Application implements Controller.ActionInController {
     }
 
     private void getResultProduct(Map<String, ResultProduct> resultMap){
+
+        preFld = Double.parseDouble(controller.percentTxtFld.getText());
 
         taskWriteExel = new TaskWriteExel(resultMap);
 

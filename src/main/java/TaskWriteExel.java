@@ -283,8 +283,12 @@ public class TaskWriteExel extends Task<File> {
 
             //Наша пороговая цена
             cell = row.createCell(14);
-            cell.setCellValue(productArrayList.get(i).getSpecPrice() + productArrayList.get(i).getSpecPrice() * 0.15 + 33);
-            cell.setCellStyle(style);
+            if (productArrayList.get(i).getSpecPrice() == 0){
+                cell.setCellValue("-");
+            } else {
+                cell.setCellValue(productArrayList.get(i).getSpecPrice() + productArrayList.get(i).getSpecPrice() * 0.15 + 33);
+                cell.setCellStyle(style);
+            }
 
             //Тек. роз. цена конкурента
             cell = row.createCell(15);

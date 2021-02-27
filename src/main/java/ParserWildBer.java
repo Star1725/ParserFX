@@ -192,6 +192,9 @@ public class ParserWildBer {
         //устанавливаем ссылку на артикул моего товара
         product.setMyRefForPage(getString("https://www.wildberries.ru/catalog/", myVendorCodeFromRequest, "/detail.aspx?targetUrl=SP"));
 
+        //устанавливаем мой vendorCode
+        product.setMyVendorCodeFromRequest(myVendorCodeFromRequest);
+
         return product;
     }
 
