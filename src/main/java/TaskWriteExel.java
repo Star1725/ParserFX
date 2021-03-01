@@ -158,11 +158,18 @@ public class TaskWriteExel extends Task<File> {
         styleMyProductAnalog.setFont(font2);
 
         //настройка стиля для ячейки с ошибкой
-        CellStyle styleException = workbook.createCellStyle();
-        styleException.setWrapText(true);
-        styleException.setFillForegroundColor(IndexedColors.RED.getIndex());
-        styleException.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        styleException.setFont(font2);
+        CellStyle styleRedCell = workbook.createCellStyle();
+        styleRedCell.setWrapText(true);
+        styleRedCell.setFillForegroundColor(IndexedColors.fromInt(45).getIndex());
+        styleRedCell.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        styleRedCell.setFont(font2);
+
+        //настройка стиля для ячейки с ошибкой
+        CellStyle styleGreenCell = workbook.createCellStyle();
+        styleGreenCell.setWrapText(true);
+        styleGreenCell.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+        styleGreenCell.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        styleGreenCell.setFont(font2);
 
         //паолучаем множество моих артикулов, чтобы можно было понять относится ли итотговый продукт к моим артикулам(для окрашивания ячеек)
         Set<String> myVendorCodesSet = new HashSet<>(productMap.keySet());
@@ -180,7 +187,7 @@ public class TaskWriteExel extends Task<File> {
 
             //Бренд
             Cell cell = row.createCell(0);
-            cell.setCellValue(productArrayList.get(i).getCompetitorBrand());
+            cell.setCellValue(productArrayList.get(i).getMyBrand());
             cell.setCellStyle(style);
 
             //Категория товара
@@ -233,7 +240,7 @@ public class TaskWriteExel extends Task<File> {
             cell = row.createCell(7);
             if (productArrayList.get(i).getCompetitorProductName().equals("-")){
                 cell.setCellValue(Constants.NOT_FOUND_PAGE);
-                cell.setCellStyle(styleException);
+                cell.setCellStyle(styleGreenCell);
             } else {
                 cell.setCellValue((productArrayList.get(i).getCompetitorProductName()));
                 if (isMy && isMyAnalog){
@@ -258,17 +265,20 @@ public class TaskWriteExel extends Task<File> {
 
             //Моя базовая цена
             cell = row.createCell(9);
-            cell.setCellValue(Math.round(productArrayList.get(i).getMyPriceU() / 100));
+            int myPriceU = Math.round(productArrayList.get(i).getMyPriceU() / 100);
+            cell.setCellValue(myPriceU);
             cell.setCellStyle(style);
 
             //Моя тек. роз. цена
             cell = row.createCell(10);
-            cell.setCellValue(Math.round(productArrayList.get(i).getMyLowerPriceU() / 100));
+            int myLowerPrice = Math.round(productArrayList.get(i).getMyLowerPriceU() / 100);
+            cell.setCellValue(myLowerPrice);
             cell.setCellStyle(style);
 
             //Спец-цена
             cell = row.createCell(11);
-            cell.setCellValue(productArrayList.get(i).getSpecPrice());
+            int specPrice = productArrayList.get(i).getSpecPrice() / 100;
+            cell.setCellValue(specPrice);
             cell.setCellStyle(style);
 
             //Коммисия
@@ -286,14 +296,22 @@ public class TaskWriteExel extends Task<File> {
             if (productArrayList.get(i).getSpecPrice() == 0){
                 cell.setCellValue("-");
             } else {
-                cell.setCellValue(productArrayList.get(i).getSpecPrice() + productArrayList.get(i).getSpecPrice() * 0.15 + 33);
+                cell.setCellValue(specPrice + specPrice * 0.15 + 33);
                 cell.setCellStyle(style);
             }
 
             //Тек. роз. цена конкурента
             cell = row.createCell(15);
-            cell.setCellValue(Math.round(productArrayList.get(i).getLowerPriceU() / 100));
-            cell.setCellStyle(style);
+            int competitorLowerPrice = Math.round(productArrayList.get(i).getLowerPriceU() / 100);
+            cell.setCellValue(competitorLowerPrice);
+            if (competitorLowerPrice == myLowerPrice){
+                cell.setCellStyle(style);
+            } else if (competitorLowerPrice < myLowerPrice){
+                cell.setCellStyle(styleRedCell);
+            } else {
+                cell.setCellStyle(styleGreenCell);
+            }
+
 
             //Рекомендуемая роз. цена
             cell = row.createCell(16);
@@ -306,7 +324,7 @@ public class TaskWriteExel extends Task<File> {
 
             //В случае повышения - новая реком. розн. цена (до скидки)
             cell = row.createCell(17);
-            cell.setCellValue(productArrayList.get(i).getRecommendedPriceU());
+            cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU()/100));
             cell.setCellStyle(style);
 
             //"Реком. согласованная скидка"

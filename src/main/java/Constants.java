@@ -22,7 +22,7 @@ public class Constants {
     public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList i-dtList j-card-item]";
     public static final String ATTRIBUTE_WITH_VENDOR_CODE = "data-popup-nm-id";
     public static final String ELEMENT_WITH_CARD_PRODUCT = "a[class=ref_goods_n_p j-open-full-product-card]";
-    public static final String ELEMENT_WITH_NAME_PRODUCT = "span[class=goods-name c-text-sm]";
+    public static final String ELEMENT_WITH_NAME_PRODUCT = "div[class=dtlist-inner-brand-name]";
     public static final String ATTRIBUTE_WITH_REF_FOR_PAGE_PRODUCT = "href";
     public static final String ELEMENT_WITH_REF_FOR_IMAGE = "img[class=thumbnail]";
     public static final String ATTRIBUTE_WITH_REF_FOR_IMAGE_1 = "src";
@@ -52,13 +52,15 @@ public class Constants {
     public static final ArrayList<String> listForTypeConnect = new ArrayList<>();
     public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
     public static final ArrayList<String> listForCabel = new ArrayList<>();
+    public static final ArrayList<String> listForBugs = new ArrayList<>();
 
     static {
         listForTypeConnect.add("Type-C");
+        listForTypeConnect.add("Apple");
         listForTypeConnect.add("8-pin");
         listForTypeConnect.add("8 pin");
         listForTypeConnect.add("микро USB");
-        listForTypeConnect.add("Apple");
+        listForTypeConnect.add("micro USB");
         listForTypeConnect.add("угловой");
         listForTypeConnect.add("lightning");
         listForTypeConnect.add("Lightning");
@@ -71,15 +73,26 @@ public class Constants {
         listForTypeGlass.add("EYE");
         listForTypeGlass.add("Privacy");
 
+        listForCabel.add("с");
         listForCabel.add("кабелем");
         listForCabel.add("кабель");
-        listForCabel.add("Микро");
+        listForCabel.add("держателем");
+        listForCabel.add("для");
+        listForCabel.add("авто");
         listForCabel.add("микро");
         listForCabel.add("Micro");
         listForCabel.add("micro");
         listForCabel.add("USB");
         listForCabel.add("Apple");
+        listForCabel.add("8");
         listForCabel.add("pin");
         listForCabel.add("Type-C");
+
+        listForBugs.add("(S)");
+        listForBugs.add("(L)");
+        listForBugs.add("13");
+        listForBugs.add("16");
+        listForBugs.add("5,5");
+        listForBugs.add("дюймов");
     }
 }

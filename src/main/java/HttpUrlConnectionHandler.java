@@ -60,7 +60,7 @@ public class HttpUrlConnectionHandler {
             }
             return productList;
         } catch (IOException e) {
-            System.out.println("Для запроса - " + query + " выподает ошибка \"NullPointerException\"");
+            System.out.println("Для запроса - " + query + " Json выдаёт ошибку \"" + e.getMessage() + "\"");
             return productList;
         }
     }

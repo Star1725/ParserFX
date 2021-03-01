@@ -21,6 +21,8 @@ public class Main extends Application implements Controller.ActionInController {
     private Controller controller;
     private static double preFld;
 
+    private static Set<String> setMyVendorCodes;
+
     TaskReadExcel taskReadExcel;
     TaskWriteExel taskWriteExel;
 
@@ -119,7 +121,7 @@ public class Main extends Application implements Controller.ActionInController {
                 CompletionService<Product> executorCompletionService= new ExecutorCompletionService<>(executorService);
 
                 List<MyCall> myCalls = new ArrayList<>();
-                Set<String> setMyVendorCodes = resultMap.keySet();
+                setMyVendorCodes = resultMap.keySet();
 
                 for (Map.Entry<String, ResultProduct> entry : resultMap.entrySet()) {
                     String key = entry.getKey();
@@ -136,10 +138,11 @@ public class Main extends Application implements Controller.ActionInController {
                 }
 
                 for (int i =0; i < futureList.size(); i++) {
+                    String myVendorCode = null;
                     try {
                         Product resultProduct = executorCompletionService.take().get();
                         //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
-                        String myVendorCode = resultProduct.getMyVendorCodeFromRequest();
+                        myVendorCode = resultProduct.getMyVendorCodeFromRequest();
 
                         String myRefForPage = resultProduct.getMyRefForPage();
                         String myRefForImage = resultProduct.getMyRefForImage();
@@ -185,7 +188,7 @@ public class Main extends Application implements Controller.ActionInController {
                         double present = 1 - preFld / 100;
 
                         //если аналог это мой товар, то всё оставляю без изменений
-                        if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-")) {
+                        if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-") || setMyVendorCodes.contains(competitorVendorCode)) {
                             resultProductTemp.setRecommendedPromoPriceU(resultProductTemp.getMyLowerPriceU());
                             resultProductTemp.setRecommendedSale(resultProductTemp.getMyBasicSale());
                             resultProductTemp.setRecommendedPromoSale(resultProductTemp.getMyPromoSale());
@@ -235,6 +238,8 @@ public class Main extends Application implements Controller.ActionInController {
                             int basicPriceU = Math.toIntExact(Math.round(recommendedPriceU / (0.9)));
                             int priceU = Math.toIntExact(Math.round(basicPriceU / (0.75)));
                             resultProductTemp.setRecommendedPriceU(priceU);
+                            resultProductTemp.setRecommendedSale(25);
+                            resultProductTemp.setRecommendedPromoSale(10);
                         }
 
                         resultMap.put(resultProductTemp.getMyVendorCodeForWildberies(), resultProductTemp);
@@ -242,14 +247,14 @@ public class Main extends Application implements Controller.ActionInController {
                         int finalI = i + 1;
 
                         synchronized (mon) {
-                            if (competitorVendorCode.equals("-")){
+                            if (competitorVendorCode.equals("-")) {
                                 controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
                             } else {
                                 controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");
                             }
                         }
                     } catch (InterruptedException | ExecutionException | NullPointerException e) {
-                        e.printStackTrace();
+                        System.out.println("для артикула " + myVendorCode + " ошибка - " + e.getMessage());
                     }
                 }
                 controller.getAreaLog().appendText("Количество проанализированных позицый - " + futureList.size() + "\n");

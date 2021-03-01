@@ -53,6 +53,8 @@ public class ParserWildBer {
     private static final String CATEGORY_36 = "Фильтры воздушные";
     private static final String CATEGORY_37 = "Автомобильные ароматизаторы";
     private static final String CATEGORY_38 = "FM-трансмиттеры";
+    private static final String CATEGORY_39 = "Автохимия";
+    private static final String CATEGORY_40 = "Насадки для швабр";
 
 
     public Product getProduct(String myVendorCodeFromRequest, String category, String brand, Set myVendorCodes){
@@ -103,12 +105,18 @@ public class ParserWildBer {
                 //для поиска по маскам надо в запросе передать "Маски одноразовые" и кол-во штук в упаковке
                 query = category + " " + count;
                 productList = getCatalogProducts(query.toLowerCase(), brand);
+                if (productList.size() == 0){
+                    return product;
+                }
                 product = productList.stream().filter(p -> p.getCompetitorProductName().contains(count)).findAny().orElse(null);
                 break;
 
             case CATEGORY_4:
                 query = paramsForRequest.get(0);
                 productList = getCatalogProducts(query.toLowerCase(), brand);
+                if (productList.size() == 0){
+                    return product;
+                }
                 product = productList.stream().findFirst().orElse(null);
                 break;
 
@@ -118,8 +126,11 @@ public class ParserWildBer {
                 } catch (IndexOutOfBoundsException e) {
                     System.out.println("Для артикула: " + myVendorCodeFromRequest + " - ошибка формирования запроса на поиск конкурентов");
                 }
+                assert query != null;
                 productList = getCatalogProducts(query.toLowerCase(), brand);
-
+                if (productList.size() == 0){
+                    return product;
+                }
                 //проходимся по всему списку и находим продукт с наименьшей ценой
                 product = getProductWithLowerPrice(productList, myVendorCodes);
                 break;
@@ -127,22 +138,47 @@ public class ParserWildBer {
                 //для данных категорий запрос формирунтся из бренда и модели
             case CATEGORY_1:
             case CATEGORY_2:
-            case CATEGORY_3:
             case CATEGORY_5:
             case CATEGORY_6:
+            case CATEGORY_15:
+            case CATEGORY_18:
+
+            case CATEGORY_20:
+            case CATEGORY_21:
+            case CATEGORY_22:
+            case CATEGORY_34:
+            case CATEGORY_35:
+            case CATEGORY_40:
+                query = brand;
+                for (String s : paramsForRequest) {
+                    query = query + " " + s;
+                }
+                query = query.toLowerCase();
+                productList = getCatalogProducts(query.toLowerCase(), brand);
+                if (productList.size() == 0){
+                    return product;
+                }
+                //проходимся по всему списку и находим продукт с наименьшей ценой
+                product = getProductWithLowerPrice(productList, myVendorCodes);
+                break;
+
+                //для данных категорий запрос формирунтся из бренда, категории и модели
+            case CATEGORY_3:
+
+
             case CATEGORY_8:
             case CATEGORY_9:
             case CATEGORY_11:
             case CATEGORY_12:
             case CATEGORY_13:
             case CATEGORY_14:
-            case CATEGORY_15:
+
             case CATEGORY_16:
             case CATEGORY_17:
-            case CATEGORY_18:
-            case CATEGORY_20:
-            case CATEGORY_21:
-            case CATEGORY_22:
+
+
+
+
             case CATEGORY_23:
             case CATEGORY_24:
             case CATEGORY_25:
@@ -154,21 +190,23 @@ public class ParserWildBer {
             case CATEGORY_31:
             case CATEGORY_32:
             case CATEGORY_33:
-            case CATEGORY_34:
-            case CATEGORY_35:
+
             case CATEGORY_36:
             case CATEGORY_37:
             case CATEGORY_38:
+            case CATEGORY_39:
 
                 query = brand + " " + category;
                 for (int i = 0; i < paramsForRequest.size(); i++) {
                     query = query + " " + paramsForRequest.get(i);
                 }
                 query = query.toLowerCase();
-                productList = getCatalogProducts(query, brand);
+                productList = getCatalogProducts(query.toLowerCase(), brand);
+                if (productList.size() == 0){
+                    return product;
+                }
                 //проходимся по всему списку и находим продукт с наименьшей ценой
                 product = getProductWithLowerPrice(productList, myVendorCodes);
-
                 break;
         }
 
@@ -248,22 +286,50 @@ public class ParserWildBer {
         if (modelName == null) {
             //пытаемся получить название модели из title
             modelName = getProductModelFromTitle(title);
-            //--- 1 --- первым параметром бедет название модели либо кол-во элементов в упаковке
-            paramsForRequest.add(modelName);
         }
+        //--- 1 --- первым параметром бедет название модели либо кол-во элементов в упаковке
+        paramsForRequest.add(modelName);
 
         //определяем дополнительные параметры запроса в зависимости от категории товара
         switch (category) {
             case CATEGORY_1:
             case CATEGORY_6:
-                for (String param : Constants.listForCabel) {
-                    if (title.contains(param)) {
-                        paramsForRequest.add(param);
+                if (title.contains("кабелем") || title.contains("кабель") || title.contains("держателем") || title.contains("держатель")){
+                    String[] arrayForTitle = title.split(",", 2);
+                    String[] arrayForParams = arrayForTitle[1].replace(",", "").split(" ");
+                    for (String s: arrayForParams){
+                        for (String param : Constants.listForCabel) {
+                            if (s.equalsIgnoreCase(param)) {
+                                paramsForRequest.add(param);
+                            }
+                        }
                     }
                 }
                 break;
-            case CATEGORY_3:
+
             case CATEGORY_8:
+                String myType = title;
+                try {
+                    String[] arrayTitle1 = title.split("/");
+                    String brand = arrayTitle1[0].trim().toLowerCase();
+                    if (arrayTitle1[1].toLowerCase().contains(brand)){
+                        String[] types = arrayTitle1[1].toLowerCase().split(brand);
+                        myType = types[0];
+                        String[] arrayTitle2 = arrayTitle1[1].split(",", 2);
+                        String[] arrayTitle3 = arrayTitle2[0].toLowerCase().split(brand);
+
+                        paramsForRequest.set(0, brand + " " + arrayTitle3[1].trim());
+                    }
+                } catch (Exception e) {
+                }
+                for (String type : Constants.listForTypeConnect) {
+                    if (myType.contains(type)) {
+                        paramsForRequest.add(type);
+                    }
+                }
+                break;
+
+            case CATEGORY_3:
             case CATEGORY_12:
                 for (String type : Constants.listForTypeConnect) {
                     if (title.contains(type)) {
@@ -271,14 +337,26 @@ public class ParserWildBer {
                     }
                 }
                 break;
+
             case CATEGORY_7:
-                for (String type: Constants.listForTypeGlass){
-                    if(title.equals(type)){
-                        paramsForRequest.add(type);
-                        break;
+                String[] arrayForTitle = title.split(",", 2);
+                String[] arrayForParams = arrayForTitle[1].replace(",", "").split(" ");
+                for (String s: arrayForParams){
+                    for (String type : Constants.listForTypeGlass) {
+                        if (s.equalsIgnoreCase(type)) {
+                            paramsForRequest.add(type);
+                        }
                     }
                 }
+
+//                for (String type: Constants.listForTypeGlass){
+//                    if(title.contains(type)){
+//                        paramsForRequest.add(type);
+//                        break;
+//                    }
+//                }
                 break;
+
             case CATEGORY_16:
                 try {
                     String[] strBuf1 = title.split(", ");
@@ -286,6 +364,25 @@ public class ParserWildBer {
                     paramsForRequest.add(strBuf2[strBuf2.length - 1]);
                     return paramsForRequest;
                 } catch (Exception e) {
+                }
+                break;
+
+            case CATEGORY_40:
+            case CATEGORY_34:
+                String[] arrayStr = title.split(",", 2);
+                String[] arrayStr2 = arrayStr[0].split("/");
+                String brand = arrayStr2[0].trim().toLowerCase();
+                if (category.equals(CATEGORY_40)){
+                    paramsForRequest.set(0, arrayStr2[1]);
+                } else {
+                    String str = arrayStr2[1].toLowerCase().replace(brand, "");
+                    paramsForRequest.set(0, str);
+                }
+
+                for (String s: Constants.listForBugs){
+                    if (title.contains(s)){
+                        paramsForRequest.add(s);
+                    }
                 }
                 break;
         }
@@ -344,7 +441,7 @@ public class ParserWildBer {
 
     private static String getProductModelFromTitle(String title) {
 
-        String[] strBuf1 = title.split("/");
+        String[] strBuf1 = title.split("/", 2);
         String brand = strBuf1[0].toLowerCase().trim();
 
         String[] strBuf2 = strBuf1[1].trim().split(",");
@@ -370,22 +467,38 @@ public class ParserWildBer {
             }
         }
         if (model.equals("")){
-            if (strBuf2[0].toLowerCase().contains(brand)){
-                model = strBuf2[1].trim();
+            for (int i = 0; i < strBuf2.length; i++){
+                if (strBuf2[i].toLowerCase().contains(brand)){
+                    model = strBuf2[i + 1].trim();
+                }
             }
         }
+        if (model.equals("")){
+            char[] strBrandToArray = brand.toCharArray();
+            for (String s2: strBuf2){
+                String[] strBuf3 = s2.toLowerCase().trim().split(" ");
+                for (String s3: strBuf3){
+                    if (s3.startsWith(String.valueOf(strBrandToArray[0])) && s3.contains("-")){
+                        model = s3;
+                    }
+                }
+            }
+        }
+
         return model.replaceAll("()", "").trim();
     }
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     private static List<Product> getCatalogProducts(String query, String brand) {
         List<Product> productList;
-        Document page = null;
+        Document page;
         page = getPageForSearchQuery(query);
 
         //получение бренда, артикула, имени товара, ссылки на страницу товара, ссылки на картинкау товара, спец-акции, рейтинга
         productList = getCatalogProductsForRequestPage(page, brand);
-
+        if (productList.size() == 0){
+            return productList;
+        }
         //получение цены и скидок через json
         HttpUrlConnectionHandler.getCatalog(productList, query);
 
@@ -422,9 +535,11 @@ public class ParserWildBer {
 
     private static List<Product> getCatalogProductsForRequestPage(Document page, String myBrand){
         List<Product> productList = new ArrayList<>();
-        Product product = null;
         if (page != null){
             Element catalog = page.select(Constants.ELEMENT_WITH_CATALOG).first();
+            if (catalog == null){
+                return productList;
+            }
             Elements goods = catalog.select(Constants.ELEMENT_WITH_PRODUCT);
             int countSearch = goods.size();
             for (Element good : goods) {
