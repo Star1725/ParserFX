@@ -1,3 +1,5 @@
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -57,7 +59,7 @@ public class ParserWildBer {
     private static final String CATEGORY_40 = "Насадки для швабр";
 
 
-    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, Set myVendorCodes){
+    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, Set myVendorCodes, WebClient webClient){
         List<Product> productList;
         Product product = new Product(myVendorCodeFromRequest,
                 "-",
@@ -212,8 +214,8 @@ public class ParserWildBer {
 
         assert product != null;
         //устанавливаем имя продовца
-//        String sellerName = getSellerName(product.getCompetitorVendorCode());
-//        product.setCompetitorName(sellerName);
+        String sellerName = getSellerName(product.getCompetitorVendorCode(), webClient);
+        product.setCompetitorName(sellerName);
 
         //устанавливаем мою спецакцию, если она есть
         product.setMySpecAction(getMySpecAction(page));
@@ -270,10 +272,20 @@ public class ParserWildBer {
         }
     }
 
-    private String getSellerName(String vendorCode){
-        Document page = getDocumentPageForVendorCode(vendorCode);
-        Element elementSellerName = page.select("span[class=seller__text]").first();
-        return elementSellerName.text();
+    private String getSellerName(String vendorCode, WebClient webClient){
+//        Document page = getDocumentPageForVendorCode(vendorCode);
+        String url = getString("https://www.wildberries.ru/catalog/", vendorCode, "/detail.aspx?targetUrl=SP");
+        HtmlPage page = null;
+        try {
+            page = webClient.getPage(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //Element elementSellerName = page.select("span[class=seller__text]").first();
+
+        String sellerName = "-";
+        //return elementSellerName.text();
+        return sellerName;
     }
 
     //метод читающий на странице продукта характеристики, по которым будет осуществляться запрос на поиск аналогов!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

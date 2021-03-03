@@ -1,3 +1,5 @@
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
 import controllers.Controller;
 import javafx.application.Application;
 import javafx.concurrent.WorkerStateEvent;
@@ -17,6 +19,7 @@ import java.util.concurrent.*;
 public class Main extends Application implements Controller.ActionInController {
 
     private Object mon = new Object();
+    final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_78);
 
     private Controller controller;
     private static double preFld;
@@ -128,7 +131,7 @@ public class Main extends Application implements Controller.ActionInController {
                     String category = entry.getValue().getCategory();
                     String brand = entry.getValue().getMyBrand();
 
-                    myCalls.add(new MyCall(key, category, brand, setMyVendorCodes));
+                    myCalls.add(new MyCall(key, category, brand, setMyVendorCodes, webClient));
                 }
 
                 List<Future<Product>> futureList = new ArrayList<>();
@@ -271,17 +274,19 @@ public class Main extends Application implements Controller.ActionInController {
         String category;
         String brand;
         Set myVendorCodes;
+        WebClient webClient;
 
-        public MyCall(String key, String category, String brand, Set myVendorCodes) {
+        public MyCall(String key, String category, String brand, Set myVendorCodes, WebClient webClient) {
             this.key = key;
             this.category = category;
             this.brand = brand;
             this.myVendorCodes = myVendorCodes;
+            this.webClient = webClient;
         }
 
         @Override
         public Product call() throws Exception {
-            return parserWildBer.getProduct(key, category, brand, myVendorCodes);
+            return parserWildBer.getProduct(key, category, brand, myVendorCodes, webClient);
         }
     }
 }
