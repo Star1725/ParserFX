@@ -1,5 +1,8 @@
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -272,20 +275,23 @@ public class ParserWildBer {
         }
     }
 
-    private String getSellerName(String vendorCode, WebClient webClient){
+    private synchronized String getSellerName(String vendorCode, WebClient webClient){
 //        Document page = getDocumentPageForVendorCode(vendorCode);
         String url = getString("https://www.wildberries.ru/catalog/", vendorCode, "/detail.aspx?targetUrl=SP");
         HtmlPage page = null;
         try {
+            webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setJavaScriptEnabled(true);
+
             page = webClient.getPage(url);
         } catch (IOException e) {
             e.printStackTrace();
         }
         //Element elementSellerName = page.select("span[class=seller__text]").first();
-
-        String sellerName = "-";
-        //return elementSellerName.text();
-        return sellerName;
+        webClient.waitForBackgroundJavaScript(5000);
+        //String pageString = page.asXml();
+        HtmlDivision spanSellerName = (HtmlDivision) page.getByXPath("//div[@class='seller']").get(0);
+        return spanSellerName.asText();
     }
 
     //метод читающий на странице продукта характеристики, по которым будет осуществляться запрос на поиск аналогов!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

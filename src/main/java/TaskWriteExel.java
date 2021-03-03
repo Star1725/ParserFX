@@ -87,51 +87,59 @@ public class TaskWriteExel extends Task<File> {
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(9);
-        headerCell.setCellValue("Мои базовая цена(до скидки)");
+        headerCell.setCellValue("Имя продавца");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(10);
-        headerCell.setCellValue("Моя тек. роз. цена");
+        headerCell.setCellValue("Участие в акции");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(11);
-        headerCell.setCellValue("Спец-цена");
+        headerCell.setCellValue("Мои базовая цена(до скидки)");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(12);
-        headerCell.setCellValue("Комиссия (%)");
+        headerCell.setCellValue("Моя тек. роз. цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(13);
-        headerCell.setCellValue("Логистика");
+        headerCell.setCellValue("Спец-цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(14);
-        headerCell.setCellValue("Наша пороговая цена");
+        headerCell.setCellValue("Комиссия (%)");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(15);
-        headerCell.setCellValue("Тек. роз. цена конкур.");
+        headerCell.setCellValue("Логистика");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(16);
-        headerCell.setCellValue("Реком. роз. цена");
+        headerCell.setCellValue("Наша пороговая цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(17);
-        headerCell.setCellValue("В случае повышения - новая реком. розн. цена (до скидки)");
+        headerCell.setCellValue("Тек. роз. цена конкур.");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(18);
-        headerCell.setCellValue("Реком. согласованная скидка");
+        headerCell.setCellValue("Реком. роз. цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(19);
+        headerCell.setCellValue("В случае повышения - новая реком. розн. цена (до скидки)");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(20);
+        headerCell.setCellValue("Реком. согласованная скидка");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(21);
         headerCell.setCellValue("Реком. новая скидка по промокоду");
         headerCell.setCellStyle(headerStyle);
 
         //настройка автоширины ячейки по содержимому
-        for (int columnIndex = 0; columnIndex < 20; columnIndex++) {
+        for (int columnIndex = 0; columnIndex < 22; columnIndex++) {
             sheet.autoSizeColumn(columnIndex);
         }
 
@@ -263,36 +271,46 @@ public class TaskWriteExel extends Task<File> {
                 cell.setCellStyle(style);
             }
 
-            //Моя базовая цена
+            //Имя продавца
             cell = row.createCell(9);
+            cell.setCellValue(productArrayList.get(i).getCompetitorName());
+            cell.setCellStyle(styleRedCell);
+
+            //Спец-акция
+            cell = row.createCell(10);
+            cell.setCellValue(productArrayList.get(i).getMySpecAction());
+            cell.setCellStyle(styleRedCell);
+
+            //Моя базовая цена
+            cell = row.createCell(11);
             int myPriceU = Math.round(productArrayList.get(i).getMyPriceU() / 100);
             cell.setCellValue(myPriceU);
             cell.setCellStyle(style);
 
             //Моя тек. роз. цена
-            cell = row.createCell(10);
+            cell = row.createCell(12);
             int myLowerPrice = Math.round(productArrayList.get(i).getMyLowerPriceU() / 100);
             cell.setCellValue(myLowerPrice);
             cell.setCellStyle(style);
 
             //Спец-цена
-            cell = row.createCell(11);
+            cell = row.createCell(13);
             int specPrice = productArrayList.get(i).getSpecPrice() / 100;
             cell.setCellValue(specPrice);
             cell.setCellStyle(style);
 
             //Коммисия
-            cell = row.createCell(12);
+            cell = row.createCell(14);
             cell.setCellValue("15%");
             cell.setCellStyle(style);
 
             //Логистика
-            cell = row.createCell(13);
+            cell = row.createCell(15);
             cell.setCellValue("33 р");
             cell.setCellStyle(style);
 
             //Наша пороговая цена
-            cell = row.createCell(14);
+            cell = row.createCell(16);
             if (productArrayList.get(i).getSpecPrice() == 0){
                 cell.setCellValue("-");
             } else {
@@ -301,7 +319,7 @@ public class TaskWriteExel extends Task<File> {
             }
 
             //Тек. роз. цена конкурента
-            cell = row.createCell(15);
+            cell = row.createCell(17);
             int competitorLowerPrice = Math.round(productArrayList.get(i).getLowerPriceU() / 100);
             cell.setCellValue(competitorLowerPrice);
             if (competitorLowerPrice == myLowerPrice){
@@ -314,7 +332,7 @@ public class TaskWriteExel extends Task<File> {
 
 
             //Рекомендуемая роз. цена
-            cell = row.createCell(16);
+            cell = row.createCell(18);
 //            if (isMyAnalog){
 //                cell.setCellValue(Math.round(productArrayList.get(i).getLowerPriceU() / 100));
 //            } else {
@@ -323,12 +341,12 @@ public class TaskWriteExel extends Task<File> {
             cell.setCellStyle(style);
 
             //В случае повышения - новая реком. розн. цена (до скидки)
-            cell = row.createCell(17);
+            cell = row.createCell(19);
             cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU()/100));
             cell.setCellStyle(style);
 
             //"Реком. согласованная скидка"
-            cell = row.createCell(18);
+            cell = row.createCell(20);
 //            if (isMyAnalog){
 //                cell.setCellValue((productArrayList.get(i).getMyBasicSale()));
 //            } else {
@@ -337,7 +355,7 @@ public class TaskWriteExel extends Task<File> {
             cell.setCellStyle(style);
 
             //"Реком. новая скидка по промокоду"
-            cell = row.createCell(19);
+            cell = row.createCell(21);
 //            if (isMyAnalog){
 //                cell.setCellValue((productArrayList.get(i).getMyPromoSale()));
 //            } else {

@@ -27,7 +27,8 @@ public class Constants {
     public static final String ELEMENT_WITH_REF_FOR_IMAGE = "img[class=thumbnail]";
     public static final String ATTRIBUTE_WITH_REF_FOR_IMAGE_1 = "src";
     public static final String ATTRIBUTE_WITH_REF_FOR_IMAGE_2 = "data-original";
-    public static final String ELEMENT_WITH_SPEC_ACTION = "span[class=spec-actions-catalog i-spec-action]";
+    //public static final String ELEMENT_WITH_SPEC_ACTION = "span[class=spec-actions-catalog i-spec-action]";
+    public static final String ELEMENT_WITH_SPEC_ACTION = "a[class=spec-actions-link]";//03.03.21
     public static final String ELEMENT_WITH_BRAND_NAME = "strong[class=brand-name c-text-sm]";
 
     public static final String URL_FOR_JSON = "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?spp=0&regions=69,58,64,40,48,70,1,38,4,30,22,66&" +

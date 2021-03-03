@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 public class Main extends Application implements Controller.ActionInController {
 
     private Object mon = new Object();
-    final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_78);
+    final WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
     private Controller controller;
     private static double preFld;
@@ -155,6 +155,7 @@ public class Main extends Application implements Controller.ActionInController {
                         String competitorProductName = resultProduct.getCompetitorProductName();
                         String competitorRefForPage = resultProduct.getCompetitorRefForPage();
                         String competitorRefForImage = resultProduct.getCompetitorRefForImage();
+                        String competitorName = resultProduct.getCompetitorName();
                         String queryForSearch = resultProduct.getQueryForSearch();
                         int countSearch = resultProduct.getCountSearch();
                         int competitorPriceU = resultProduct.getCompetitorPriceU();
@@ -175,6 +176,7 @@ public class Main extends Application implements Controller.ActionInController {
                         resultProductTemp.setCompetitorProductName(competitorProductName);
                         resultProductTemp.setCompetitorRefForPage(competitorRefForPage);
                         resultProductTemp.setCompetitorRefForImage(competitorRefForImage);
+                        resultProductTemp.setCompetitorName(competitorName);
                         resultProductTemp.setQueryForSearch(queryForSearch);
                         resultProductTemp.setCountSearch(countSearch);
                         resultProductTemp.setCompetitorPriceU(competitorPriceU);
