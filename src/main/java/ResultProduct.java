@@ -16,7 +16,7 @@ public class ResultProduct extends Product{
     private int myPromoSale;
     private int myPromoPriceU;
 
-    private int recommendedPromoPriceU;
+    private int recommendedMyLowerPrice;
     private int recommendedSale;
     private int recommendedPromoSale;
     private int recommendedPriceU;
@@ -62,7 +62,7 @@ public class ResultProduct extends Product{
             int myBasicPriceU,
             int myPromoSale,
             int myPromoPriceU,
-            int recommendedPromoPriceU,
+            int recommendedMyLowerPrice,
             int recommendedSale,
             int recommendedPromoSale,
             int recommendedPriceU,
@@ -104,7 +104,7 @@ public class ResultProduct extends Product{
         this.myBasicPriceU = myBasicPriceU;
         this.myPromoSale = myPromoSale;
         this.myPromoPriceU = myPromoPriceU;
-        this.recommendedPromoPriceU = recommendedPromoPriceU;
+        this.recommendedMyLowerPrice = recommendedMyLowerPrice;
         this.recommendedSale = recommendedSale;
         this.recommendedPromoSale = recommendedPromoSale;
         this.recommendedPriceU = recommendedPriceU;
@@ -122,7 +122,7 @@ public class ResultProduct extends Product{
             int myBasicPriceU,
             int myPromoSale,
             int myPromoPriceU,
-            int recommendedPromoPriceU,
+            int recommendedMyLowerPrice,
             int recommendedSale,
             int recommendedPromoSale,
             int recommendedPriceU
@@ -138,7 +138,7 @@ public class ResultProduct extends Product{
         this.myBasicPriceU = myBasicPriceU;
         this.myPromoSale = myPromoSale;
         this.myPromoPriceU = myPromoPriceU;
-        this.recommendedPromoPriceU = recommendedPromoPriceU;
+        this.recommendedMyLowerPrice = recommendedMyLowerPrice;
         this.recommendedSale = recommendedSale;
         this.recommendedPromoSale = recommendedPromoSale;
         this.recommendedPriceU = recommendedPriceU;

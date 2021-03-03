@@ -6,6 +6,8 @@ import java.util.*;
 
 public class TaskReadExcel extends Task<Map> {
 
+    private int countRows;
+
     public TaskReadExcel(List<File> files) {
         this.files = files;
     }
@@ -68,7 +70,7 @@ public class TaskReadExcel extends Task<Map> {
                 //получаем артикул поставщика (code_1C)!!!
                 cell = row.getCell(3);
                 String buffStr = cell.getRichStringCellValue().getString();
-                String code_1C = "0";
+                String code_1C = "-";
                 if (buffStr.length() == 24) {
                     code_1C = buffStr.substring(13);
                 } else if (buffStr.length() == 22 && (buffStr.startsWith("AA-") || buffStr.startsWith("RD-"))){
@@ -76,8 +78,6 @@ public class TaskReadExcel extends Task<Map> {
                 } else if (buffStr.startsWith("AA-") || buffStr.startsWith("RD-")){
                     code_1C = buffStr.substring(0, 11);
                 }
-
-
 
                 //получаем артикл wildberies
                 cell = row.getCell(4);
@@ -137,6 +137,7 @@ public class TaskReadExcel extends Task<Map> {
                 ));
 
                 this.updateProgress(i, countFull);
+                countRows = i;
                 i++;
             }
 
@@ -188,7 +189,7 @@ public class TaskReadExcel extends Task<Map> {
             return resultProductHashMap;
         }
         catch (Exception e) {
-            System.out.println("ошибка при чтении файла .xls");
+            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countRows);
             return null;
         }
     }

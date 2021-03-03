@@ -33,7 +33,7 @@ public class Product {
 
     private String competitorName;
 
-    public int getLowerPriceU(){
+    public int getCompetitorLowerPriceU(){
         if (this.competitorPromoPriceU != 0){
             return competitorPromoPriceU;
         } else if (this.competitorBasicPriceU != 0){

@@ -194,57 +194,34 @@ public class Main extends Application implements Controller.ActionInController {
 
                         //если аналог это мой товар, то всё оставляю без изменений
                         if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-") || setMyVendorCodes.contains(competitorVendorCode)) {
-                            resultProductTemp.setRecommendedPromoPriceU(resultProductTemp.getMyLowerPriceU());
+                            resultProductTemp.setRecommendedMyLowerPrice(resultProductTemp.getMyLowerPriceU());
                             resultProductTemp.setRecommendedSale(resultProductTemp.getMyBasicSale());
                             resultProductTemp.setRecommendedPromoSale(resultProductTemp.getMyPromoSale());
 
                         }
-                        //иначе
-                        //если розничная цена конкурента меньше моей розничной цены
-                        else if (resultProductTemp.getLowerPriceU() < resultProductTemp.getMyLowerPriceU()) {
-                            //расчитываем рекомендованню розничную цену с учётом процента демпинга
-                            int recommendedPriceU = (int) Math.round(resultProductTemp.getLowerPriceU() * present);
-                            resultProductTemp.setRecommendedPromoPriceU(recommendedPriceU);
-                            //и на основании этой рекомендованной цены расчитываем базоваю скидку и промо-скидку
-                            //если у моего товара нет ни базовой ни промо скидки или есть только промо скидка
-                            if ((resultProductTemp.getMyBasicSale() == 0 & resultProductTemp.getMyPromoSale() == 0) || (resultProductTemp.getMyBasicSale() == 0 & resultProductTemp.getMyPromoSale() != 0)) {
-                                //пробуем базоваю скидку = 25%
-                                int recommendedSale = 25;
-                                //и расчитываем промо скидку
-                                int recommendedPromoSale = 100 - (int) Math.round((double) resultProductTemp.getRecommendedPromoPriceU() / (resultProductTemp.getMyPriceU() * 0.75) * 100);
-                                //если промо скидка получается отрицательной
-                                if (recommendedPromoSale < 0) {
-                                    //то расчитываем только базоваю скидку
-                                    recommendedSale = 100 - (int) Math.round((double) resultProductTemp.getRecommendedPromoPriceU() / (resultProductTemp.getMyPriceU()) * 100);
-                                    //и устанавливаем её в качестве рекомендованной базовой скидки
-                                    resultProductTemp.setRecommendedSale(recommendedSale);
-                                    //а рекомендованную промо устанавливаем в 0
-                                    resultProductTemp.setRecommendedPromoSale(0);
-                                    //иначе устанавливаем рекомендованную базоваю в 25% и рекомендованную расчитанную промо
-                                } else {
-                                    resultProductTemp.setRecommendedSale(recommendedSale);
-                                    resultProductTemp.setRecommendedPromoSale(recommendedPromoSale);
-                                }
-                                //если у моего товара есть только базовая скидка или есть и базовая и промо
-                            } else if ((resultProductTemp.getMyBasicSale() != 0 & resultProductTemp.getMyPromoSale() == 0) || (resultProductTemp.getMyBasicSale() != 0 & resultProductTemp.getMyPromoSale() != 0)) {
-                                //установливаем рекомендованную базоваю без изменений
-                                resultProductTemp.setRecommendedSale(resultProductTemp.getMyBasicSale());
-                                //а рекомендованную промо расчитываем
-                                resultProductTemp.setRecommendedPromoSale((100 - (int) Math.round((double) resultProductTemp.getRecommendedPromoPriceU() / resultProductTemp.getMyBasicPriceU() * 100)));
-                            }
-                        }
-                        //иначе (если розничная цена конкурента больше моей розничной цены) --- Стратегия на повышение
+
                         else {
                             //расчитываем рекомендованню розничную цену с учётом процента демпинга
-                            int recommendedPriceU = (int) Math.round(resultProductTemp.getLowerPriceU() * present);
-                            resultProductTemp.setRecommendedPromoPriceU(recommendedPriceU);
-                            //устанавливаем рекомендованную базоваю скидку = 25% и промо в 10%
-                            //и на основании этих данных расчитывае новую рекомендованнюую цену до скидки
-                            int basicPriceU = Math.toIntExact(Math.round(recommendedPriceU / (0.9)));
-                            int priceU = Math.toIntExact(Math.round(basicPriceU / (0.75)));
-                            resultProductTemp.setRecommendedPriceU(priceU);
-                            resultProductTemp.setRecommendedSale(25);
-                            resultProductTemp.setRecommendedPromoSale(10);
+                            int recommendedMyLowerPrice = (int) Math.round(resultProductTemp.getCompetitorLowerPriceU() * present);
+                            resultProductTemp.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
+                            //и на основании этой рекомендованной цены расчитываем базоваю скидку
+                            int newMyBasicSale = 100 - (int) Math.round((double) recommendedMyLowerPrice/resultProductTemp.getMyPriceU()*100);
+                            //если новая базовая скидка меньше 3%
+                            if (newMyBasicSale < 3){
+                                newMyBasicSale = 3;
+                                resultProductTemp.setRecommendedSale(newMyBasicSale);//устанавливаем скидку в 3%
+                                int newRecomendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.97);//расчитываем новую розничную цену до скидки
+                                resultProductTemp.setRecommendedPriceU(newRecomendPriceU);//устанавливаем её
+                            } else
+                                //если новая базовая скидка больше 90%
+                                if (newMyBasicSale > 90){
+                                newMyBasicSale = 90;
+                                resultProductTemp.setRecommendedSale(newMyBasicSale);//устанавливаем скидку в 90%
+                                int newRecomendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.1);//расчитываем новую розничную цену до скидки
+                                resultProductTemp.setRecommendedPriceU(newRecomendPriceU);//устанавливаем её
+                            } else {
+                                resultProductTemp.setRecommendedSale(newMyBasicSale);
+                            }
                         }
 
                         resultMap.put(resultProductTemp.getMyVendorCodeForWildberies(), resultProductTemp);

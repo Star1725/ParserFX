@@ -165,10 +165,17 @@ public class TaskWriteExel extends Task<File> {
         styleMyProductAnalog.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         styleMyProductAnalog.setFont(font2);
 
-        //настройка стиля для ячейки с ошибкой
+        //настройка стиля для розовой ячейки
+        CellStyle styleRoseCell = workbook.createCellStyle();
+        styleRoseCell.setWrapText(true);
+        styleRoseCell.setFillForegroundColor(IndexedColors.fromInt(45).getIndex());
+        styleRoseCell.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        styleRoseCell.setFont(font2);
+
+        //настройка стиля для красной ячейки
         CellStyle styleRedCell = workbook.createCellStyle();
         styleRedCell.setWrapText(true);
-        styleRedCell.setFillForegroundColor(IndexedColors.fromInt(45).getIndex());
+        styleRedCell.setFillForegroundColor(IndexedColors.RED.getIndex());
         styleRedCell.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         styleRedCell.setFont(font2);
 
@@ -200,10 +207,14 @@ public class TaskWriteExel extends Task<File> {
 
             //Категория товара
             cell = row.createCell(1);
-            cell.setCellValue(productArrayList.get(i).getCategory());
+            String category = productArrayList.get(i).getCategory();
+            cell.setCellValue(category);
             cell.setCellStyle(style);
 
 //Мой артикул поставщика(по 1С)
+            cell = row.createCell(2);
+            cell.setCellValue(productArrayList.get(i).getCode_1C());
+            cell.setCellStyle(style);
 
             //Мой артикул по Wildberies
             cell = row.createCell(3);
@@ -215,7 +226,6 @@ public class TaskWriteExel extends Task<File> {
             } else {
                 cell.setCellStyle(style);
             }
-
 
             //моё наименование товара
             cell = row.createCell(4);
@@ -274,12 +284,18 @@ public class TaskWriteExel extends Task<File> {
             //Имя продавца
             cell = row.createCell(9);
             cell.setCellValue(productArrayList.get(i).getCompetitorName());
-            cell.setCellStyle(styleRedCell);
+            cell.setCellStyle(style);
 
             //Спец-акция
             cell = row.createCell(10);
-            cell.setCellValue(productArrayList.get(i).getMySpecAction());
-            cell.setCellStyle(styleRedCell);
+            String specAction = productArrayList.get(i).getMySpecAction();
+            if (specAction.equals(Constants.NOT_FOUND_HTML_ITEM)){
+                cell.setCellValue("-");
+                cell.setCellStyle(style);
+            } else {
+                cell.setCellValue(specAction);
+                cell.setCellStyle(styleRedCell);
+            }
 
             //Моя базовая цена
             cell = row.createCell(11);
@@ -301,7 +317,64 @@ public class TaskWriteExel extends Task<File> {
 
             //Коммисия
             cell = row.createCell(14);
-            cell.setCellValue("15%");
+            int commissionPercentage = 0;
+            switch (category){
+                case Constants.CATEGORY_1:
+                    commissionPercentage = 3;
+                    break;
+
+                case Constants.CATEGORY_5 :
+                case Constants.CATEGORY_13:
+                case Constants.CATEGORY_18:
+                    commissionPercentage = 5;
+                    break;
+
+                case Constants.CATEGORY_2 :
+                case Constants.CATEGORY_15:
+                    commissionPercentage = 7;
+                    break;
+
+                case Constants.CATEGORY_3 :
+                case Constants.CATEGORY_6 :
+                case Constants.CATEGORY_7 :
+                case Constants.CATEGORY_8 :
+                case Constants.CATEGORY_9 :
+                case Constants.CATEGORY_11:
+                case Constants.CATEGORY_12:
+                case Constants.CATEGORY_14:
+                case Constants.CATEGORY_16:
+                case Constants.CATEGORY_17:
+                case Constants.CATEGORY_24:
+                case Constants.CATEGORY_25:
+                case Constants.CATEGORY_26:
+                case Constants.CATEGORY_27:
+                case Constants.CATEGORY_28:
+                case Constants.CATEGORY_29:
+                case Constants.CATEGORY_30:
+                case Constants.CATEGORY_32:
+                case Constants.CATEGORY_33:
+                case Constants.CATEGORY_35:
+                case Constants.CATEGORY_36:
+                case Constants.CATEGORY_37:
+                case Constants.CATEGORY_38:
+                case Constants.CATEGORY_39:
+                case Constants.CATEGORY_40:
+                    commissionPercentage = 12;
+                    break;
+
+                case Constants.CATEGORY_4 :
+                case Constants.CATEGORY_10:
+                case Constants.CATEGORY_19:
+                case Constants.CATEGORY_20:
+                case Constants.CATEGORY_21:
+                case Constants.CATEGORY_22:
+                case Constants.CATEGORY_23:
+                case Constants.CATEGORY_31:
+                case Constants.CATEGORY_34:
+                    commissionPercentage = 15;
+                    break;
+            }
+            cell.setCellValue(commissionPercentage + "%");
             cell.setCellStyle(style);
 
             //Логистика
@@ -314,29 +387,28 @@ public class TaskWriteExel extends Task<File> {
             if (productArrayList.get(i).getSpecPrice() == 0){
                 cell.setCellValue("-");
             } else {
-                cell.setCellValue(specPrice + specPrice * 0.15 + 33);
+                cell.setCellValue(specPrice + specPrice * commissionPercentage/100 + 33);
                 cell.setCellStyle(style);
             }
 
             //Тек. роз. цена конкурента
             cell = row.createCell(17);
-            int competitorLowerPrice = Math.round(productArrayList.get(i).getLowerPriceU() / 100);
+            int competitorLowerPrice = Math.round(productArrayList.get(i).getCompetitorLowerPriceU() / 100);
             cell.setCellValue(competitorLowerPrice);
             if (competitorLowerPrice == myLowerPrice){
                 cell.setCellStyle(style);
             } else if (competitorLowerPrice < myLowerPrice){
-                cell.setCellStyle(styleRedCell);
+                cell.setCellStyle(styleRoseCell);
             } else {
                 cell.setCellStyle(styleGreenCell);
             }
-
 
             //Рекомендуемая роз. цена
             cell = row.createCell(18);
 //            if (isMyAnalog){
 //                cell.setCellValue(Math.round(productArrayList.get(i).getLowerPriceU() / 100));
 //            } else {
-                cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPromoPriceU() / 100));
+                cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedMyLowerPrice() / 100));
 //            }
             cell.setCellStyle(style);
 
