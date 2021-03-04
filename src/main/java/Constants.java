@@ -48,6 +48,9 @@ public class Constants {
     public static final String CATEGORY_34 = "Сумки для ноутбуков";//15
 
 
+    public static final String CATEGORY_41 = "Молотки";//15
+
+
     public static final String MARKETPLACE = "https://www.wildberries.ru";
 
     public static final String NOT_FOUND_PAGE = "Превышено время ожидания ответа сервера либо не найдена страница товара";
@@ -101,8 +104,16 @@ public class Constants {
     public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
     public static final ArrayList<String> listForСharging = new ArrayList<>();
     public static final ArrayList<String> listForBugs = new ArrayList<>();
+    public static final ArrayList<String> listForHeadset = new ArrayList<>();
 
     static {
+        listForHeadset.add("apple");
+        listForHeadset.add("lightning");
+        //listForHeadset.add("8");
+        listForHeadset.add("pin");
+        listForHeadset.add("8-pin");
+        listForHeadset.add("type-c");
+
         listForCabel.add("aux");
         listForCabel.add("jack");
         listForCabel.add("type-c");
@@ -141,10 +152,10 @@ public class Constants {
         listForСharging.add("микро");
         listForСharging.add("Micro");
         listForСharging.add("micro");
-        listForСharging.add("USB");
+        //listForСharging.add("USB");
         listForСharging.add("Apple");
-        listForСharging.add("8");
-        listForСharging.add("pin");
+        //listForСharging.add("8");
+        //listForСharging.add("pin");
         listForСharging.add("Type-C");
 
         listForBugs.add("(S)");

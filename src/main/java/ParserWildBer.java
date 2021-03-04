@@ -118,6 +118,7 @@ public class ParserWildBer {
             case Constants.CATEGORY_22:
             case Constants.CATEGORY_34:
             case Constants.CATEGORY_35:
+            case Constants.CATEGORY_37:
             case Constants.CATEGORY_40:
                 query = brand;
                 for (String s : paramsForRequest) {
@@ -162,9 +163,10 @@ public class ParserWildBer {
             case Constants.CATEGORY_33:
 
             case Constants.CATEGORY_36:
-            case Constants.CATEGORY_37:
+
             case Constants.CATEGORY_38:
             case Constants.CATEGORY_39:
+            case Constants.CATEGORY_41:
 
                 query = brand + " " + category;
                 for (int i = 0; i < paramsForRequest.size(); i++) {
@@ -181,7 +183,7 @@ public class ParserWildBer {
         }
 
         assert product != null;
-        //устанавливаем имя продовца
+//        //устанавливаем имя продовца
 //        String sellerName = getSellerName(product.getCompetitorVendorCode(), webClient);
 //        product.setCompetitorName(sellerName);
         product.setCompetitorName("-");
@@ -317,8 +319,8 @@ public class ParserWildBer {
 
             case Constants.CATEGORY_3:
             case Constants.CATEGORY_12:
-                for (String type : Constants.listForCabel) {
-                    if (title.contains(type)) {
+                for (String type : Constants.listForHeadset) {
+                    if (title.toLowerCase().contains(type)) {
                         paramsForRequest.add(type);
                     }
                 }

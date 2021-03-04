@@ -412,7 +412,7 @@ public class TaskWriteExel extends Task<File> {
 //            }
             cell.setCellStyle(style);
 
-            //В случае повышения - новая реком. розн. цена (до скидки)
+            //Если баз. скидка < 3 или > 90%, то новая реком. розн. цена (до скидки)
             cell = row.createCell(19);
             cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU()/100));
             cell.setCellStyle(style);
