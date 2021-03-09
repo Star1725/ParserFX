@@ -20,12 +20,14 @@
       <path>
         <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="BRANCH:branch_for_SpecPrice" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:master" type="e8cecc67:BranchNodeDescriptor" />
       </path>
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="commit" />
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="commit">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
     <list id="1019f6b8-5348-4ab5-b739-b8eb41122888" name="Revert &quot;версия 1.1&quot;" comment="Revert &quot;версия 1.1&quot;&#10;&#10;This reverts commit 1e6a163f" />
     <list id="7c07d6c2-34ea-49e6-96c6-03e9eb23df85" name="релизная версия 1.0.3 - отрабатывает все категории" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -89,7 +91,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="branch_for_SpecPrice" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -528,7 +530,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="branch_for_SpecPrice" />
+                        <option value="master" />
                       </list>
                     </value>
                   </entry>
@@ -599,10 +601,10 @@
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1739.939@0.0.1739.939" timestamp="1614764209564" />
-    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2" timestamp="1614840744501">
+    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2" timestamp="1615285781174">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2/0.0.1739.939@0.0.1739.939" timestamp="1614840744501" />
+    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2/0.0.1739.939@0.0.1739.939" timestamp="1615285781174" />
     <state width="534" height="466" key="DebuggerActiveHint" timestamp="1614213235691">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
@@ -611,34 +613,34 @@
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="68" y="74" width="1553" height="754" key="DiffContextDialog/0.0.1739.939@0.0.1739.939" timestamp="1614753538436" />
-    <state x="650" y="225" key="FileChooserDialogImpl" timestamp="1614856185385">
+    <state x="650" y="225" key="FileChooserDialogImpl" timestamp="1615286036063">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="650" y="225" key="FileChooserDialogImpl/0.0.1739.939@0.0.1739.939" timestamp="1614856185385" />
+    <state x="650" y="225" key="FileChooserDialogImpl/0.0.1739.939@0.0.1739.939" timestamp="1615286036063" />
     <state x="749" y="368" key="Github.ShareDialog" timestamp="1613639192275">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="749" y="368" key="Github.ShareDialog/0.0.1739.939@0.0.1739.939" timestamp="1613639192275" />
-    <state width="1696" height="205" key="GridCell.Tab.0.bottom" timestamp="1614856280954">
+    <state width="1696" height="359" key="GridCell.Tab.0.bottom" timestamp="1615285960660">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.bottom/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="205" key="GridCell.Tab.0.bottom/0.0.1739.939@0.0.1739.939" timestamp="1614856280954" />
-    <state width="1696" height="205" key="GridCell.Tab.0.center" timestamp="1614856280954">
+    <state width="1696" height="359" key="GridCell.Tab.0.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615285960660" />
+    <state width="1696" height="359" key="GridCell.Tab.0.center" timestamp="1615285960659">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.center/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="205" key="GridCell.Tab.0.center/0.0.1739.939@0.0.1739.939" timestamp="1614856280954" />
-    <state width="1696" height="205" key="GridCell.Tab.0.left" timestamp="1614856280953">
+    <state width="1696" height="359" key="GridCell.Tab.0.center/0.0.1739.939@0.0.1739.939" timestamp="1615285960659" />
+    <state width="1696" height="359" key="GridCell.Tab.0.left" timestamp="1615285960659">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.left/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="205" key="GridCell.Tab.0.left/0.0.1739.939@0.0.1739.939" timestamp="1614856280953" />
-    <state width="1696" height="205" key="GridCell.Tab.0.right" timestamp="1614856280954">
+    <state width="1696" height="359" key="GridCell.Tab.0.left/0.0.1739.939@0.0.1739.939" timestamp="1615285960659" />
+    <state width="1696" height="359" key="GridCell.Tab.0.right" timestamp="1615285960659">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.right/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="205" key="GridCell.Tab.0.right/0.0.1739.939@0.0.1739.939" timestamp="1614856280954" />
+    <state width="1696" height="359" key="GridCell.Tab.0.right/0.0.1739.939@0.0.1739.939" timestamp="1615285960659" />
     <state width="532" height="259" key="GridCell.Tab.1.bottom" timestamp="1614855700954">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
@@ -659,10 +661,10 @@
     </state>
     <state width="1696" height="859" key="GridCell.Tab.1.right/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
     <state width="532" height="259" key="GridCell.Tab.1.right/0.0.1739.939@0.0.1739.939" timestamp="1614855700954" />
-    <state x="226" y="20" key="MergeDialog" timestamp="1614346417414">
+    <state x="226" y="20" key="MergeDialog" timestamp="1615285983415">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="226" y="20" key="MergeDialog/0.0.1739.939@0.0.1739.939" timestamp="1614346417414" />
+    <state x="226" y="20" key="MergeDialog/0.0.1739.939@0.0.1739.939" timestamp="1615285983415" />
     <state x="509" y="232" key="MultipleFileMergeDialog" timestamp="1614346419429">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
@@ -707,94 +709,18 @@
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="582" y="69" width="575" height="801" key="find.popup/0.0.1739.939@0.0.1739.939" timestamp="1614527496927" />
-    <state x="652" y="183" key="git4idea.branch.GitSmartOperationDialog" timestamp="1614856057595">
+    <state x="652" y="183" key="git4idea.branch.GitSmartOperationDialog" timestamp="1615286056703">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="652" y="183" key="git4idea.branch.GitSmartOperationDialog/0.0.1739.939@0.0.1739.939" timestamp="1614856057595" />
-    <state x="77" y="39" width="1553" height="754" key="git4idea.log.GitShowExternalLogAction" timestamp="1614856392100">
+    <state x="652" y="183" key="git4idea.branch.GitSmartOperationDialog/0.0.1739.939@0.0.1739.939" timestamp="1615286056703" />
+    <state x="77" y="39" width="1553" height="754" key="git4idea.log.GitShowExternalLogAction" timestamp="1615286085405">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="77" y="39" width="1553" height="754" key="git4idea.log.GitShowExternalLogAction/0.0.1739.939@0.0.1739.939" timestamp="1614856392100" />
+    <state x="77" y="39" width="1553" height="754" key="git4idea.log.GitShowExternalLogAction/0.0.1739.939@0.0.1739.939" timestamp="1615286085405" />
     <state x="527" y="216" key="run.anything.popup" timestamp="1613904786316">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="527" y="216" key="run.anything.popup/0.0.1739.939@0.0.1739.939" timestamp="1613904786316" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>208</line>
-          <option name="timeStamp" value="196" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>370</line>
-          <option name="timeStamp" value="200" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>187</line>
-          <option name="timeStamp" value="206" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/Main.java</url>
-          <line>202</line>
-          <option name="timeStamp" value="207" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/Main.java</url>
-          <line>195</line>
-          <option name="timeStamp" value="208" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/TaskWriteExel.java</url>
-          <line>203</line>
-          <option name="timeStamp" value="209" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>300</line>
-          <option name="timeStamp" value="212" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>281</line>
-          <option name="timeStamp" value="213" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>429</line>
-          <option name="timeStamp" value="215" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>450</line>
-          <option name="timeStamp" value="216" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>457</line>
-          <option name="timeStamp" value="217" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>468</line>
-          <option name="timeStamp" value="218" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>481</line>
-          <option name="timeStamp" value="219" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
-          <line>53</line>
-          <option name="timeStamp" value="220" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
