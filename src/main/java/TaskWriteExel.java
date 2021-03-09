@@ -312,28 +312,32 @@ public class TaskWriteExel extends Task<File> {
             //Спец-цена
             cell = row.createCell(13);
             int specPrice = productArrayList.get(i).getSpecPrice() / 100;
-            cell.setCellValue(specPrice);
-            cell.setCellStyle(style);
+            if (specPrice == 0){
+                cell.setCellValue("н/д");
+                cell.setCellStyle(style);
+            } else {
+                cell.setCellValue(specPrice);
+                cell.setCellStyle(style);
+            }
+
 
             //Коммисия
             cell = row.createCell(14);
-            int commissionPercentage = 0;
+            double commissionPercentage = 0;
             switch (category){
-                case Constants.CATEGORY_1:
-                    commissionPercentage = 3;
-                    break;
 
                 case Constants.CATEGORY_5 :
                 case Constants.CATEGORY_13:
                 case Constants.CATEGORY_18:
-                    commissionPercentage = 5;
+                    commissionPercentage = 1.05;
                     break;
 
                 case Constants.CATEGORY_2 :
                 case Constants.CATEGORY_15:
-                    commissionPercentage = 7;
+                    commissionPercentage = 1.07;
                     break;
 
+                case Constants.CATEGORY_1:
                 case Constants.CATEGORY_3 :
                 case Constants.CATEGORY_6 :
                 case Constants.CATEGORY_7 :
@@ -359,7 +363,7 @@ public class TaskWriteExel extends Task<File> {
                 case Constants.CATEGORY_38:
                 case Constants.CATEGORY_39:
                 case Constants.CATEGORY_40:
-                    commissionPercentage = 12;
+                    commissionPercentage = 1.12;
                     break;
 
                 case Constants.CATEGORY_4 :
@@ -371,10 +375,16 @@ public class TaskWriteExel extends Task<File> {
                 case Constants.CATEGORY_23:
                 case Constants.CATEGORY_31:
                 case Constants.CATEGORY_34:
-                    commissionPercentage = 15;
+                case Constants.CATEGORY_42:
+                case Constants.CATEGORY_43:
+                case Constants.CATEGORY_44:
+                case Constants.CATEGORY_45:
+                case Constants.CATEGORY_46:
+                case Constants.CATEGORY_47:
+                    commissionPercentage = 1.15;
                     break;
             }
-            cell.setCellValue(commissionPercentage + "%");
+            cell.setCellValue(commissionPercentage);
             cell.setCellStyle(style);
 
             //Логистика
@@ -387,7 +397,7 @@ public class TaskWriteExel extends Task<File> {
             if (productArrayList.get(i).getSpecPrice() == 0){
                 cell.setCellValue("-");
             } else {
-                cell.setCellValue(specPrice + specPrice * commissionPercentage/100 + 33);
+                cell.setCellValue(specPrice * commissionPercentage + 33);
                 cell.setCellStyle(style);
             }
 

@@ -2,8 +2,6 @@ import java.util.ArrayList;
 
 public class Constants {
 
-    public static final String CATEGORY_1 = "Автомобильные зарядные устройства";//3
-
     public static final String CATEGORY_5 = "Держатели в авто";//5
     public static final String CATEGORY_13 = "Пылесосы автомобильные";//5
     public static final String CATEGORY_18 = "Подставки для мобильных устройств";//5
@@ -11,6 +9,7 @@ public class Constants {
     public static final String CATEGORY_2 = "Внешние аккумуляторы";//7
     public static final String CATEGORY_15 = "Переходники";//7
 
+    public static final String CATEGORY_1 = "Автомобильные зарядные устройства";//12
     public static final String CATEGORY_3 = "Гарнитуры";//12
     public static final String CATEGORY_6 = "Зарядные устройства";//12
     public static final String CATEGORY_7 = "Защитные стекла";//12
@@ -47,8 +46,15 @@ public class Constants {
     public static final String CATEGORY_31 = "Ремешки для умных часов";//15
     public static final String CATEGORY_34 = "Сумки для ноутбуков";//15
 
-
     public static final String CATEGORY_41 = "Молотки";//15
+    public static final String CATEGORY_42 = "Облучатели-рециркуляторы";//15
+    public static final String CATEGORY_43 = "Пепельницы";//15
+    public static final String CATEGORY_44 = "Подсветка автомобильная";//15
+    public static final String CATEGORY_45 = "Подставки для бытовой техники";//15
+    public static final String CATEGORY_46 = "Ресиверы";//15
+    public static final String CATEGORY_47 = "Стилусы";//15
+    public static final String CATEGORY_48 = "Насосы автомобильные";//15
+
 
 
     public static final String MARKETPLACE = "https://www.wildberries.ru";
@@ -65,6 +71,7 @@ public class Constants {
     public static final String ELEMENT_WITH_PHOTO_MY_PRODUCT = "img[class=preview-photo j-zoom-preview]";
     public static final String ELEMENT_WITH_TITLE_MY_PRODUCT = "div[class=brand-and-name j-product-title]";
     public static final String ELEMENT_WITH_PARAMS_MY_PRODUCT = "div[class=params]";
+    public static final String ELEMENT_WITH_DESCRIPTION_MY_PRODUCT = "div[class=j-description collapsable-content description-text]";
 
     //Html элементы страницы поискового запроса аналогов
     public static final String ELEMENT_WITH_CATALOG = "div[class=catalog_main_table j-products-container]";
@@ -106,6 +113,7 @@ public class Constants {
     public static final ArrayList<String> listForBugs = new ArrayList<>();
     public static final ArrayList<String> listForHeadset = new ArrayList<>();
 
+
     static {
         listForHeadset.add("apple");
         listForHeadset.add("lightning");
@@ -113,6 +121,8 @@ public class Constants {
         listForHeadset.add("pin");
         listForHeadset.add("8-pin");
         listForHeadset.add("type-c");
+        listForHeadset.add("3,5");
+        listForHeadset.add("3.5");
 
         listForCabel.add("aux");
         listForCabel.add("jack");
@@ -140,12 +150,10 @@ public class Constants {
         listForTypeGlass.add("11D");
         listForTypeGlass.add("2.5D");
         listForTypeGlass.add("SuperD");
+        listForTypeGlass.add("Super D");
         listForTypeGlass.add("EYE");
         listForTypeGlass.add("Privacy");
 
-        listForСharging.add("с");
-        listForСharging.add("кабелем");
-        listForСharging.add("кабель");
         listForСharging.add("держателем");
         listForСharging.add("для");
         listForСharging.add("авто");

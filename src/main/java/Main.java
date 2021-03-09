@@ -191,21 +191,40 @@ public class Main extends Application implements Controller.ActionInController {
                         //установка рекомендуемой скидки и розничной цены на основании процента демпинга
 
                         double present = 1 - preFld / 100;
+                        int currentPriceU = resultProductTemp.getMyPriceU();
+                        int myCurrentLowerPriceU = resultProductTemp.getMyLowerPriceU();
+                        int myCurrentBasicSale = resultProductTemp.getMyBasicSale();
+
+                        int competitorLowerPriceU = resultProductTemp.getCompetitorLowerPriceU();
+
+                        int dumpingPresent = (int) (Math.round(100 - 100 * ((double) myCurrentLowerPriceU/competitorLowerPriceU)));
 
                         //если аналог это мой товар, то всё оставляю без изменений
-                        if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-") || setMyVendorCodes.contains(competitorVendorCode)) {
-                            resultProductTemp.setRecommendedMyLowerPrice(resultProductTemp.getMyLowerPriceU());
-                            resultProductTemp.setRecommendedSale(resultProductTemp.getMyBasicSale());
+                        if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-") || setMyVendorCodes.contains(competitorVendorCode) || (dumpingPresent == 1)){
+                            resultProductTemp.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
+                            resultProductTemp.setRecommendedSale(myCurrentBasicSale);
                             resultProductTemp.setRecommendedPromoSale(resultProductTemp.getMyPromoSale());
 
                         }
 
                         else {
                             //расчитываем рекомендованню розничную цену с учётом процента демпинга
-                            int recommendedMyLowerPrice = (int) Math.round(resultProductTemp.getCompetitorLowerPriceU() * present);
-                            resultProductTemp.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
+                            double count1 = (double) competitorLowerPriceU * present;
+                            long count2 = Math.round(count1);
+                            int count3 = (int) count2;
+                            int recommendedMyLowerPrice = count3;
                             //и на основании этой рекомендованной цены расчитываем базоваю скидку
-                            int newMyBasicSale = 100 - (int) Math.round((double) recommendedMyLowerPrice/resultProductTemp.getMyPriceU()*100);
+                            double count4 = (double) recommendedMyLowerPrice / currentPriceU * 100;
+                            long count5 = Math.round(count4);
+                            int newMyBasicSale = 100 - (int) count5 ;
+                            //проверка базовой скидки:
+                            int checkPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
+                            if (recommendedMyLowerPrice < checkPrice){
+                                newMyBasicSale = newMyBasicSale + 1;
+                            }
+                            recommendedMyLowerPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
+                            resultProductTemp.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
+
                             //если новая базовая скидка меньше 3%
                             if (newMyBasicSale < 3){
                                 newMyBasicSale = 3;
@@ -217,8 +236,8 @@ public class Main extends Application implements Controller.ActionInController {
                                 if (newMyBasicSale > 90){
                                 newMyBasicSale = 90;
                                 resultProductTemp.setRecommendedSale(newMyBasicSale);//устанавливаем скидку в 90%
-                                int newRecomendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.1);//расчитываем новую розничную цену до скидки
-                                resultProductTemp.setRecommendedPriceU(newRecomendPriceU);//устанавливаем её
+                                int newRecommendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.1);//расчитываем новую розничную цену до скидки
+                                resultProductTemp.setRecommendedPriceU(newRecommendPriceU);//устанавливаем её
                             } else {
                                 resultProductTemp.setRecommendedSale(newMyBasicSale);
                             }
