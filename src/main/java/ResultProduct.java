@@ -7,8 +7,9 @@ public class ResultProduct extends Product{
     private String myBrand;
     private String category;
     private String code_1C;
-    private String myVendorCodeForWildberies;
+    private String myVendorCodeForWildberiesOrOzon;
     private String vendorCode_1C;
+    private String querySearchForOzon;
     private int specPrice;
     private int myPriceU;
     private int myBasicSale;
@@ -17,7 +18,7 @@ public class ResultProduct extends Product{
     private int myPromoPriceU;
 
     private int recommendedMyLowerPrice;
-    private int recommendedSale;
+    private int recommendedBasicSale;
     private int recommendedPromoSale;
     private int recommendedPriceU;
 
@@ -54,8 +55,9 @@ public class ResultProduct extends Product{
             String myBrand,
             String category,
             String code_1C,
-            String myVendorCodeForWildberies,
+            String myVendorCodeForWildberiesOrOzon,
             String vendorCode_1C,
+            String querySearchForOzon,
             int specPrice,
             int myPriceU,
             int myBasicSale,
@@ -63,7 +65,7 @@ public class ResultProduct extends Product{
             int myPromoSale,
             int myPromoPriceU,
             int recommendedMyLowerPrice,
-            int recommendedSale,
+            int recommendedBasicSale,
             int recommendedPromoSale,
             int recommendedPriceU,
 
@@ -96,8 +98,9 @@ public class ResultProduct extends Product{
         this.myBrand = myBrand;
         this.category = category;
         this.code_1C = code_1C;
-        this.myVendorCodeForWildberies = myVendorCodeForWildberies;
+        this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
         this.vendorCode_1C = vendorCode_1C;
+        this.querySearchForOzon = querySearchForOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;
         this.myBasicSale = myBasicSale;
@@ -105,7 +108,7 @@ public class ResultProduct extends Product{
         this.myPromoSale = myPromoSale;
         this.myPromoPriceU = myPromoPriceU;
         this.recommendedMyLowerPrice = recommendedMyLowerPrice;
-        this.recommendedSale = recommendedSale;
+        this.recommendedBasicSale = recommendedBasicSale;
         this.recommendedPromoSale = recommendedPromoSale;
         this.recommendedPriceU = recommendedPriceU;
     }
@@ -114,8 +117,9 @@ public class ResultProduct extends Product{
             String myBrand,
             String category,
             String code_1C,
-            String myVendorCodeForWildberies,
+            String myVendorCodeForWildberiesOrOzon,
             String vendorCode_1C,
+            String querySearchForOzon,
             int specPrice,
             int myPriceU,
             int myBasicSale,
@@ -123,15 +127,16 @@ public class ResultProduct extends Product{
             int myPromoSale,
             int myPromoPriceU,
             int recommendedMyLowerPrice,
-            int recommendedSale,
+            int recommendedBasicSale,
             int recommendedPromoSale,
             int recommendedPriceU
     ) {
         this.myBrand = myBrand;
         this.category = category;
         this.code_1C = code_1C;
-        this.myVendorCodeForWildberies = myVendorCodeForWildberies;
+        this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
         this.vendorCode_1C = vendorCode_1C;
+        this.querySearchForOzon = querySearchForOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;
         this.myBasicSale = myBasicSale;
@@ -139,7 +144,7 @@ public class ResultProduct extends Product{
         this.myPromoSale = myPromoSale;
         this.myPromoPriceU = myPromoPriceU;
         this.recommendedMyLowerPrice = recommendedMyLowerPrice;
-        this.recommendedSale = recommendedSale;
+        this.recommendedBasicSale = recommendedBasicSale;
         this.recommendedPromoSale = recommendedPromoSale;
         this.recommendedPriceU = recommendedPriceU;
     }

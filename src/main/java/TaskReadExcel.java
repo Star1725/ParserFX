@@ -124,6 +124,7 @@ public class TaskReadExcel extends Task<Map> {
                         code_1C,
                         myVendorCodeWildberies,
                         vendorCode_1C,
+                        "-",//для Ozon(сразу формируем поисковый запрос)
                         0,
                         myPriceU,
                         myBasicSale,

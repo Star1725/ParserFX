@@ -196,7 +196,7 @@ public class TaskWriteExel extends Task<File> {
             Row row = sheet.createRow(i + 1);
             row.setHeightInPoints(70);
 
-            boolean isMy = productArrayList.get(i).getMyVendorCodeForWildberies().equals(productArrayList.get(i).getCompetitorVendorCode());
+            boolean isMy = productArrayList.get(i).getMyVendorCodeForWildberiesOrOzon().equals(productArrayList.get(i).getCompetitorVendorCode());
 
             boolean isMyAnalog = myVendorCodesSet.contains(productArrayList.get(i).getCompetitorVendorCode());
 
@@ -218,7 +218,7 @@ public class TaskWriteExel extends Task<File> {
 
             //Мой артикул по Wildberies
             cell = row.createCell(3);
-            cell.setCellValue(productArrayList.get(i).getMyVendorCodeForWildberies());
+            cell.setCellValue(productArrayList.get(i).getMyVendorCodeForWildberiesOrOzon());
             if (isMy && isMyAnalog){
                 cell.setCellStyle(styleMyProduct);
             } else if (!isMy && isMyAnalog){
@@ -326,61 +326,61 @@ public class TaskWriteExel extends Task<File> {
             double commissionPercentage = 0;
             switch (category){
 
-                case Constants.CATEGORY_5 :
-                case Constants.CATEGORY_13:
-                case Constants.CATEGORY_18:
+                case Constants.CATEGORY_WILD_5 :
+                case Constants.CATEGORY_WILD_13:
+                case Constants.CATEGORY_WILD_18:
                     commissionPercentage = 1.05;
                     break;
 
-                case Constants.CATEGORY_2 :
-                case Constants.CATEGORY_15:
+                case Constants.CATEGORY_WILD_2 :
+                case Constants.CATEGORY_WILD_15:
                     commissionPercentage = 1.07;
                     break;
 
-                case Constants.CATEGORY_1:
-                case Constants.CATEGORY_3 :
-                case Constants.CATEGORY_6 :
-                case Constants.CATEGORY_7 :
-                case Constants.CATEGORY_8 :
-                case Constants.CATEGORY_9 :
-                case Constants.CATEGORY_11:
-                case Constants.CATEGORY_12:
-                case Constants.CATEGORY_14:
-                case Constants.CATEGORY_16:
-                case Constants.CATEGORY_17:
-                case Constants.CATEGORY_24:
-                case Constants.CATEGORY_25:
-                case Constants.CATEGORY_26:
-                case Constants.CATEGORY_27:
-                case Constants.CATEGORY_28:
-                case Constants.CATEGORY_29:
-                case Constants.CATEGORY_30:
-                case Constants.CATEGORY_32:
-                case Constants.CATEGORY_33:
-                case Constants.CATEGORY_35:
-                case Constants.CATEGORY_36:
-                case Constants.CATEGORY_37:
-                case Constants.CATEGORY_38:
-                case Constants.CATEGORY_39:
-                case Constants.CATEGORY_40:
+                case Constants.CATEGORY_WILD_1:
+                case Constants.CATEGORY_WILD_3 :
+                case Constants.CATEGORY_WILD_6 :
+                case Constants.CATEGORY_WILD_7 :
+                case Constants.CATEGORY_WILD_8 :
+                case Constants.CATEGORY_WILD_9 :
+                case Constants.CATEGORY_WILD_11:
+                case Constants.CATEGORY_WILD_12:
+                case Constants.CATEGORY_WILD_14:
+                case Constants.CATEGORY_WILD_16:
+                case Constants.CATEGORY_WILD_17:
+                case Constants.CATEGORY_WILD_24:
+                case Constants.CATEGORY_WILD_25:
+                case Constants.CATEGORY_WILD_26:
+                case Constants.CATEGORY_WILD_27:
+                case Constants.CATEGORY_WILD_28:
+                case Constants.CATEGORY_WILD_29:
+                case Constants.CATEGORY_WILD_30:
+                case Constants.CATEGORY_WILD_32:
+                case Constants.CATEGORY_WILD_33:
+                case Constants.CATEGORY_WILD_35:
+                case Constants.CATEGORY_WILD_36:
+                case Constants.CATEGORY_WILD_37:
+                case Constants.CATEGORY_WILD_38:
+                case Constants.CATEGORY_WILD_39:
+                case Constants.CATEGORY_WILD_40:
                     commissionPercentage = 1.12;
                     break;
 
-                case Constants.CATEGORY_4 :
-                case Constants.CATEGORY_10:
-                case Constants.CATEGORY_19:
-                case Constants.CATEGORY_20:
-                case Constants.CATEGORY_21:
-                case Constants.CATEGORY_22:
-                case Constants.CATEGORY_23:
-                case Constants.CATEGORY_31:
-                case Constants.CATEGORY_34:
-                case Constants.CATEGORY_42:
-                case Constants.CATEGORY_43:
-                case Constants.CATEGORY_44:
-                case Constants.CATEGORY_45:
-                case Constants.CATEGORY_46:
-                case Constants.CATEGORY_47:
+                case Constants.CATEGORY_WILD_4 :
+                case Constants.CATEGORY_WILD_10:
+                case Constants.CATEGORY_WILD_19:
+                case Constants.CATEGORY_WILD_20:
+                case Constants.CATEGORY_WILD_21:
+                case Constants.CATEGORY_WILD_22:
+                case Constants.CATEGORY_WILD_23:
+                case Constants.CATEGORY_WILD_31:
+                case Constants.CATEGORY_WILD_34:
+                case Constants.CATEGORY_WILD_42:
+                case Constants.CATEGORY_WILD_43:
+                case Constants.CATEGORY_WILD_44:
+                case Constants.CATEGORY_WILD_45:
+                case Constants.CATEGORY_WILD_46:
+                case Constants.CATEGORY_WILD_47:
                     commissionPercentage = 1.15;
                     break;
             }
@@ -432,7 +432,7 @@ public class TaskWriteExel extends Task<File> {
 //            if (isMyAnalog){
 //                cell.setCellValue((productArrayList.get(i).getMyBasicSale()));
 //            } else {
-                cell.setCellValue((productArrayList.get(i).getRecommendedSale()));
+                cell.setCellValue((productArrayList.get(i).getRecommendedBasicSale()));
 //            }
             cell.setCellStyle(style);
 

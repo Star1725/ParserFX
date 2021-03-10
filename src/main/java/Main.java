@@ -26,7 +26,9 @@ public class Main extends Application implements Controller.ActionInController {
 
     private static Set<String> setMyVendorCodes;
 
+    static int marketplaceFlag;
     TaskReadExcel taskReadExcel;
+    TaskReadExcelForOzon taskReadExcelForOzon;
     TaskWriteExel taskWriteExel;
 
     static ParserWildBer parserWildBer = new ParserWildBer();
@@ -59,38 +61,59 @@ public class Main extends Application implements Controller.ActionInController {
 
     @Override
     public void selectFile(List<File> files) {
-        taskReadExcel = new TaskReadExcel(files);
+        if (files.size() == 1) marketplaceFlag = 1;//Ozon
+        if (files.size() == 2) marketplaceFlag = 2;//Wildberies
 
-        controller.getAreaLog().appendText("Чтение файлов \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
+        if (marketplaceFlag == 1){
+            taskReadExcelForOzon = new TaskReadExcelForOzon(files);
+            controller.getAreaLog().appendText("Чтение файла \"" + files.get(0).getName() + "\"");
+        } else if (marketplaceFlag == 2){
+            taskReadExcel = new TaskReadExcel(files);
+            controller.getAreaLog().appendText("Чтение файлов \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
+        }
 
         controller.getProgressBar().setProgress(0);
         // Unbind progress property
         controller.getProgressBar().progressProperty().unbind();
-        // Bind progress property
-        controller.getProgressBar().progressProperty().bind(taskReadExcel.progressProperty());
 
-        // When completed tasks
-        taskReadExcel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                resultMap = taskReadExcel.getValue();
-                taskReadExcel.cancel(true);
-                controller.getAreaLog().appendText(" - ok!\n");
-                controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
-                controller.getProgressBar().progressProperty().unbind();
-//                Platform.runLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        controller.getProgressBar().setProgress(0);
-//                    }
-//                });
+        if (marketplaceFlag == 1){
+            // Bind progress property
+            controller.getProgressBar().progressProperty().bind(taskReadExcelForOzon.progressProperty());
+            // When completed taskReadExcelForOzon
+            taskReadExcelForOzon.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    resultMap = taskReadExcelForOzon.getValue();
+                    taskReadExcelForOzon.cancel(true);
+                    controller.getAreaLog().appendText(" - ok!\n");
+                    controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
+                    controller.getProgressBar().progressProperty().unbind();
 
-                controller.getAreaLog().appendText("Анализ артикулов:\n");
+                    controller.getAreaLog().appendText("Анализ артикулов:\n");
 
-                getResultProduct(resultMap);
-            }
-        });
-        new Thread(taskReadExcel).start();
+                    getResultProduct(resultMap);
+                }
+            });
+            new Thread(taskReadExcelForOzon).start();
+        } else if (marketplaceFlag == 2){
+            // Bind progress property
+            controller.getProgressBar().progressProperty().bind(taskReadExcel.progressProperty());
+            // When completed tasks for Wildberies
+            taskReadExcel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    resultMap = taskReadExcel.getValue();
+                    taskReadExcel.cancel(true);
+                    controller.getAreaLog().appendText(" - ok!\n");
+                    controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
+                    controller.getProgressBar().progressProperty().unbind();
+                    controller.getAreaLog().appendText("Анализ артикулов:\n");
+
+                    getResultProduct(resultMap);
+                }
+            });
+            new Thread(taskReadExcel).start();
+        }
     }
 
     private static void openFile(File file) {
@@ -130,8 +153,9 @@ public class Main extends Application implements Controller.ActionInController {
                     String key = entry.getKey();
                     String category = entry.getValue().getCategory();
                     String brand = entry.getValue().getMyBrand();
+                    String querySearchForOzon = entry.getValue().getQuerySearchForOzon();
 
-                    myCalls.add(new MyCall(key, category, brand, setMyVendorCodes, webClient));
+                    myCalls.add(new MyCall(key, category, brand, setMyVendorCodes, querySearchForOzon, webClient));
                 }
 
                 List<Future<Product>> futureList = new ArrayList<>();
@@ -202,7 +226,7 @@ public class Main extends Application implements Controller.ActionInController {
                         //если аналог это мой товар, то всё оставляю без изменений
                         if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-") || setMyVendorCodes.contains(competitorVendorCode) || (dumpingPresent == 1)){
                             resultProductTemp.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
-                            resultProductTemp.setRecommendedSale(myCurrentBasicSale);
+                            resultProductTemp.setRecommendedBasicSale(myCurrentBasicSale);
                             resultProductTemp.setRecommendedPromoSale(resultProductTemp.getMyPromoSale());
 
                         }
@@ -228,22 +252,22 @@ public class Main extends Application implements Controller.ActionInController {
                             //если новая базовая скидка меньше 3%
                             if (newMyBasicSale < 3){
                                 newMyBasicSale = 3;
-                                resultProductTemp.setRecommendedSale(newMyBasicSale);//устанавливаем скидку в 3%
+                                resultProductTemp.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 3%
                                 int newRecomendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.97);//расчитываем новую розничную цену до скидки
                                 resultProductTemp.setRecommendedPriceU(newRecomendPriceU);//устанавливаем её
                             } else
                                 //если новая базовая скидка больше 90%
                                 if (newMyBasicSale > 90){
                                 newMyBasicSale = 90;
-                                resultProductTemp.setRecommendedSale(newMyBasicSale);//устанавливаем скидку в 90%
+                                resultProductTemp.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 90%
                                 int newRecommendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.1);//расчитываем новую розничную цену до скидки
                                 resultProductTemp.setRecommendedPriceU(newRecommendPriceU);//устанавливаем её
                             } else {
-                                resultProductTemp.setRecommendedSale(newMyBasicSale);
+                                resultProductTemp.setRecommendedBasicSale(newMyBasicSale);
                             }
                         }
 
-                        resultMap.put(resultProductTemp.getMyVendorCodeForWildberies(), resultProductTemp);
+                        resultMap.put(resultProductTemp.getMyVendorCodeForWildberiesOrOzon(), resultProductTemp);
 
                         int finalI = i + 1;
 
@@ -271,20 +295,24 @@ public class Main extends Application implements Controller.ActionInController {
         String key;
         String category;
         String brand;
+        String querySearchForOzon;
         Set myVendorCodes;
         WebClient webClient;
 
-        public MyCall(String key, String category, String brand, Set myVendorCodes, WebClient webClient) {
+        public MyCall(String key, String category, String brand, Set myVendorCodes, String querySearchForOzon, WebClient webClient) {
             this.key = key;
             this.category = category;
             this.brand = brand;
+            this.querySearchForOzon = querySearchForOzon;
             this.myVendorCodes = myVendorCodes;
             this.webClient = webClient;
         }
 
         @Override
+        //1 - флаг для Ozon
+        //2 - флаг для Wildberies
         public Product call() throws Exception {
-            return parserWildBer.getProduct(key, category, brand, myVendorCodes, webClient);
+            return parserWildBer.getProduct(key, category, brand, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
         }
     }
 }
