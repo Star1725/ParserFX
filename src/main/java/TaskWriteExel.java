@@ -103,27 +103,27 @@ public class TaskWriteExel extends Task<File> {
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(13);
-        headerCell.setCellValue("Спец-цена");
-        headerCell.setCellStyle(headerStyle);
-
-        headerCell = header.createCell(14);
         headerCell.setCellValue("Комиссия (%)");
         headerCell.setCellStyle(headerStyle);
 
-        headerCell = header.createCell(15);
+        headerCell = header.createCell(14);
         headerCell.setCellValue("Логистика");
         headerCell.setCellStyle(headerStyle);
 
+        headerCell = header.createCell(15);
+        headerCell.setCellValue("Реком. роз. цена");
+        headerCell.setCellStyle(headerStyle);
+
         headerCell = header.createCell(16);
-        headerCell.setCellValue("Наша пороговая цена");
+        headerCell.setCellValue("Спец-цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(17);
-        headerCell.setCellValue("Тек. роз. цена конкур.");
+        headerCell.setCellValue("Наша пороговая цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(18);
-        headerCell.setCellValue("Реком. роз. цена");
+        headerCell.setCellValue("Тек. роз. цена конкур.");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(19);
@@ -303,38 +303,37 @@ public class TaskWriteExel extends Task<File> {
             cell.setCellValue(myPriceU);
             cell.setCellStyle(style);
 
+            //расчитываем все необходимые цены
+            int myLowerPrice = Math.round(productArrayList.get(i).getMyLowerPriceU() / 100);
+            int competitorLowerPrice = Math.round(productArrayList.get(i).getCompetitorLowerPriceU() / 100);
+            int specPrice = productArrayList.get(i).getSpecPrice() / 100;
+            int logistic = 33;
+
             //Моя тек. роз. цена
             cell = row.createCell(12);
-            int myLowerPrice = Math.round(productArrayList.get(i).getMyLowerPriceU() / 100);
             cell.setCellValue(myLowerPrice);
-            cell.setCellStyle(style);
-
-            //Спец-цена
-            cell = row.createCell(13);
-            int specPrice = productArrayList.get(i).getSpecPrice() / 100;
-            if (specPrice == 0){
-                cell.setCellValue("н/д");
+            if (competitorLowerPrice == myLowerPrice){
                 cell.setCellStyle(style);
+            } else if (competitorLowerPrice < myLowerPrice){
+                cell.setCellStyle(styleRoseCell);
             } else {
-                cell.setCellValue(specPrice);
-                cell.setCellStyle(style);
+                cell.setCellStyle(styleGreenCell);
             }
 
-
             //Коммисия
-            cell = row.createCell(14);
+            cell = row.createCell(13);
             double commissionPercentage = 0;
             switch (category){
 
                 case Constants.CATEGORY_WILD_5 :
                 case Constants.CATEGORY_WILD_13:
                 case Constants.CATEGORY_WILD_18:
-                    commissionPercentage = 1.05;
+                    commissionPercentage = 0.95;//5%
                     break;
 
                 case Constants.CATEGORY_WILD_2 :
                 case Constants.CATEGORY_WILD_15:
-                    commissionPercentage = 1.07;
+                    commissionPercentage = 0.93;//7%
                     break;
 
                 case Constants.CATEGORY_WILD_1:
@@ -363,7 +362,7 @@ public class TaskWriteExel extends Task<File> {
                 case Constants.CATEGORY_WILD_38:
                 case Constants.CATEGORY_WILD_39:
                 case Constants.CATEGORY_WILD_40:
-                    commissionPercentage = 1.12;
+                    commissionPercentage = 0.82;//12%
                     break;
 
                 case Constants.CATEGORY_WILD_4 :
@@ -381,29 +380,52 @@ public class TaskWriteExel extends Task<File> {
                 case Constants.CATEGORY_WILD_45:
                 case Constants.CATEGORY_WILD_46:
                 case Constants.CATEGORY_WILD_47:
-                    commissionPercentage = 1.15;
+                    commissionPercentage = 0.85;//15%
                     break;
             }
             cell.setCellValue(commissionPercentage);
             cell.setCellStyle(style);
 
             //Логистика
-            cell = row.createCell(15);
+            cell = row.createCell(14);
             cell.setCellValue("33 р");
             cell.setCellStyle(style);
 
-            //Наша пороговая цена
-            cell = row.createCell(16);
-            if (productArrayList.get(i).getSpecPrice() == 0){
-                cell.setCellValue("-");
+            //Рекомендуемая роз. цена
+            cell = row.createCell(15);
+            int recommendLowerPrice = Math.round(productArrayList.get(i).getRecommendedMyLowerPrice() / 100);
+            cell.setCellValue(recommendLowerPrice);
+            if (competitorLowerPrice == myLowerPrice){
+                cell.setCellStyle(style);
+            } else if (competitorLowerPrice < myLowerPrice){
+                cell.setCellStyle(styleRoseCell);
             } else {
-                cell.setCellValue(specPrice * commissionPercentage + 33);
+                cell.setCellStyle(styleGreenCell);
+            }
+
+            //Спец-цена
+            cell = row.createCell(16);
+            if (specPrice == 0){
+                cell.setCellValue("н/д");
+                cell.setCellStyle(style);
+            } else {
+                cell.setCellValue(specPrice);
                 cell.setCellStyle(style);
             }
 
-            //Тек. роз. цена конкурента
+            //Наша пороговая цена
             cell = row.createCell(17);
-            int competitorLowerPrice = Math.round(productArrayList.get(i).getCompetitorLowerPriceU() / 100);
+            int criticPrice = (int) Math.round(recommendLowerPrice * commissionPercentage - logistic);
+            cell.setCellValue(criticPrice);
+            if (specPrice < criticPrice){
+                cell.setCellStyle(style);
+            } else {
+                cell.setCellStyle(styleRedCell);
+            }
+
+
+            //Тек. роз. цена конкурента
+            cell = row.createCell(18);
             cell.setCellValue(competitorLowerPrice);
             if (competitorLowerPrice == myLowerPrice){
                 cell.setCellStyle(style);
@@ -413,15 +435,6 @@ public class TaskWriteExel extends Task<File> {
                 cell.setCellStyle(styleGreenCell);
             }
 
-            //Рекомендуемая роз. цена
-            cell = row.createCell(18);
-//            if (isMyAnalog){
-//                cell.setCellValue(Math.round(productArrayList.get(i).getLowerPriceU() / 100));
-//            } else {
-                cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedMyLowerPrice() / 100));
-//            }
-            cell.setCellStyle(style);
-
             //Если баз. скидка < 3 или > 90%, то новая реком. розн. цена (до скидки)
             cell = row.createCell(19);
             cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU()/100));
@@ -429,11 +442,7 @@ public class TaskWriteExel extends Task<File> {
 
             //"Реком. согласованная скидка"
             cell = row.createCell(20);
-//            if (isMyAnalog){
-//                cell.setCellValue((productArrayList.get(i).getMyBasicSale()));
-//            } else {
-                cell.setCellValue((productArrayList.get(i).getRecommendedBasicSale()));
-//            }
+            cell.setCellValue((productArrayList.get(i).getRecommendedBasicSale()));
             cell.setCellStyle(style);
 
             //"Реком. новая скидка по промокоду"

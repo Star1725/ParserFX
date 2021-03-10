@@ -123,7 +123,7 @@ public class ParserWildBer {
             case Constants.CATEGORY_WILD_12:
             case Constants.CATEGORY_WILD_13:
             case Constants.CATEGORY_WILD_14:
-            case Constants.CATEGORY_WILD_16:
+
             case Constants.CATEGORY_WILD_17:
             case Constants.CATEGORY_WILD_23:
             case Constants.CATEGORY_WILD_24:
@@ -152,6 +152,20 @@ public class ParserWildBer {
                 for (String s : paramsForRequest) {
                     query.append(" ").append(s);
                 }
+                query = new StringBuilder(query.toString().toLowerCase());
+                productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+                if (productList.size() != 0){
+                    //проходимся по всему списку и находим продукт с наименьшей ценой
+                    product = getProductWithLowerPrice(productList, myVendorCodes);
+                }
+                break;
+
+            case Constants.CATEGORY_WILD_16:
+
+                String[] buffArray1 = paramsForRequest.get(0).split("/");
+                String[] buffArray2 = buffArray1[1].split(",");
+                query = new StringBuilder(brand + " " + buffArray2[0].trim());
+
                 query = new StringBuilder(query.toString().toLowerCase());
                 productList = getCatalogProducts(query.toString().toLowerCase(), brand);
                 if (productList.size() != 0){
@@ -621,7 +635,9 @@ public class ParserWildBer {
                 Element brand = fullProductCard.select(Constants.ELEMENT_WITH_BRAND_NAME).first();
                 String string = brand.text();
                 String brandName = string.substring(0, string.length() - 2).toLowerCase();
-                if (!brandName.contains(myBrand.toLowerCase())) continue;
+                if (!myBrand.equals("Aiqura")){
+                    if (!brandName.contains(myBrand.toLowerCase())) continue;
+                }
 
                 productList.add(new Product("-",
                         "-",

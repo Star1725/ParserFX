@@ -143,6 +143,7 @@ public class TaskReadExcel extends Task<Map> {
             }
 
             //считываем информацию с отчёта 1C
+            System.out.println("считываем информацию с отчёта 1C");
             rowIterator = sheet_1C.rowIterator();
             while (rowIterator.hasNext()){
                 //получаем строку
@@ -153,16 +154,20 @@ public class TaskReadExcel extends Task<Map> {
 
                 //получаем код товара по 1С
                 Cell cell = row.getCell(1);
+                if (cell == null){
+                    continue;
+                }
                 String code_1C = cell.getRichStringCellValue().getString();
 
                 //получаем артикул товара по 1С(последний баркод по Wildberies)
                 cell = row.getCell(2);
-
-                String vendorCode_1C = null;
-                try {
-                    vendorCode_1C = String.valueOf((long)cell.getNumericCellValue());
-                } catch (Exception e) {
-                    vendorCode_1C = cell.getRichStringCellValue().getString();
+                String vendorCode_1C = "-";
+                if (cell != null){
+                    try {
+                        vendorCode_1C = String.valueOf((long)cell.getNumericCellValue());
+                    } catch (Exception e) {
+                        vendorCode_1C = cell.getRichStringCellValue().getString();
+                    }
                 }
 
                 //получаем спец-цену
