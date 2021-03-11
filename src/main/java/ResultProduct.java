@@ -8,7 +8,6 @@ public class ResultProduct extends Product{
     private String category;
     private String code_1C;
     private String myVendorCodeForWildberiesOrOzon;
-    private String vendorCode_1C;
     private String querySearchForOzon;
     private int specPrice;
     private int myPriceU;
@@ -44,10 +43,11 @@ public class ResultProduct extends Product{
                          int basicPriceU,
                          int promoSale,
                          int promoPriceU,
+                         int competitorPremiumPriceForOzon,
 
                          String competitorName
                          ) {
-        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorName);
+        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorPremiumPriceForOzon, competitorName);
     }
 
 
@@ -56,7 +56,6 @@ public class ResultProduct extends Product{
             String category,
             String code_1C,
             String myVendorCodeForWildberiesOrOzon,
-            String vendorCode_1C,
             String querySearchForOzon,
             int specPrice,
             int myPriceU,
@@ -91,15 +90,15 @@ public class ResultProduct extends Product{
             int basicPriceU,
             int promoSale,
             int promoPriceU,
+            int competitorPremiumPriceForOzon,
 
             String competitorName
             ) {
-        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorName);
+        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorPremiumPriceForOzon, competitorName);
         this.myBrand = myBrand;
         this.category = category;
         this.code_1C = code_1C;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
-        this.vendorCode_1C = vendorCode_1C;
         this.querySearchForOzon = querySearchForOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;
@@ -118,7 +117,6 @@ public class ResultProduct extends Product{
             String category,
             String code_1C,
             String myVendorCodeForWildberiesOrOzon,
-            String vendorCode_1C,
             String querySearchForOzon,
             int specPrice,
             int myPriceU,
@@ -135,7 +133,6 @@ public class ResultProduct extends Product{
         this.category = category;
         this.code_1C = code_1C;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
-        this.vendorCode_1C = vendorCode_1C;
         this.querySearchForOzon = querySearchForOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;

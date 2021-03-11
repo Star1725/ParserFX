@@ -44,28 +44,26 @@ public class ParserWildBer {
                 0,
                 0,
                 0,
+                0,
 
                 "-");
+
 
         StringBuilder query = new StringBuilder("-");
         Document page = null;
         List<String> paramsForRequest = null;
 
-        if (marketPlaceFlag == 2) {
-            //получение html-страницы для моего артикула
-            page = getDocumentPageForVendorCode(myVendorCodeFromRequest);
-            //если ничего не вернулось(страница не существует) то возвращаем нулевой продукт
-            if (page == null){
-                return product;
-            }
-            //обработка html-страницы для формирования поискового запроса аналогов
-            paramsForRequest = getDataForRequestFromCategory(page, category, brand);
-            if (paramsForRequest.size() == 0){
-                product.setQueryForSearch("Мало данных для формирования поискового запроса");
-                return product;
-            }
-        } else if (marketPlaceFlag == 1){
-            query = new StringBuilder(querySearchForOzon);
+        //получение html-страницы для моего артикула
+        page = getDocumentPageForVendorCode(myVendorCodeFromRequest);
+        //если ничего не вернулось(страница не существует) то возвращаем нулевой продукт
+        if (page == null){
+            return product;
+        }
+        //обработка html-страницы для формирования поискового запроса аналогов
+        paramsForRequest = getDataForRequestFromCategory(page, category, brand);
+        if (paramsForRequest.size() == 0){
+            product.setQueryForSearch("Мало данных для формирования поискового запроса");
+            return product;
         }
 
         //в заввисимости от категории определяем параметры запроса для поиска конкурентов
@@ -555,8 +553,8 @@ public class ParserWildBer {
     }
 
     private static Document getPageForSearchQuery(String query) {
-        //String url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&xsearch=true&sort=priceup"); запрос изменился 05.03.21
-        String url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&&sort=priceup");
+        String url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&xsearch=true&sort=priceup");// для вер. 2
+        //String url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&&sort=priceup");// для вер. 1
 
         Document page = null;
         try {
@@ -639,7 +637,8 @@ public class ParserWildBer {
                     if (!brandName.contains(myBrand.toLowerCase())) continue;
                 }
 
-                productList.add(new Product("-",
+                productList.add(new Product(
+                        "-",
                         "-",
                         "-",
                         "-",
@@ -656,6 +655,7 @@ public class ParserWildBer {
                         specAction,
                         rating,
 
+                        0,
                         0,
                         0,
                         0,

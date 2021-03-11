@@ -5,8 +5,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SupplierSpecPrice {
+public class SupplierSpecPriceAndNameProduct {
     private String code_1C;
-    private String vendorCode_1C;
+    private String productName;
     private int specPrice;
 }

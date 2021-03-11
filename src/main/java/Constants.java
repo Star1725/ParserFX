@@ -1,6 +1,11 @@
 import java.util.ArrayList;
 
 public class Constants {
+    //marketplaces
+    public static final String WILDBERIES = "Wildberies";
+    public static final String OZON = "Ozon";
+
+
     //ктегории для Wildberies с наценкой
     public static final String CATEGORY_WILD_5 = "Держатели в авто";//5
     public static final String CATEGORY_WILD_13 = "Пылесосы автомобильные";//5
@@ -167,9 +172,9 @@ public class Constants {
     public static final String PROMO_SALE_IN_FILE_WILDBERIES = "Текущая скидка по промокоду, %";//16-й столбец
 
     //статика для проверки заговков столбцов файла отчёта 1С
-    public static final String CODE_1C = "Код";//0-й столбец
-    public static final String VENDOR_CODE_1C = "Артикул";//1-й столбец
-    public static final String SPEC_PRICE_1C = "Цена";//5-й столбец
+    public static final String CODE_1C = "Код";//1-й столбец
+    public static final String NOMENCLATURE_1C = "Номенклатура";//2-й столбец
+    public static final String SPEC_PRICE_1C = "Цена";//4-й столбец
 
     //статика для проверки заговков столбцов файла отчёта Ozon
     public static final String VENDOR_CODE_1C_IN_FILE_OZON = "Артикул";//0-й столбец
@@ -203,6 +208,9 @@ public class Constants {
     //public static final String ELEMENT_WITH_SPEC_ACTION = "span[class=spec-actions-catalog i-spec-action]";
     public static final String ELEMENT_WITH_SPEC_ACTION = "a[class=spec-actions-link]";//03.03.21
     public static final String ELEMENT_WITH_BRAND_NAME = "strong[class=brand-name c-text-sm]";
+
+
+
     //for json query
     public static final String URL_FOR_JSON = "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?spp=0&regions=69,58,64,40,48,70,1,38,4,30,22,66&" +
             "stores=119261,121631,1193,119400,116433,117501,507,3158,120762,1733,117986,686,117413,119781&" +

@@ -27,11 +27,12 @@ public class Main extends Application implements Controller.ActionInController {
     private static Set<String> setMyVendorCodes;
 
     static int marketplaceFlag;
-    TaskReadExcel taskReadExcel;
+    TaskReadExcelForWildberies taskReadExcelForWildberies;
     TaskReadExcelForOzon taskReadExcelForOzon;
     TaskWriteExel taskWriteExel;
 
     static ParserWildBer parserWildBer = new ParserWildBer();
+    static ParserOzon parserOzon = new ParserOzon();
 
     private ExecutorService executorService;
 
@@ -60,16 +61,17 @@ public class Main extends Application implements Controller.ActionInController {
     }
 
     @Override
-    public void selectFile(List<File> files) {
-        if (files.size() == 1) marketplaceFlag = 1;//Ozon
-        if (files.size() == 2) marketplaceFlag = 2;//Wildberies
-
+    public void selectFile(List<File> files, String marketPlace) {
+        System.out.println("selectFile - " + marketPlace);
+        if (marketPlace.equals(Constants.OZON)) marketplaceFlag = 1;//Ozon
+        else if (marketPlace.equals(Constants.WILDBERIES)) marketplaceFlag = 2;//Wildberies
+        System.out.println("selectFile - " + marketplaceFlag);
         if (marketplaceFlag == 1){
             taskReadExcelForOzon = new TaskReadExcelForOzon(files);
-            controller.getAreaLog().appendText("Чтение файла \"" + files.get(0).getName() + "\"");
+            controller.getAreaLog().appendText("Чтение файлов для аналитики Ozon - \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
         } else if (marketplaceFlag == 2){
-            taskReadExcel = new TaskReadExcel(files);
-            controller.getAreaLog().appendText("Чтение файлов \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
+            taskReadExcelForWildberies = new TaskReadExcelForWildberies(files);
+            controller.getAreaLog().appendText("Чтение файлов для аналитики Wildberies - \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
         }
 
         controller.getProgressBar().setProgress(0);
@@ -97,13 +99,13 @@ public class Main extends Application implements Controller.ActionInController {
             new Thread(taskReadExcelForOzon).start();
         } else if (marketplaceFlag == 2){
             // Bind progress property
-            controller.getProgressBar().progressProperty().bind(taskReadExcel.progressProperty());
+            controller.getProgressBar().progressProperty().bind(taskReadExcelForWildberies.progressProperty());
             // When completed tasks for Wildberies
-            taskReadExcel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+            taskReadExcelForWildberies.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
-                    resultMap = taskReadExcel.getValue();
-                    taskReadExcel.cancel(true);
+                    resultMap = taskReadExcelForWildberies.getValue();
+                    taskReadExcelForWildberies.cancel(true);
                     controller.getAreaLog().appendText(" - ok!\n");
                     controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
                     controller.getProgressBar().progressProperty().unbind();
@@ -112,7 +114,7 @@ public class Main extends Application implements Controller.ActionInController {
                     getResultProduct(resultMap);
                 }
             });
-            new Thread(taskReadExcel).start();
+            new Thread(taskReadExcelForWildberies).start();
         }
     }
 
@@ -312,7 +314,12 @@ public class Main extends Application implements Controller.ActionInController {
         //1 - флаг для Ozon
         //2 - флаг для Wildberies
         public Product call() throws Exception {
-            return parserWildBer.getProduct(key, category, brand, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
+            System.out.println("выполнение задачи - " + marketplaceFlag);
+            if (marketplaceFlag == 1){
+                return parserOzon.getProduct(key, category, brand, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
+            } else if (marketplaceFlag == 2){
+                return parserWildBer.getProduct(key, category, brand, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
+            } else return null;
         }
     }
 }

@@ -30,6 +30,7 @@ public class Product {
     private int competitorBasicPriceU;
     private int competitorPromoSale;
     private int competitorPromoPriceU;
+    private int competitorPremiumPriceForOzon;
 
     private String competitorName;
 

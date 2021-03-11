@@ -1,13 +1,15 @@
 package controllers;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -40,9 +42,13 @@ public class Controller implements Initializable {
     @FXML
     private TextField txtFldShowPathFile;
 
+    @FXML
+    ChoiceBox<String> choiceBoxMarketPlace;
+
+    private String marketPlace;
 
     public interface ActionInController{
-        void selectFile(List<File> files);
+        void selectFile(List<File> files, String marketPlace);
     }
 
     private static final List<ActionInController> listSubscribers = new ArrayList<>();
@@ -51,24 +57,38 @@ public class Controller implements Initializable {
         listSubscribers.add(subscriber);
     }
 
-    private void notifySubscriber(List<File> files){
+    private void notifySubscriber(List<File> files, String marketPlace){
         for (ActionInController subscriber : listSubscribers) {
-            subscriber.selectFile(files);
+            System.out.println(marketPlace);
+            subscriber.selectFile(files, marketPlace);
         }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ObservableList<String> marketPlaces = FXCollections.observableArrayList("Wildberies", "Ozon");
+        choiceBoxMarketPlace.setItems(marketPlaces);
+        choiceBoxMarketPlace.setValue("Wildberies");
+        marketPlace = "Wildberies";
+
+        choiceBoxMarketPlace.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                marketPlace = choiceBoxMarketPlace.getValue();
+                System.out.println("выбран - " + marketPlace);
+            }
+        });
+
         final FileChooser fileChooser = new FileChooser();
         btnSelectFile.setOnAction(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent event) {
                 areaLog.clear();
                 txtFldShowPathFile.clear();
                 Node node = (Node) event.getSource();
                 List<File> files = fileChooser.showOpenMultipleDialog(node.getScene().getWindow());
-                notifySubscriber(files);if (files.size() == 1){
+                notifySubscriber(files, marketPlace);
+                if (files.size() == 1){
                     txtFldShowPathFile.appendText(files.get(0).getAbsolutePath());
                 } else if (files.size() == 2){
                     txtFldShowPathFile.appendText(files.get(0).getAbsolutePath() + " " + files.get(1).getAbsolutePath());
