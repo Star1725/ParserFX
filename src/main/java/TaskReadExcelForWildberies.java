@@ -142,12 +142,48 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 }
                 String code_1C = cell.getRichStringCellValue().getString();
 
+                //получаем бренд и наименование продукта и сразу пытаемся получить поисковый запрос
                 cell = row.getCell(2);
                 String myNomenclature = cell.getRichStringCellValue().getString();
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Анализ номенклатуры и формирование поискового запроса ////////////////////////////////////
-                
+                //FM-трансмиттер Borofone, BC16, пластик, цвет: чёрный
+
+                //определяем какой бренд
+                String myBrand = "-";
+                for (String s: Constants.listForBrands){
+                    if (myNomenclature.contains(s)){
+                        myBrand = s;
+                        break;
+                    }
+                }
+                //делим брендом myNomenclature на тип продукта и модель продукта с характеристиками
+                String[] buff1 = myNomenclature.split(myBrand);
+                //определяем тип продукта
+                String productType = "-";
+                for (String s: Constants.listForCategoryBy_1C){
+                    if (buff1[0].startsWith(s)){
+                        productType = s;
+                        break;
+                    }
+                }
+
+                //если модель сразу за брендом после запятой
+                String model ="-";
+                if (buff1[1].startsWith(",")){
+                    String[] buff2 = buff1[1].trim().split(",", 2);
+                    model = buff2[0];
+                } else {
+                    //если запятой нет
+                    String[] buff2 = buff1[1].trim().split(",", 3);
+                    model = buff2[0];
+                }
+
+                //получаем поисковый запрос и категорию продукта
+                String querySearch = "-";
+                if (!myBrand.isEmpty() || !model.isEmpty()) {
+                    querySearch = myBrand + " " + model;
+                }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

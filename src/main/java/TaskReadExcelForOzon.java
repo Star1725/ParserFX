@@ -95,7 +95,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 String[] buff1 = categoryBrandAndProductName.split(myBrand);
                 //определяем категорию
                 String categoryName = "-";
-                for (String s: Constants.listForCategoryOzon){
+                for (String s: Constants.listForCategoryBy_1C){
                     if (buff1[0].startsWith(s)){
                         categoryName = s;
                         break;
@@ -182,22 +182,15 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 }
                 String code_1C = cell.getRichStringCellValue().getString();
 
-                //получаем артикул товара по 1С(последний баркод по Wildberies)
+                //получаем бренд и наименование продукта и сразу пытаемся получить поисковый запрос
                 cell = row.getCell(2);
-                String vendorCode_1C = "-";
-                if (cell != null){
-                    try {
-                        vendorCode_1C = String.valueOf((long)cell.getNumericCellValue());
-                    } catch (Exception e) {
-                        vendorCode_1C = cell.getRichStringCellValue().getString();
-                    }
-                }
+                String myNomenclature = cell.getRichStringCellValue().getString();
 
                 //получаем спец-цену
                 cell = row.getCell(5);
                 int specPrice_1C = (int) cell.getNumericCellValue() * 100;
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, specPrice_1C));
+                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, myNomenclature, specPrice_1C));
             }
 
             //пытаемся привязать specPrice_1C к ResultProduct
