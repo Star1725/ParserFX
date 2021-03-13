@@ -7,6 +7,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SupplierSpecPriceAndNameProduct {
     private String code_1C;
-    private String productName;
+    private String nomenclature;
+    private String querySearch;
     private int specPrice;
 }

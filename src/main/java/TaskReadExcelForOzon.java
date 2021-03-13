@@ -146,6 +146,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         myBrand,
                         categoryName,
                         code_1C,
+                        "-",
                         myVendorCodeOzon,
                         querySearch,
                         0,

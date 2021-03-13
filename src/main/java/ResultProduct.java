@@ -7,8 +7,9 @@ public class ResultProduct extends Product{
     private String myBrand;
     private String category;
     private String code_1C;
+    private String myNomenclature;
     private String myVendorCodeForWildberiesOrOzon;
-    private String querySearchForOzon;
+    private String querySearchForWildberiesOrOzon;
     private int specPrice;
     private int myPriceU;
     private int myBasicSale;
@@ -55,8 +56,9 @@ public class ResultProduct extends Product{
             String myBrand,
             String category,
             String code_1C,
+            String myNomenclature,
             String myVendorCodeForWildberiesOrOzon,
-            String querySearchForOzon,
+            String querySearchForWildberiesOrOzon,
             int specPrice,
             int myPriceU,
             int myBasicSale,
@@ -98,8 +100,9 @@ public class ResultProduct extends Product{
         this.myBrand = myBrand;
         this.category = category;
         this.code_1C = code_1C;
+        this.myNomenclature = myNomenclature;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
-        this.querySearchForOzon = querySearchForOzon;
+        this.querySearchForWildberiesOrOzon = querySearchForWildberiesOrOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;
         this.myBasicSale = myBasicSale;
@@ -116,8 +119,9 @@ public class ResultProduct extends Product{
             String myBrand,
             String category,
             String code_1C,
+            String myNomenclature,
             String myVendorCodeForWildberiesOrOzon,
-            String querySearchForOzon,
+            String querySearchForWildberiesOrOzon,
             int specPrice,
             int myPriceU,
             int myBasicSale,
@@ -132,8 +136,9 @@ public class ResultProduct extends Product{
         this.myBrand = myBrand;
         this.category = category;
         this.code_1C = code_1C;
+        this.myNomenclature = myNomenclature;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
-        this.querySearchForOzon = querySearchForOzon;
+        this.querySearchForWildberiesOrOzon = querySearchForWildberiesOrOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;
         this.myBasicSale = myBasicSale;

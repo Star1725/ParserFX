@@ -362,7 +362,7 @@ public class TaskWriteExel extends Task<File> {
                 case Constants.CATEGORY_WILD_38:
                 case Constants.CATEGORY_WILD_39:
                 case Constants.CATEGORY_WILD_40:
-                    commissionPercentage = 0.82;//12%
+                    commissionPercentage = 0.88;//12%
                     break;
 
                 case Constants.CATEGORY_WILD_4 :

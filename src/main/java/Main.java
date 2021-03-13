@@ -155,7 +155,7 @@ public class Main extends Application implements Controller.ActionInController {
                     String key = entry.getKey();
                     String category = entry.getValue().getCategory();
                     String brand = entry.getValue().getMyBrand();
-                    String querySearchForOzon = entry.getValue().getQuerySearchForOzon();
+                    String querySearchForOzon = entry.getValue().getQuerySearchForWildberiesOrOzon();
 
                     myCalls.add(new MyCall(key, category, brand, setMyVendorCodes, querySearchForOzon, webClient));
                 }

@@ -55,7 +55,7 @@ public class ParserOzon {
         StringBuilder query = new StringBuilder(querySearchForOzon);
         //в заввисимости от категории ozon определяем параметры запроса для поиска конкурентов
         switch (category) {
-            case Constants.CATEGORY_OZON_21:
+            case Constants.CATEGORY_1C_23:
                 productList = getCatalogProducts(query.toString().toLowerCase(), brand);
 
                 product = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest);

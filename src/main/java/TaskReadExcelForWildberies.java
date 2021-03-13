@@ -106,6 +106,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         brand,
                         category,
                         code_1C,
+                        "-",
                         myVendorCodeWildberies,
                         "-",//для Ozon(сразу формируем поисковый запрос)
                         0,
@@ -171,11 +172,11 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 //если модель сразу за брендом после запятой
                 String model ="-";
                 if (buff1[1].startsWith(",")){
-                    String[] buff2 = buff1[1].trim().split(",", 2);
+                    String[] buff2 = buff1[1].trim().split(",", 3);
                     model = buff2[0];
                 } else {
                     //если запятой нет
-                    String[] buff2 = buff1[1].trim().split(",", 3);
+                    String[] buff2 = buff1[1].trim().split(",", 2);
                     model = buff2[0];
                 }
 
@@ -185,14 +186,13 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                     querySearch = myBrand + " " + model;
                 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 //получаем спец-цену
                 cell = row.getCell(4);
                 int specPrice_1C = (int) cell.getNumericCellValue() * 100;
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, myNomenclature, specPrice_1C));
+                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, myNomenclature, querySearch, specPrice_1C));
             }
 
             //пытаемся привязать specPrice_1C и productName к ResultProduct
@@ -202,6 +202,8 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 SupplierSpecPriceAndNameProduct supplierSpecPriceAndNameProduct1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
                 if (supplierSpecPriceAndNameProduct1 != null){
                     entry.getValue().setSpecPrice(supplierSpecPriceAndNameProduct1.getSpecPrice());
+                    entry.getValue().setMyNomenclature(supplierSpecPriceAndNameProduct1.getNomenclature());
+                    entry.getValue().setQuerySearchForWildberiesOrOzon(supplierSpecPriceAndNameProduct1.getQuerySearch());
                 } else entry.getValue().setSpecPrice(0);
             }
             return resultProductHashMap;
@@ -239,8 +241,8 @@ public class TaskReadExcelForWildberies extends Task<Map> {
         Row headRow = sheet.getRow(0);
         try {
             boolean checkCode_1C = headRow.getCell(1).getRichStringCellValue().getString().equals(Constants.CODE_1C);
-            boolean checkProductName = headRow.getCell(2).getRichStringCellValue().getString().equals(Constants.NOMENCLATURE_1C);
-            boolean checkSpecPrice = headRow.getCell(4).getRichStringCellValue().getString().equals(Constants.SPEC_PRICE_1C);
+            boolean checkProductName = headRow.getCell(2).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.NOMENCLATURE_1C.toLowerCase());
+            boolean checkSpecPrice = headRow.getCell(4).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.SPEC_PRICE_1C.toLowerCase());
             return checkCode_1C & checkProductName & checkProductName & checkSpecPrice;
         } catch (Exception e) {
             return false;
