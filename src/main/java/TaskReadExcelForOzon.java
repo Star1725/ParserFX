@@ -80,6 +80,22 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 }
                 String myVendorCodeOzon = String.valueOf(code);
 
+                //получаем Размер комиссии, %
+                cell = row.getCell(6);
+                double myCommissionForOzon = cell.getNumericCellValue();
+
+                //получаем Сборка заказа, FBO
+                cell = row.getCell(7);
+                double myOrderAssemblyForOzon = cell.getNumericCellValue();
+
+                //получаем Магистраль, максимум, FBO
+                cell = row.getCell(9);
+                double myTrunkForOzon = cell.getNumericCellValue();
+
+                //получаем Последняя миля, FBO
+                cell = row.getCell(10);
+                double myLastMileForOzon = cell.getNumericCellValue();
+
 // эту информацию мы получаем из файла 1С!!!!!!!!!!!!!!
 //                //получаем бренд и наименование продукта и сразу пытаемся получить поисковый запрос
 //                cell = row.getCell(2);
@@ -119,6 +135,8 @@ public class TaskReadExcelForOzon extends Task<Map> {
 //                    querySearch = myBrand + " " + model;
 //                }
 
+                //получаем комиссию
+
                 //получаем цену до скидки
                 cell = row.getCell(16);
                 int myPriceU = (int) (cell.getNumericCellValue() * 100);
@@ -150,6 +168,12 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         code_1C,
                         "-",
                         myVendorCodeOzon,
+
+                        myCommissionForOzon,
+                        myOrderAssemblyForOzon,
+                        myTrunkForOzon,
+                        myLastMileForOzon,
+
                         "-",
                         0,
                         myPriceU,
@@ -250,7 +274,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     entry.getValue().setSpecPrice(supplierSpecPriceAndNameProduct1.getSpecPrice());
                     entry.getValue().setMyBrand(supplierSpecPriceAndNameProduct1.getMyBrand());
                     entry.getValue().setProductType(supplierSpecPriceAndNameProduct1.getProductType());
-                    entry.getValue().setMyNomenclature(supplierSpecPriceAndNameProduct1.getNomenclature());
+                    entry.getValue().setMyNomenclature_1C(supplierSpecPriceAndNameProduct1.getNomenclature());
                     entry.getValue().setQuerySearchForWildberiesOrOzon(supplierSpecPriceAndNameProduct1.getQuerySearch());
                 } else entry.getValue().setSpecPrice(0);
             }

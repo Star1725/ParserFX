@@ -109,6 +109,12 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         code_1C,
                         "-",
                         myVendorCodeWildberies,
+
+                        0,
+                        0,
+                        0,
+                        0,
+
                         "-",//для Ozon(сразу формируем поисковый запрос)
                         0,
                         myPriceU,
@@ -204,7 +210,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 if (supplierSpecPriceAndNameProduct1 != null){
                     entry.getValue().setSpecPrice(supplierSpecPriceAndNameProduct1.getSpecPrice());
                     entry.getValue().setProductType(supplierSpecPriceAndNameProduct1.getProductType());
-                    entry.getValue().setMyNomenclature(supplierSpecPriceAndNameProduct1.getNomenclature());
+                    entry.getValue().setMyNomenclature_1C(supplierSpecPriceAndNameProduct1.getNomenclature());
                     entry.getValue().setQuerySearchForWildberiesOrOzon(supplierSpecPriceAndNameProduct1.getQuerySearch());
                 } else entry.getValue().setSpecPrice(0);
             }

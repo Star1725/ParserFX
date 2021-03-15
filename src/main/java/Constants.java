@@ -5,6 +5,9 @@ public class Constants {
     public static final String WILDBERIES = "Wildberies";
     public static final String OZON = "Ozon";
 
+    //заказчик
+    public static final String MY_SELLER = "Продавец ООО «АКСЕСС»";
+
 
     //ктегории для Wildberies с наценкой
     public static final String CATEGORY_WILD_5 = "Держатели в авто";//5

@@ -8,8 +8,14 @@ public class ResultProduct extends Product{
     private String category;
     private String productType;
     private String code_1C;
-    private String myNomenclature;
+    private String myNomenclature_1C;
     private String myVendorCodeForWildberiesOrOzon;
+
+    private double myCommissionForOzon;
+    private double myOrderAssemblyForOzon;
+    private double myTrunkForOzon;
+    private double myLastMileForOzon;
+
     private String querySearchForWildberiesOrOzon;
     private int specPrice;
     private int myPriceU;
@@ -58,8 +64,14 @@ public class ResultProduct extends Product{
             String category,
             String productType,
             String code_1C,
-            String myNomenclature,
+            String myNomenclature_1C,
             String myVendorCodeForWildberiesOrOzon,
+
+            double myCommissionForOzon,
+            double myOrderAssemblyForOzon,
+            double myTrunkForOzon,
+            double myLastMileForOzon,
+
             String querySearchForWildberiesOrOzon,
             int specPrice,
             int myPriceU,
@@ -103,8 +115,15 @@ public class ResultProduct extends Product{
         this.category = category;
         this.productType = productType;
         this.code_1C = code_1C;
-        this.myNomenclature = myNomenclature;
+        this.myNomenclature_1C = myNomenclature_1C;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
+
+        this.myCommissionForOzon = myCommissionForOzon;
+        this.myOrderAssemblyForOzon = myOrderAssemblyForOzon;
+        this.myTrunkForOzon = myTrunkForOzon;
+        this.myLastMileForOzon = myLastMileForOzon;
+
+
         this.querySearchForWildberiesOrOzon = querySearchForWildberiesOrOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;
@@ -123,8 +142,14 @@ public class ResultProduct extends Product{
             String category,
             String productType,
             String code_1C,
-            String myNomenclature,
+            String myNomenclature_1C,
             String myVendorCodeForWildberiesOrOzon,
+
+            double myCommissionForOzon,
+            double myOrderAssemblyForOzon,
+            double myTrunkForOzon,
+            double myLastMileForOzon,
+
             String querySearchForWildberiesOrOzon,
             int specPrice,
             int myPriceU,
@@ -141,8 +166,14 @@ public class ResultProduct extends Product{
         this.category = category;
         this.productType = productType;
         this.code_1C = code_1C;
-        this.myNomenclature = myNomenclature;
+        this.myNomenclature_1C = myNomenclature_1C;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
+
+        this.myCommissionForOzon = myCommissionForOzon;
+        this.myOrderAssemblyForOzon = myOrderAssemblyForOzon;
+        this.myTrunkForOzon = myTrunkForOzon;
+        this.myLastMileForOzon = myLastMileForOzon;
+
         this.querySearchForWildberiesOrOzon = querySearchForWildberiesOrOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;

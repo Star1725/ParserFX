@@ -9,7 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class TaskWriteExel extends Task<File> {
+public class TaskWriteExelForWildberries extends Task<File> {
 
     private Workbook workbook;
     private Sheet sheet;
@@ -18,7 +18,7 @@ public class TaskWriteExel extends Task<File> {
     private Drawing drawing;
     private int countRows;
 
-    TaskWriteExel(Map map){
+    TaskWriteExelForWildberries(Map map){
         this.resultProductHashMap = map;
     }
 

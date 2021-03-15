@@ -27,9 +27,10 @@ public class Main extends Application implements Controller.ActionInController {
     private static Set<String> setMyVendorCodes;
 
     static int marketplaceFlag;
-    TaskReadExcelForWildberies taskReadExcelForWildberies;
-    TaskReadExcelForOzon taskReadExcelForOzon;
-    TaskWriteExel taskWriteExel;
+    private TaskReadExcelForWildberies taskReadExcelForWildberies;
+    private TaskReadExcelForOzon taskReadExcelForOzon;
+    private TaskWriteExelForWildberries taskWriteExelForWildberries;
+    private TaskWriteExelForOzon taskWriteExelForOzon;
 
     static ParserWildBer parserWildBer = new ParserWildBer();
     static ParserOzon parserOzon = new ParserOzon();
@@ -130,16 +131,25 @@ public class Main extends Application implements Controller.ActionInController {
 
         preFld = Double.parseDouble(controller.percentTxtFld.getText());
 
-        taskWriteExel = new TaskWriteExel(resultMap);
-
-        controller.getProgressBar().progressProperty().bind(taskWriteExel.progressProperty());
-
-        taskWriteExel.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                openFile(taskWriteExel.writeWorkbook(resultMap));
-            }
-        });
+        if (marketplaceFlag == 1){
+            taskWriteExelForOzon = new TaskWriteExelForOzon(resultMap, webClient);
+            controller.getProgressBar().progressProperty().bind(taskWriteExelForOzon.progressProperty());
+            taskWriteExelForOzon.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    openFile(taskWriteExelForOzon.writeWorkbook(resultMap));
+                }
+            });
+        } else {
+            taskWriteExelForWildberries = new TaskWriteExelForWildberries(resultMap);
+            controller.getProgressBar().progressProperty().bind(taskWriteExelForWildberries.progressProperty());
+            taskWriteExelForWildberries.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    openFile(taskWriteExelForWildberries.writeWorkbook(resultMap));
+                }
+            });
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -158,7 +168,7 @@ public class Main extends Application implements Controller.ActionInController {
                     String productType = entry.getValue().getProductType();
                     String querySearchForOzon = entry.getValue().getQuerySearchForWildberiesOrOzon();
 
-                    myCalls.add(new MyCall(key, category, brand, productType, setMyVendorCodes, querySearchForOzon,     webClient));
+                    myCalls.add(new MyCall(key, category, brand, productType, setMyVendorCodes, querySearchForOzon, webClient));
                 }
 
                 List<Future<Product>> futureList = new ArrayList<>();
@@ -168,119 +178,177 @@ public class Main extends Application implements Controller.ActionInController {
                 }
 
                 for (int i =0; i < futureList.size(); i++) {
+
                     String myVendorCode = null;
                     try {
-                        Product resultProduct = executorCompletionService.take().get();
-                        //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
-                        myVendorCode = resultProduct.getMyVendorCodeFromRequest();
-
-                        String myRefForPage = resultProduct.getMyRefForPage();
-                        String myRefForImage = resultProduct.getMyRefForImage();
-                        String myProductName = resultProduct.getMyProductName();
-                        String mySpecAction = resultProduct.getMySpecAction();
-                        String competitorVendorCode = resultProduct.getCompetitorVendorCode();
-                        String competitorProductName = resultProduct.getCompetitorProductName();
-                        String competitorRefForPage = resultProduct.getCompetitorRefForPage();
-                        String competitorRefForImage = resultProduct.getCompetitorRefForImage();
-                        String competitorName = resultProduct.getCompetitorName();
-                        String queryForSearch = resultProduct.getQueryForSearch();
-                        int countSearch = resultProduct.getCountSearch();
-                        int competitorPriceU = resultProduct.getCompetitorPriceU();
-                        int competitorBasicSale = resultProduct.getCompetitorBasicSale();
-                        int competitorBasicPriceU = resultProduct.getCompetitorBasicPriceU();
-                        int competitorPromoSale = resultProduct.getCompetitorPromoSale();
-                        int competitorPromoPriceU = resultProduct.getCompetitorPromoPriceU();
-                        String specAction = resultProduct.getCompetitorSpecAction();
-                        int competitorRating = resultProduct.getCompetitorRating();
-
-                        ResultProduct resultProductTemp = resultMap.get(myVendorCode);
-
-                        resultProductTemp.setMyRefForPage(myRefForPage);
-                        resultProductTemp.setMyRefForImage(myRefForImage);
-                        resultProductTemp.setMyProductName(myProductName);
-                        resultProductTemp.setMySpecAction(mySpecAction);
-                        resultProductTemp.setCompetitorVendorCode(competitorVendorCode);
-                        resultProductTemp.setCompetitorProductName(competitorProductName);
-                        resultProductTemp.setCompetitorRefForPage(competitorRefForPage);
-                        resultProductTemp.setCompetitorRefForImage(competitorRefForImage);
-                        resultProductTemp.setCompetitorName(competitorName);
-                        resultProductTemp.setQueryForSearch(queryForSearch);
-                        resultProductTemp.setCountSearch(countSearch);
-                        resultProductTemp.setCompetitorPriceU(competitorPriceU);
-                        resultProductTemp.setCompetitorBasicSale(competitorBasicSale);
-                        resultProductTemp.setCompetitorBasicPriceU(competitorBasicPriceU);
-                        resultProductTemp.setCompetitorPromoSale(competitorPromoSale);
-                        resultProductTemp.setCompetitorPromoPriceU(competitorPromoPriceU);
-                        resultProductTemp.setCompetitorSpecAction(specAction);
-                        resultProductTemp.setCompetitorSpecAction(specAction);
-                        resultProductTemp.setCompetitorRating(competitorRating);
-
                         //установка рекомендуемой скидки и розничной цены на основании процента демпинга
-
                         double present = 1 - preFld / 100;
-                        int currentPriceU = resultProductTemp.getMyPriceU();
-                        int myCurrentLowerPriceU = resultProductTemp.getMyLowerPriceU();
-                        int myCurrentBasicSale = resultProductTemp.getMyBasicSale();
+                        if (marketplaceFlag == 2){
+                            Product product = executorCompletionService.take().get();
+                            //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
+                            myVendorCode = product.getMyVendorCodeFromRequest();
 
-                        int competitorLowerPriceU = resultProductTemp.getCompetitorLowerPriceU();
+                            String myRefForPage = product.getMyRefForPage();
+                            String myRefForImage = product.getMyRefForImage();
+                            String myProductName = product.getMyProductName();
+                            String mySpecAction = product.getMySpecAction();
+                            String competitorVendorCode = product.getCompetitorVendorCode();
+                            String competitorProductName = product.getCompetitorProductName();
+                            String competitorRefForPage = product.getCompetitorRefForPage();
+                            String competitorRefForImage = product.getCompetitorRefForImage();
+                            String competitorName = product.getCompetitorName();
+                            String queryForSearch = product.getQueryForSearch();
+                            int countSearch = product.getCountSearch();
+                            int competitorPriceU = product.getCompetitorPriceU();
+                            int competitorBasicSale = product.getCompetitorBasicSale();
+                            int competitorBasicPriceU = product.getCompetitorBasicPriceU();
+                            int competitorPromoSale = product.getCompetitorPromoSale();
+                            int competitorPromoPriceU = product.getCompetitorPromoPriceU();
+                            String specAction = product.getCompetitorSpecAction();
+                            int competitorRating = product.getCompetitorRating();
 
-                        int dumpingPresent = (int) (Math.round(100 - 100 * ((double) myCurrentLowerPriceU/competitorLowerPriceU)));
+                            ResultProduct resultProduct = resultMap.get(myVendorCode);
 
-                        //если аналог это мой товар, то всё оставляю без изменений
-                        if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-") || setMyVendorCodes.contains(competitorVendorCode) || (dumpingPresent == 1)){
-                            resultProductTemp.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
-                            resultProductTemp.setRecommendedBasicSale(myCurrentBasicSale);
-                            resultProductTemp.setRecommendedPromoSale(resultProductTemp.getMyPromoSale());
+                            resultProduct.setMyRefForPage(myRefForPage);
+                            resultProduct.setMyRefForImage(myRefForImage);
+                            resultProduct.setMyProductName(myProductName);
+                            resultProduct.setMySpecAction(mySpecAction);
+                            resultProduct.setCompetitorVendorCode(competitorVendorCode);
+                            resultProduct.setCompetitorProductName(competitorProductName);
+                            resultProduct.setCompetitorRefForPage(competitorRefForPage);
+                            resultProduct.setCompetitorRefForImage(competitorRefForImage);
+                            resultProduct.setCompetitorName(competitorName);
+                            resultProduct.setQueryForSearch(queryForSearch);
+                            resultProduct.setCountSearch(countSearch);
+                            resultProduct.setCompetitorPriceU(competitorPriceU);
+                            resultProduct.setCompetitorBasicSale(competitorBasicSale);
+                            resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
+                            resultProduct.setCompetitorPromoSale(competitorPromoSale);
+                            resultProduct.setCompetitorPromoPriceU(competitorPromoPriceU);
+                            resultProduct.setCompetitorSpecAction(specAction);
+                            resultProduct.setCompetitorSpecAction(specAction);
+                            resultProduct.setCompetitorRating(competitorRating);
 
-                        }
 
-                        else {
-                            //расчитываем рекомендованню розничную цену с учётом процента демпинга
-                            double count1 = (double) competitorLowerPriceU * present;
-                            long count2 = Math.round(count1);
-                            int count3 = (int) count2;
-                            int recommendedMyLowerPrice = count3;
-                            //и на основании этой рекомендованной цены расчитываем базоваю скидку
-                            double count4 = (double) recommendedMyLowerPrice / currentPriceU * 100;
-                            long count5 = Math.round(count4);
-                            int newMyBasicSale = 100 - (int) count5 ;
-                            //проверка базовой скидки:
-                            int checkPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
-                            if (recommendedMyLowerPrice < checkPrice){
-                                newMyBasicSale = newMyBasicSale + 1;
-                            }
-                            recommendedMyLowerPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
-                            resultProductTemp.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
+                            int currentPriceU = resultProduct.getMyPriceU();
+                            int myCurrentLowerPriceU = resultProduct.getMyLowerPriceU();
+                            int myCurrentBasicSale = resultProduct.getMyBasicSale();
 
-                            //если новая базовая скидка меньше 3%
-                            if (newMyBasicSale < 3){
-                                newMyBasicSale = 3;
-                                resultProductTemp.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 3%
-                                int newRecomendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.97);//расчитываем новую розничную цену до скидки
-                                resultProductTemp.setRecommendedPriceU(newRecomendPriceU);//устанавливаем её
-                            } else
-                                //если новая базовая скидка больше 90%
-                                if (newMyBasicSale > 90){
-                                newMyBasicSale = 90;
-                                resultProductTemp.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 90%
-                                int newRecommendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.1);//расчитываем новую розничную цену до скидки
-                                resultProductTemp.setRecommendedPriceU(newRecommendPriceU);//устанавливаем её
+                            int competitorLowerPriceU = resultProduct.getCompetitorLowerPriceU();
+
+                            int dumpingPresent = (int) (Math.round(100 - 100 * ((double) myCurrentLowerPriceU/competitorLowerPriceU)));
+
+                            //если аналог это мой товар, то всё оставляю без изменений
+                            if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-") || setMyVendorCodes.contains(competitorVendorCode) || (dumpingPresent == 1)){
+                                resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
+                                resultProduct.setRecommendedBasicSale(myCurrentBasicSale);
+                                resultProduct.setRecommendedPromoSale(resultProduct.getMyPromoSale());
+
                             } else {
-                                resultProductTemp.setRecommendedBasicSale(newMyBasicSale);
+                                //расчитываем рекомендованню розничную цену с учётом процента демпинга
+                                double count1 = (double) competitorLowerPriceU * present;
+                                long count2 = Math.round(count1);
+                                int count3 = (int) count2;
+                                int recommendedMyLowerPrice = count3;
+                                //и на основании этой рекомендованной цены расчитываем базоваю скидку
+                                double count4 = (double) recommendedMyLowerPrice / currentPriceU * 100;
+                                long count5 = Math.round(count4);
+                                int newMyBasicSale = 100 - (int) count5 ;
+                                //проверка базовой скидки:
+                                int checkPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
+                                if (recommendedMyLowerPrice < checkPrice){
+                                    newMyBasicSale = newMyBasicSale + 1;
+                                }
+                                recommendedMyLowerPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
+                                resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
+
+                                //если новая базовая скидка меньше 3%
+                                if (newMyBasicSale < 3){
+                                    newMyBasicSale = 3;
+                                    resultProduct.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 3%
+                                    int newRecomendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.97);//расчитываем новую розничную цену до скидки
+                                    resultProduct.setRecommendedPriceU(newRecomendPriceU);//устанавливаем её
+                                } else
+                                    //если новая базовая скидка больше 90%
+                                    if (newMyBasicSale > 90){
+                                        newMyBasicSale = 90;
+                                        resultProduct.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 90%
+                                        int newRecommendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.1);//расчитываем новую розничную цену до скидки
+                                        resultProduct.setRecommendedPriceU(newRecommendPriceU);//устанавливаем её
+                                    } else {
+                                        resultProduct.setRecommendedBasicSale(newMyBasicSale);
+                                    }
                             }
-                        }
+                            //дублирование кода
+                            resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
 
-                        resultMap.put(resultProductTemp.getMyVendorCodeForWildberiesOrOzon(), resultProductTemp);
+                            int finalI = i + 1;
+                            synchronized (mon) {
+                                if (competitorVendorCode.equals("-")) {
+                                    controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
+                                } else {
+                                    controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");
+                                }
+                            }
+                            ///////////////////
+                        } else {
+                            Product product = executorCompletionService.take().get();
+                            //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
+                            myVendorCode = product.getMyVendorCodeFromRequest();
 
-                        int finalI = i + 1;
+                            String myRefForPage = product.getMyRefForPage();
+                            String competitorVendorCode = product.getCompetitorVendorCode();
+                            String competitorProductName = product.getCompetitorProductName();
+                            String competitorRefForPage = product.getCompetitorRefForPage();
+                            String competitorRefForImage = product.getCompetitorRefForImage();
+                            String competitorName = product.getCompetitorName();
+                            String queryForSearch = product.getQueryForSearch();
+                            int competitorBasicPriceU = product.getCompetitorBasicPriceU();
+                            int competitorPremiumPriceForOzon = product.getCompetitorPremiumPriceForOzon();
 
-                        synchronized (mon) {
-                            if (competitorVendorCode.equals("-")) {
-                                controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
+                            ResultProduct resultProduct = resultMap.get(myVendorCode);
+
+                            resultProduct.setMyRefForPage(myRefForPage);
+                            resultProduct.setCompetitorVendorCode(competitorVendorCode);
+                            resultProduct.setCompetitorProductName(competitorProductName);
+                            resultProduct.setCompetitorRefForPage(competitorRefForPage);
+                            resultProduct.setCompetitorRefForImage(competitorRefForImage);
+                            resultProduct.setCompetitorName(competitorName);
+                            resultProduct.setQueryForSearch(queryForSearch);
+                            resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
+                            resultProduct.setCompetitorPremiumPriceForOzon(competitorPremiumPriceForOzon);
+
+                            int myCurrentPriceU = resultProduct.getMyPriceU();
+                            int myCurrentLowerPriceU = resultProduct.getMyLowerPriceU();
+                            int competitorLowerPriceU = resultProduct.getCompetitorLowerPriceU();
+
+                            int dumpingPresent = (int) (Math.round(100 - 100 * ((double) myCurrentLowerPriceU/competitorLowerPriceU)));
+
+                            if (competitorName.equals(Constants.MY_SELLER) || (dumpingPresent == 1)){
+                                resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
                             } else {
-                                controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");
+                                //расчитываем рекомендованню розничную цену с учётом процента демпинга
+                                double count1 = (double) competitorLowerPriceU * present;
+                                long count2 = Math.round(count1);
+                                int count3 = (int) count2;
+                                int recommendedMyLowerPrice = count3;
+
+                                resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
                             }
+                            //дублирование кода
+                            resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
+
+                            int finalI = i + 1;
+                            synchronized (mon) {
+                                if (competitorVendorCode.equals("-")) {
+                                    controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
+                                } else {
+                                    controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");
+                                }
+                            }
+                            ///////////////////
                         }
+
                     } catch (InterruptedException | ExecutionException | NullPointerException e) {
                         System.out.println("для артикула " + myVendorCode + " ошибка - " + e.getMessage());
                     }
@@ -288,7 +356,12 @@ public class Main extends Application implements Controller.ActionInController {
                 controller.getAreaLog().appendText("Количество проанализированных позицый - " + futureList.size() + "\n");
                 executorService.shutdown();
                 controller.getAreaLog().appendText("Загрузка изображений...");
-                taskWriteExel.run();
+
+                if (marketplaceFlag == 1){
+                    taskWriteExelForOzon.run();
+                } else {
+                    taskWriteExelForWildberries.run();
+                }
             }
         }).start();
     }
