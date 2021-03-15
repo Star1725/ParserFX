@@ -105,6 +105,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 resultProductHashMap.put(myVendorCodeWildberies, new ResultProduct(
                         brand,
                         category,
+                        "-",
                         code_1C,
                         "-",
                         myVendorCodeWildberies,
@@ -192,7 +193,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 cell = row.getCell(4);
                 int specPrice_1C = (int) cell.getNumericCellValue() * 100;
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, myNomenclature, querySearch, specPrice_1C));
+                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, myBrand, productType, myNomenclature, querySearch, specPrice_1C));
             }
 
             //пытаемся привязать specPrice_1C и productName к ResultProduct
@@ -202,6 +203,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 SupplierSpecPriceAndNameProduct supplierSpecPriceAndNameProduct1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
                 if (supplierSpecPriceAndNameProduct1 != null){
                     entry.getValue().setSpecPrice(supplierSpecPriceAndNameProduct1.getSpecPrice());
+                    entry.getValue().setProductType(supplierSpecPriceAndNameProduct1.getProductType());
                     entry.getValue().setMyNomenclature(supplierSpecPriceAndNameProduct1.getNomenclature());
                     entry.getValue().setQuerySearchForWildberiesOrOzon(supplierSpecPriceAndNameProduct1.getQuerySearch());
                 } else entry.getValue().setSpecPrice(0);

@@ -6,6 +6,7 @@ import lombok.Setter;
 public class ResultProduct extends Product{
     private String myBrand;
     private String category;
+    private String productType;
     private String code_1C;
     private String myNomenclature;
     private String myVendorCodeForWildberiesOrOzon;
@@ -55,6 +56,7 @@ public class ResultProduct extends Product{
     public ResultProduct(
             String myBrand,
             String category,
+            String productType,
             String code_1C,
             String myNomenclature,
             String myVendorCodeForWildberiesOrOzon,
@@ -99,6 +101,7 @@ public class ResultProduct extends Product{
         super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorPremiumPriceForOzon, competitorName);
         this.myBrand = myBrand;
         this.category = category;
+        this.productType = productType;
         this.code_1C = code_1C;
         this.myNomenclature = myNomenclature;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
@@ -118,6 +121,7 @@ public class ResultProduct extends Product{
     public ResultProduct(
             String myBrand,
             String category,
+            String productType,
             String code_1C,
             String myNomenclature,
             String myVendorCodeForWildberiesOrOzon,
@@ -135,6 +139,7 @@ public class ResultProduct extends Product{
     ) {
         this.myBrand = myBrand;
         this.category = category;
+        this.productType = productType;
         this.code_1C = code_1C;
         this.myNomenclature = myNomenclature;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;

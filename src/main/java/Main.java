@@ -155,9 +155,10 @@ public class Main extends Application implements Controller.ActionInController {
                     String key = entry.getKey();
                     String category = entry.getValue().getCategory();
                     String brand = entry.getValue().getMyBrand();
+                    String productType = entry.getValue().getProductType();
                     String querySearchForOzon = entry.getValue().getQuerySearchForWildberiesOrOzon();
 
-                    myCalls.add(new MyCall(key, category, brand, setMyVendorCodes, querySearchForOzon, webClient));
+                    myCalls.add(new MyCall(key, category, brand, productType, setMyVendorCodes, querySearchForOzon,     webClient));
                 }
 
                 List<Future<Product>> futureList = new ArrayList<>();
@@ -297,14 +298,16 @@ public class Main extends Application implements Controller.ActionInController {
         String key;
         String category;
         String brand;
+        String productType;
         String querySearchForOzon;
         Set myVendorCodes;
         WebClient webClient;
 
-        public MyCall(String key, String category, String brand, Set myVendorCodes, String querySearchForOzon, WebClient webClient) {
+        public MyCall(String key, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient) {
             this.key = key;
             this.category = category;
             this.brand = brand;
+            this.productType = productType;
             this.querySearchForOzon = querySearchForOzon;
             this.myVendorCodes = myVendorCodes;
             this.webClient = webClient;
@@ -316,9 +319,9 @@ public class Main extends Application implements Controller.ActionInController {
         public Product call() throws Exception {
             System.out.println("выполнение задачи - " + marketplaceFlag);
             if (marketplaceFlag == 1){
-                return parserOzon.getProduct(key, category, brand, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
+                return parserOzon.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
             } else if (marketplaceFlag == 2){
-                return parserWildBer.getProduct(key, category, brand, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
+                return parserWildBer.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
             } else return null;
         }
     }

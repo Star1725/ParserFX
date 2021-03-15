@@ -20,12 +20,38 @@
       <path>
         <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="BRANCH:master" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:branch_for_SpecPrice" type="e8cecc67:BranchNodeDescriptor" />
       </path>
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="commit" />
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ParserOzon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ParserOzon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ParserWildBer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ParserWildBer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ResultProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ResultProduct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/SupplierSpecPriceAndNameProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SupplierSpecPriceAndNameProduct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TaskReadExcelForOzon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskReadExcelForOzon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Constants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/HttpUrlConnectionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/HttpUrlConnectionHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Main$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Main$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Main$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Main$MyCall.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$MyCall.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ParserWildBer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ParserWildBer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Product.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Product.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ResultProduct.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ResultProduct.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/TaskReadExel.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/TaskWriteExel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/TaskWriteExel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/controllers/Controller$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controllers/Controller$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/controllers/Controller$ActionInController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controllers/Controller$ActionInController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/controllers/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controllers/Controller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample.fxml" afterDir="false" />
+    </list>
     <list id="1019f6b8-5348-4ab5-b739-b8eb41122888" name="Revert &quot;версия 1.1&quot;" comment="Revert &quot;версия 1.1&quot;&#10;&#10;This reverts commit 1e6a163f" />
     <list id="7c07d6c2-34ea-49e6-96c6-03e9eb23df85" name="релизная версия 1.0.3 - отрабатывает все категории" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -89,7 +115,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="ad917c8d702da62f7141e41f9b0d95fb71aa86de" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -522,7 +548,42 @@
       <option name="project" value="LOCAL" />
       <updated>1615286173356</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="добавил класс для работы с Ozon">
+      <created>1615352346376</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1615352346376</updated>
+    </task>
+    <task id="LOCAL-00040" summary="проблема с термометрами, пока в ручном режиме if (!myBrand.equals(&quot;Aiqura&quot;))">
+      <created>1615379990505</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1615379990505</updated>
+    </task>
+    <task id="LOCAL-00041" summary="переделываем - поисковый запрос будет из файла 1С">
+      <created>1615470016013</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1615470016013</updated>
+    </task>
+    <task id="LOCAL-00042" summary="доработка">
+      <created>1615526206752</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1615526206752</updated>
+    </task>
+    <task id="LOCAL-00043" summary="commit">
+      <created>1615654114835</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1615654114835</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -542,7 +603,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="master" />
+                        <option value="branch_for_SpecPrice" />
                       </list>
                     </value>
                   </entry>
@@ -557,9 +618,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
-    <MESSAGE value="релизная версия 1.0.2 - оптимизирован запрос по категории &quot;Автомобильные зарядные устройства&quot;" />
-    <MESSAGE value="релизная версия 1.0.3 - отрабатывает все категории" />
-    <MESSAGE value="версия 1.1.0 - со спец" />
     <MESSAGE value="версия 1.1" />
     <MESSAGE value="зафеншуить продукт" />
     <MESSAGE value="вроде достаю все хотелки, не могу проверить, wildberies не отвечает" />
@@ -572,7 +630,6 @@
     <MESSAGE value="доработал класс чтиния Excel" />
     <MESSAGE value="доработка ошибок" />
     <MESSAGE value="доработана обработка артикула поставщика, чтобы он соответствовал форме в отчёте 1С" />
-    <MESSAGE value="доработка" />
     <MESSAGE value="доработал стратегию на повышение" />
     <MESSAGE value="переработал выходнй файл Excel" />
     <MESSAGE value="ver. 1.1&#10;- добавлены все хотелки&#10;- необходимо оптимизировать поисковый запрос по кабелям" />
@@ -581,6 +638,10 @@
     <MESSAGE value="достаёт всё!!!!!!!" />
     <MESSAGE value="оптимизация поискового запроса по кабелям" />
     <MESSAGE value="оптимизировал поиск, добавил категорию Молотки" />
+    <MESSAGE value="добавил класс для работы с Ozon" />
+    <MESSAGE value="проблема с термометрами, пока в ручном режиме if (!myBrand.equals(&quot;Aiqura&quot;))" />
+    <MESSAGE value="переделываем - поисковый запрос будет из файла 1С" />
+    <MESSAGE value="доработка" />
     <MESSAGE value="commit" />
     <option name="LAST_COMMIT_MESSAGE" value="commit" />
   </component>
@@ -597,34 +658,34 @@
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="755" y="333" width="544" height="273" key="#Notifications/0.0.1739.939@0.0.1739.939" timestamp="1614280603354" />
-    <state x="675" y="177" key="#com.intellij.ide.util.MemberChooser" timestamp="1614348843883">
+    <state x="675" y="177" key="#com.intellij.ide.util.MemberChooser" timestamp="1615709321597">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="675" y="177" key="#com.intellij.ide.util.MemberChooser/0.0.1739.939@0.0.1739.939" timestamp="1614348843883" />
+    <state x="675" y="177" key="#com.intellij.ide.util.MemberChooser/0.0.1739.939@0.0.1739.939" timestamp="1615709321597" />
     <state x="599" y="260" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1614856096548">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="599" y="260" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1739.939@0.0.1739.939" timestamp="1614856096548" />
-    <state x="653" y="335" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1613573283323">
+    <state x="653" y="335" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1615448567909">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="653" y="335" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1739.939@0.0.1739.939" timestamp="1613573283323" />
-    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1614764209564">
+    <state x="653" y="335" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1739.939@0.0.1739.939" timestamp="1615448567909" />
+    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1615530647297">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1739.939@0.0.1739.939" timestamp="1614764209564" />
-    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2" timestamp="1615285781174">
+    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1739.939@0.0.1739.939" timestamp="1615530647297" />
+    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2" timestamp="1615654113946">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2/0.0.1739.939@0.0.1739.939" timestamp="1615285781174" />
+    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2/0.0.1739.939@0.0.1739.939" timestamp="1615654113946" />
     <state width="534" height="466" key="DebuggerActiveHint" timestamp="1614213235691">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="534" height="466" key="DebuggerActiveHint/0.0.1739.939@0.0.1739.939" timestamp="1614213235691" />
-    <state x="68" y="74" width="1553" height="754" key="DiffContextDialog" timestamp="1614753538436">
+    <state x="97" y="131" width="1553" height="754" key="DiffContextDialog" timestamp="1615470387618">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="68" y="74" width="1553" height="754" key="DiffContextDialog/0.0.1739.939@0.0.1739.939" timestamp="1614753538436" />
+    <state x="97" y="131" width="1553" height="754" key="DiffContextDialog/0.0.1739.939@0.0.1739.939" timestamp="1615470387618" />
     <state x="650" y="225" key="FileChooserDialogImpl" timestamp="1615286036063">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
@@ -633,46 +694,46 @@
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="749" y="368" key="Github.ShareDialog/0.0.1739.939@0.0.1739.939" timestamp="1613639192275" />
-    <state width="1696" height="359" key="GridCell.Tab.0.bottom" timestamp="1615285960660">
+    <state width="1696" height="461" key="GridCell.Tab.0.bottom" timestamp="1615790456322">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.bottom/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="359" key="GridCell.Tab.0.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615285960660" />
-    <state width="1696" height="359" key="GridCell.Tab.0.center" timestamp="1615285960659">
+    <state width="1696" height="461" key="GridCell.Tab.0.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615790456322" />
+    <state width="1696" height="461" key="GridCell.Tab.0.center" timestamp="1615790456322">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.center/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="359" key="GridCell.Tab.0.center/0.0.1739.939@0.0.1739.939" timestamp="1615285960659" />
-    <state width="1696" height="359" key="GridCell.Tab.0.left" timestamp="1615285960659">
+    <state width="1696" height="461" key="GridCell.Tab.0.center/0.0.1739.939@0.0.1739.939" timestamp="1615790456322" />
+    <state width="1696" height="461" key="GridCell.Tab.0.left" timestamp="1615790456321">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.left/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="359" key="GridCell.Tab.0.left/0.0.1739.939@0.0.1739.939" timestamp="1615285960659" />
-    <state width="1696" height="359" key="GridCell.Tab.0.right" timestamp="1615285960659">
+    <state width="1696" height="461" key="GridCell.Tab.0.left/0.0.1739.939@0.0.1739.939" timestamp="1615790456321" />
+    <state width="1696" height="461" key="GridCell.Tab.0.right" timestamp="1615790456322">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.right/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="359" key="GridCell.Tab.0.right/0.0.1739.939@0.0.1739.939" timestamp="1615285960659" />
-    <state width="532" height="259" key="GridCell.Tab.1.bottom" timestamp="1614855700954">
+    <state width="1696" height="461" key="GridCell.Tab.0.right/0.0.1739.939@0.0.1739.939" timestamp="1615790456322" />
+    <state width="1696" height="461" key="GridCell.Tab.1.bottom" timestamp="1615790478499">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.1.bottom/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="532" height="259" key="GridCell.Tab.1.bottom/0.0.1739.939@0.0.1739.939" timestamp="1614855700954" />
-    <state width="532" height="259" key="GridCell.Tab.1.center" timestamp="1614855700951">
+    <state width="1696" height="461" key="GridCell.Tab.1.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615790478499" />
+    <state width="1696" height="461" key="GridCell.Tab.1.center" timestamp="1615790478499">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.1.center/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="532" height="259" key="GridCell.Tab.1.center/0.0.1739.939@0.0.1739.939" timestamp="1614855700951" />
-    <state width="532" height="259" key="GridCell.Tab.1.left" timestamp="1614855700951">
+    <state width="1696" height="461" key="GridCell.Tab.1.center/0.0.1739.939@0.0.1739.939" timestamp="1615790478499" />
+    <state width="1696" height="461" key="GridCell.Tab.1.left" timestamp="1615790478499">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.1.left/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="532" height="259" key="GridCell.Tab.1.left/0.0.1739.939@0.0.1739.939" timestamp="1614855700951" />
-    <state width="532" height="259" key="GridCell.Tab.1.right" timestamp="1614855700954">
+    <state width="1696" height="461" key="GridCell.Tab.1.left/0.0.1739.939@0.0.1739.939" timestamp="1615790478499" />
+    <state width="1696" height="461" key="GridCell.Tab.1.right" timestamp="1615790478499">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.1.right/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="532" height="259" key="GridCell.Tab.1.right/0.0.1739.939@0.0.1739.939" timestamp="1614855700954" />
+    <state width="1696" height="461" key="GridCell.Tab.1.right/0.0.1739.939@0.0.1739.939" timestamp="1615790478499" />
     <state x="226" y="20" key="MergeDialog" timestamp="1615285983415">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
@@ -693,22 +754,22 @@
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="254" height="198" key="RunAnythingAction_Filter_Popup/0.0.1739.939@0.0.1739.939" timestamp="1613904786311" />
-    <state x="720" y="385" key="VCS.ChangelistChooser" timestamp="1614369203875">
+    <state x="720" y="385" key="VCS.ChangelistChooser" timestamp="1615383946830">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="720" y="385" key="VCS.ChangelistChooser/0.0.1739.939@0.0.1739.939" timestamp="1614369203875" />
-    <state x="462" y="203" key="Vcs.Push.Dialog.v2" timestamp="1615286435046">
+    <state x="720" y="385" key="VCS.ChangelistChooser/0.0.1739.939@0.0.1739.939" timestamp="1615383946830" />
+    <state x="462" y="203" key="Vcs.Push.Dialog.v2" timestamp="1615708326427">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="462" y="203" key="Vcs.Push.Dialog.v2/0.0.1739.939@0.0.1739.939" timestamp="1615286435046" />
+    <state x="462" y="203" key="Vcs.Push.Dialog.v2/0.0.1739.939@0.0.1739.939" timestamp="1615708326427" />
     <state x="598" y="204" key="VcsDiffUtil.ChangesDialog" timestamp="1614282386720">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="598" y="204" key="VcsDiffUtil.ChangesDialog/0.0.1739.939@0.0.1739.939" timestamp="1614282386720" />
-    <state width="1275" height="477" key="XDebugger.FullValuePopup" timestamp="1614759486261">
+    <state width="1275" height="477" key="XDebugger.FullValuePopup" timestamp="1615736683550">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="1275" height="477" key="XDebugger.FullValuePopup/0.0.1739.939@0.0.1739.939" timestamp="1614759486261" />
+    <state width="1275" height="477" key="XDebugger.FullValuePopup/0.0.1739.939@0.0.1739.939" timestamp="1615736683550" />
     <state x="641" y="277" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1614183629698">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
@@ -717,29 +778,70 @@
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="910" y="200" key="extract.method.dialog/0.0.1739.939@0.0.1739.939" timestamp="1614437095358" />
-    <state x="582" y="69" width="575" height="801" key="find.popup" timestamp="1614527496927">
+    <state x="582" y="69" width="575" height="801" key="find.popup" timestamp="1615448386460">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="582" y="69" width="575" height="801" key="find.popup/0.0.1739.939@0.0.1739.939" timestamp="1614527496927" />
+    <state x="582" y="69" width="575" height="801" key="find.popup/0.0.1739.939@0.0.1739.939" timestamp="1615448386460" />
     <state x="652" y="183" key="git4idea.branch.GitSmartOperationDialog" timestamp="1615286056703">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="652" y="183" key="git4idea.branch.GitSmartOperationDialog/0.0.1739.939@0.0.1739.939" timestamp="1615286056703" />
-    <state x="77" y="39" width="1553" height="754" key="git4idea.log.GitShowExternalLogAction" timestamp="1615286381521">
+    <state x="77" y="105" width="1553" height="688" key="git4idea.log.GitShowExternalLogAction" timestamp="1615287123407">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="77" y="39" width="1553" height="754" key="git4idea.log.GitShowExternalLogAction/0.0.1739.939@0.0.1739.939" timestamp="1615286381521" />
-    <state x="527" y="216" key="run.anything.popup" timestamp="1613904786316">
+    <state x="77" y="105" width="1553" height="688" key="git4idea.log.GitShowExternalLogAction/0.0.1739.939@0.0.1739.939" timestamp="1615287123407" />
+    <state x="527" y="216" key="run.anything.popup" timestamp="1615467860022">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="527" y="216" key="run.anything.popup/0.0.1739.939@0.0.1739.939" timestamp="1613904786316" />
+    <state x="527" y="216" key="run.anything.popup/0.0.1739.939@0.0.1739.939" timestamp="1615467860022" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserOzon.java</url>
+          <line>22</line>
+          <option name="timeStamp" value="234" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java</url>
+          <line>154</line>
+          <option name="timeStamp" value="241" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java</url>
+          <line>26</line>
+          <option name="timeStamp" value="243" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java</url>
+          <line>140</line>
+          <option name="timeStamp" value="244" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserOzon.java</url>
+          <line>265</line>
+          <option name="timeStamp" value="251" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserOzon.java</url>
+          <line>230</line>
+          <option name="timeStamp" value="252" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForOzon.java</url>
+          <line>30</line>
+          <option name="timeStamp" value="255" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
     <select />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ParserFX$Main.ic" NAME="Main Coverage Results" MODIFIED="1614553711821" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+    <SUITE FILE_PATH="coverage/ParserFX$Main.ic" NAME="Main Coverage Results" MODIFIED="1615726118778" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>.*</FILTER>
     </SUITE>
   </component>

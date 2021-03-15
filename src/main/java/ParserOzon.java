@@ -1,14 +1,9 @@
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +18,7 @@ public class ParserOzon {
     private Object mon = new Object();
     private static WebClient webClientForOzon;
 
-    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, Set myVendorCodes, String querySearchForOzon, WebClient webClient, int marketPlaceFlag){
+    public Product getProduct(String myVendorCodeFromRequest, String category, String brand,String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient, int marketPlaceFlag){
         List<Product> productList;
         Product product = new Product(myVendorCodeFromRequest,
                 "-",
@@ -54,8 +49,8 @@ public class ParserOzon {
 
         StringBuilder query = new StringBuilder(querySearchForOzon);
         //в заввисимости от категории ozon определяем параметры запроса для поиска конкурентов
-        switch (category) {
-            case Constants.CATEGORY_1C_23:
+        switch (productType) {
+            case Constants.PRODUCT_TYPE_1C_23:
                 productList = getCatalogProducts(query.toString().toLowerCase(), brand);
 
                 product = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest);
@@ -203,110 +198,119 @@ public class ParserOzon {
         url = getUrlForSearchQuery(query);
 
         //получение бренда, артикула, имени товара, ссылки на страницу товара, ссылки на картинкау товара, спец-акции, рейтинга
-        productList = getDocumentFromHtmlUnit(url);
+        productList = getCatalogFromFPageForHtmlUnit(url);
 
         return productList;
     }
 
     private static String getUrlForSearchQuery(String query) {
         String url = "-";
-        String example = "https://www.ozon.ru/category/aksessuary-dlya-elektroniki-15879/?from_global=true&sorting=price&text=%D0%B0%D0%BA%D0%BA%D1%83%D0%BC%D1%83%D0%BB%D1%8F%D1%82%D0%BE%D1%80+%D0%B2%D0%BD%D0%B5%D1%88%D0%BD%D0%B8%D0%B9+borofone+bt17";
-        url = getString("https://www.ozon.ru/category/aksessuary-dlya-elektroniki-15879/?from_global=true&sorting=price&text=", getQueryUTF8(query), "");
-        url = getString("https://www.ozon.ru/search/?from_global=true&text=", getQueryUTF8(query), "");
+        url = getString("https://www.ozon.ru/search/?from_global=true&sorting=price&text=", getQueryUTF8(query), "");
         return url;
     }
 
-    private static List<Product> getDocumentFromHtmlUnit(String url) {
+    private static List<Product> getCatalogFromFPageForHtmlUnit(String url) {
         List<Product> productList = new ArrayList<>();
-        HtmlPage page1 = null;
-        int countSearch = 0;
+        HtmlPage page = null;
+        String querySearchAndCount = "-";
 
-        final WebClient webClient = webClientForOzon;
+        final WebClient webClient = new WebClient(BrowserVersion.CHROME);
         try {
             webClient.getOptions().setCssEnabled(false);
             webClient.getOptions().setJavaScriptEnabled(false);
-            page1 = webClient.getPage(url);
+            page = webClient.getPage(url);
         } catch (IOException e) {
             e.printStackTrace();
         }
         webClient.close();
 
+        assert page != null;
+        String pageString = page.asXml();
+
         //получаем кол-во найденных аналогов
-        List<HtmlElement> itemsCountSearch = page1.getByXPath("//div[@class='b6r7']");
+        List<HtmlElement> itemsCountSearch = page.getByXPath("//div[@class='b6r7']");
         if (itemsCountSearch.isEmpty()) {
             System.out.println("No items found !");
         } else {
-            countSearch = itemsCountSearch.size();
+            querySearchAndCount = itemsCountSearch.get(0).asText();
         }
 
         //получаем список продуктов, полученный по поисковому запросу аналогов
-        List<HtmlElement> itemsForListProducts = page1.getByXPath("//div[@class='a0t8 a0u']");
+        List<HtmlElement> itemsForListProducts = page.getByXPath("//div[@class='a0c4']");
+
         if (itemsForListProducts.isEmpty()) {
             System.out.println("No items found !");
         } else {
-            for (int j = 0; j < itemsForListProducts.size(); j++) {
+            for (HtmlElement itemProduct: itemsForListProducts) {
+                String competitorBrand = "-";
                 String refForProduct = "-";
                 String refImage = "-";
                 String vendorCode = "-";
-                String productName = "-";
+                String productDescription = "-";
                 String seller = "-";
-                String stringSale = "-";
                 int intSale = 0;
-                int curPrice = 0;
-                int olPrice = 0;
-                String premiumPrice = "-";
-                int premPrice = 0;
+                int competitorBasicPriceU = 0;
+                int competitorPriceU = 0;
+                int competitorPremiumPriceForOzon = 0;
 
-                String code = itemsForListProducts.get(j).getFirstChild().getFirstChild().getAttributes().getNamedItem("href").getNodeValue();
-                int numberProduct = j;
-                Iterable<DomElement> elements = itemsForListProducts.get(j).getChildElements();
-                int i = 0;
-                for (DomElement element : elements) {
-                    System.out.println(element.getNodeName());
-                    if (i == 0) {
-                        //-- 0 -- Элемент, содержащий артикул, ссылки на продукт и картинку
-                        //HtmlDivision divisionRefAndImage = (HtmlDivision) item.getByXPath("//div[@class='a0t0']").get(0);
-                        HtmlAnchor anchorRef = (HtmlAnchor) element.getByXPath("//a[@class='a0v2 a0v4 tile-hover-target']").get(j);
-                        refForProduct = "https://www.ozon.ru" + anchorRef.getAttribute("href");
-                        String[] sBuff = refForProduct.split("/");
-                        vendorCode = sBuff[sBuff.length - 1];
-                        HtmlDivision divisionImage = (HtmlDivision) anchorRef.getByXPath("//div[@class='a0i7 a0i8']").get(j);
-                        refImage = divisionImage.getFirstChild().getAttributes().getNamedItem("src").getNodeValue();
-                    } else if (i == 1) {
-                        //-- 1 --Элемент, содержащий имя продукта и продавца
-                        HtmlAnchor anchor = (HtmlAnchor) element.getByXPath("//a[@class='a2g0 tile-hover-target']").get(j);
-                        productName = anchor.asText();
-                        HtmlSpan spanSellerName = (HtmlSpan) element.getByXPath("//span[@class='a2g6']").get(1);
-                        seller = spanSellerName.getFirstElementChild().asText();
-                    } else if (i == 2) {
-                        //-- 2 --Элемент, содержащий цену и скидку
-                        //получаем текущую цену и если есть цену без скидки
-                        HtmlDivision divisionCurrentPriceAndOldPrice = (HtmlDivision) element.getByXPath("//div[@class='b5v4 a5d2 item a1d1']").get(j);
-                        String elementsPrice = divisionCurrentPriceAndOldPrice.asText();
-                        String[] priceBuff = elementsPrice.split("₽");
-                        curPrice = getPriceFromStringPrice(priceBuff[0]) * 100;
-                        if (priceBuff.length == 2) {
-                            olPrice = getPriceFromStringPrice(priceBuff[1]) * 100;
-                        }
-                        //получаем если есть скидку
-                        try {
-                            HtmlDivision divisionSale = (HtmlDivision) element.getByXPath("//div[@class='a0x a5d2 item']").get(j);
-                            stringSale = divisionSale.getFirstChild().asText();
-                            intSale = Integer.parseInt(stringSale.substring(1, stringSale.length() - 1));
-                        } catch (Exception e) {
-                            System.out.println("Скидки нет");
-                        }
-                        //если есть premium ozon
-                        try {
-                            HtmlDivision divisionPremiumPrice = (HtmlDivision) element.getByXPath("//div[@class='a0x a5d2 item']").get(j + 1);
-                            String allText = divisionPremiumPrice.asText();
-                            String[] buffPremium = allText.split("₽");
-                            premPrice = getPriceFromStringPrice(buffPremium[0]) * 100;
-                        } catch (Exception e) {
-                            System.out.println("premium ozon нет");
-                        }
+                //получение ссылки на продукт
+                refForProduct = "https://www.ozon.ru" + itemProduct.getFirstChild().getAttributes().getNamedItem("href").getNodeValue();
+                String[] arrayBuff1 = refForProduct.split("/");
+                for (int i = 0; i < arrayBuff1.length; i++) {
+                    if (arrayBuff1[i].equals("id")){
+                        vendorCode = arrayBuff1[i + 1];
+                        break;
                     }
-                    i++;
+                }
+                //элементы, в которых вся нужная информация
+                Iterable<DomElement> elementsFor_a0c4 = itemProduct.getChildElements();
+                int childFor_a0c4 = 1;
+                for (DomElement elementFor_a0c4 : elementsFor_a0c4) {
+                    //получение ссылки на картинку
+                    if (childFor_a0c4 == 1) {
+                        refImage = elementFor_a0c4.getFirstChild().getFirstChild().getFirstChild().getAttributes().getNamedItem("src").getNodeValue();
+                    }
+                    //получение
+                    if (childFor_a0c4 == 2) {
+
+                        DomNodeList<HtmlElement> asFor_a0s9 = elementFor_a0c4.getElementsByTagName("a");
+
+                        //получение цен: currentBasicPriceString, competitorPriceU
+                        DomNodeList<HtmlElement> divsFor_a0y9 = asFor_a0s9.get(0).getElementsByTagName("div");
+                        System.out.println(divsFor_a0y9.size());
+                        DomNodeList<HtmlElement> spanFor_b5v4 = divsFor_a0y9.get(0).getElementsByTagName("span");
+                        System.out.println(spanFor_b5v4.size());
+                        String currentBasicPriceString = spanFor_b5v4.get(0).asText();
+                        competitorBasicPriceU = getPriceFromStringPrice(currentBasicPriceString);
+                        String currentPriceUString = spanFor_b5v4.get(1).asText();
+                        competitorPriceU = getPriceFromStringPrice(currentPriceUString);
+
+                        //получение цены premiumPriceString
+                        try {
+                            //пробуем получить премиум цену, если есть
+                            String premiumPriceString = divsFor_a0y9.get(2).asText();
+                            competitorPremiumPriceForOzon = getPriceFromStringPrice(premiumPriceString);
+                        } catch (Exception ignored) {
+                        }
+
+                        //получение описания продукта
+                        productDescription = asFor_a0s9.get(1).asText();
+                        //определяем какой бренд
+                        competitorBrand = "-";
+                        for (String s: Constants.listForBrands){
+                            if (productDescription.contains(s)){
+                                competitorBrand = s;
+                                break;
+                            }
+                        }
+
+                        //получение имени продавца
+                        DomNodeList<HtmlElement> divsFor_a0s9 = elementFor_a0c4.getElementsByTagName("div");
+                        DomNodeList<HtmlElement> spansFor_a0t6 = divsFor_a0s9.get(1).getElementsByTagName("span");
+                        seller = spansFor_a0t6.get(0).asText();
+
+                    }
+                    childFor_a0c4++;
                 }
                 productList.add(new Product(
                         "-",
@@ -315,22 +319,22 @@ public class ParserOzon {
                         "-",
                         "-",
 
-                        "-",
-                        countSearch,
+                        querySearchAndCount,
+                        0,
 
-                        "-",
+                        competitorBrand,
                         vendorCode,
-                        productName,
+                        productDescription,
                         refForProduct,
                         refImage,
                         "-",
                         0,
-                        olPrice,
+                        competitorPriceU,
                         intSale,
-                        curPrice,
+                        competitorBasicPriceU,
                         0,
                         0,
-                        premPrice,
+                        competitorPremiumPriceForOzon,
 
                         seller
                 ));
@@ -349,7 +353,6 @@ public class ParserOzon {
             System.out.println(m.group());
             resultPrice = resultPrice + m.group();
         }
-
         return Integer.parseInt(resultPrice);
     }
 

@@ -80,43 +80,44 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 }
                 String myVendorCodeOzon = String.valueOf(code);
 
-                //получаем бренд и наименование продукта и сразу пытаемся получить поисковый запрос
-                cell = row.getCell(2);
-                String categoryBrandAndProductName = cell.getRichStringCellValue().getString();
-                //определяем какой бренд
-                String myBrand = "-";
-                for (String s: Constants.listForBrands){
-                    if (categoryBrandAndProductName.contains(s)){
-                        myBrand = s;
-                        break;
-                    }
-                }
-                //делим брендом categoryBrandAndProductName на категорию и модель с характеристиками
-                String[] buff1 = categoryBrandAndProductName.split(myBrand);
-                //определяем категорию
-                String categoryName = "-";
-                for (String s: Constants.listForCategoryBy_1C){
-                    if (buff1[0].startsWith(s)){
-                        categoryName = s;
-                        break;
-                    }
-                }
-
-                //если модель сразу за брендом запяьтая
-                String model ="-";
-                if (buff1[1].startsWith(",")){
-                    String[] buff2 = buff1[1].trim().split(",", 2);
-                    model = buff2[0];
-                } else {
-                    String[] buff2 = buff1[1].trim().split(",", 3);
-                    model = buff2[0];
-                }
-
-                //получаем поисковый запрос и категорию продукта
-                String querySearch = "-";
-                if (!myBrand.isEmpty() || !model.isEmpty()) {
-                    querySearch = myBrand + " " + model;
-                }
+// эту информацию мы получаем из файла 1С!!!!!!!!!!!!!!
+//                //получаем бренд и наименование продукта и сразу пытаемся получить поисковый запрос
+//                cell = row.getCell(2);
+//                String ProductTypeBrandAndModel = cell.getRichStringCellValue().getString();
+//                //определяем какой бренд
+//                String myBrand = "-";
+//                for (String s: Constants.listForBrands){
+//                    if (ProductTypeBrandAndModel.contains(s)){
+//                        myBrand = s;
+//                        break;
+//                    }
+//                }
+//                //делим брендом ProductTypeBrandAndModel на ProductType и модель с характеристиками
+//                String[] buff1 = ProductTypeBrandAndModel.split(myBrand);
+//                //определяем категорию
+//                String productType = "-";
+//                for (String s: Constants.listForCategoryBy_1C){
+//                    if (buff1[0].startsWith(s)){
+//                        productType = s;
+//                        break;
+//                    }
+//                }
+//
+//                //если модель сразу за брендом запяьтая
+//                String model ="-";
+//                if (buff1[1].startsWith(",")){
+//                    String[] buff2 = buff1[1].trim().split(",", 2);
+//                    model = buff2[0];
+//                } else {
+//                    String[] buff2 = buff1[1].trim().split(",", 3);
+//                    model = buff2[0];
+//                }
+//
+//                //получаем поисковый запрос и категорию продукта
+//                String querySearch = "-";
+//                if (!myBrand.isEmpty() || !model.isEmpty()) {
+//                    querySearch = myBrand + " " + model;
+//                }
 
                 //получаем цену до скидки
                 cell = row.getCell(16);
@@ -143,12 +144,13 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 int myPremiumPrice = (int) (cell.getNumericCellValue() * 100);
 
                 resultProductHashMap.put(myVendorCodeOzon, new ResultProduct(
-                        myBrand,
-                        categoryName,
+                        "-",
+                        "-",
+                        "-",
                         code_1C,
                         "-",
                         myVendorCodeOzon,
-                        querySearch,
+                        "-",
                         0,
                         myPriceU,
                         myBasicSale,
@@ -186,23 +188,71 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 //получаем бренд и наименование продукта и сразу пытаемся получить поисковый запрос
                 cell = row.getCell(2);
                 String myNomenclature = cell.getRichStringCellValue().getString();
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////// Анализ номенклатуры и формирование поискового запроса ////////////////////////////////////
+                //FM-трансмиттер Borofone, BC16, пластик, цвет: чёрный
+
+                //определяем какой бренд
+                String myBrand = "-";
+                for (String s: Constants.listForBrands){
+                    if (myNomenclature.contains(s)){
+                        myBrand = s;
+                        break;
+                    }
+                }
+                //делим брендом myNomenclature на тип продукта и модель продукта с характеристиками
+                String[] buff1 = myNomenclature.split(myBrand);
+                //определяем тип продукта
+                String productType = "-";
+                for (String s: Constants.listForCategoryBy_1C){
+                    if (buff1[0].startsWith(s)){
+                        productType = s;
+                        break;
+                    }
+                }
+
+                //если модель сразу за брендом после запятой
+                String model ="-";
+                if (buff1[1].startsWith(",")){
+                    String[] buff2 = buff1[1].trim().split(",", 3);
+                    model = buff2[0];
+                } else {
+                    //если запятой нет
+                    String[] buff2 = buff1[1].trim().split(",", 2);
+                    model = buff2[0];
+                }
+
+                //получаем поисковый запрос и категорию продукта
+                String querySearch = "-";
+                if (!myBrand.isEmpty() || !model.isEmpty()) {
+                    querySearch = myBrand + " " + model;
+                }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 //получаем спец-цену
-                cell = row.getCell(5);
+                cell = row.getCell(4);
                 int specPrice_1C = (int) cell.getNumericCellValue() * 100;
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, myNomenclature, specPrice_1C));
+                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, myBrand, productType, myNomenclature, querySearch, specPrice_1C));
+                //увеличиваем ProgressBar
+                this.updateProgress(i, countFull);
+                countRows = i;
+                i++;
             }
 
-            //пытаемся привязать specPrice_1C к ResultProduct
+            //пытаемся привязать specPrice_1C и productName к ResultProduct
             for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
                 String key = entry.getKey();
                 String code_1C = entry.getValue().getCode_1C();
                 SupplierSpecPriceAndNameProduct supplierSpecPriceAndNameProduct1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
                 if (supplierSpecPriceAndNameProduct1 != null){
                     entry.getValue().setSpecPrice(supplierSpecPriceAndNameProduct1.getSpecPrice());
+                    entry.getValue().setMyBrand(supplierSpecPriceAndNameProduct1.getMyBrand());
+                    entry.getValue().setProductType(supplierSpecPriceAndNameProduct1.getProductType());
+                    entry.getValue().setMyNomenclature(supplierSpecPriceAndNameProduct1.getNomenclature());
+                    entry.getValue().setQuerySearchForWildberiesOrOzon(supplierSpecPriceAndNameProduct1.getQuerySearch());
                 } else entry.getValue().setSpecPrice(0);
-
             }
             return resultProductHashMap;
         }
@@ -231,8 +281,8 @@ public class TaskReadExcelForOzon extends Task<Map> {
         Row headRow = sheet.getRow(0);
         try {
             boolean checkCode_1C = headRow.getCell(1).getRichStringCellValue().getString().equals(Constants.CODE_1C);
-            boolean checkProductName = headRow.getCell(2).getRichStringCellValue().getString().equals(Constants.NOMENCLATURE_1C);
-            boolean checkSpecPrice = headRow.getCell(4).getRichStringCellValue().getString().equals(Constants.SPEC_PRICE_1C);
+            boolean checkProductName = headRow.getCell(2).getRichStringCellValue().getString().trim().equals(Constants.NOMENCLATURE_1C);
+            boolean checkSpecPrice = headRow.getCell(4).getRichStringCellValue().getString().trim().equals(Constants.SPEC_PRICE_1C);
             return checkCode_1C & checkProductName & checkProductName & checkSpecPrice;
         } catch (Exception e) {
             return false;
