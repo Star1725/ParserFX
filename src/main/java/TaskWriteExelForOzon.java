@@ -1,13 +1,20 @@
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlPicture;
 import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.Jsoup;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -415,22 +422,33 @@ public class TaskWriteExelForOzon extends Task<File> {
 
     private void setImageForCell(String url, int columnIndex, int rowIndex, double scaleX, double scaleY) {
         try {
-            byte[] bytes = Jsoup.connect(url).timeout(30000).ignoreContentType(true).execute().bodyAsBytes();
+//            byte[] bytes = Jsoup.connect(url).userAgent("Chrome").timeout(30000).ignoreContentType(true).execute().bodyAsBytes();
 
-            int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+            URL urlForImage = new URL(url);
+            BufferedImage img = ImageIO.read(urlForImage);
 
-            helper = workbook.getCreationHelper();
+            webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setJavaScriptEnabled(false);
+            HtmlPage pageImage = webClient.getPage(url);
+            assert pageImage != null;
+            String html = pageImage.asText();
+            String contentType = pageImage.getWebResponse().getContentType();
+//            byte[] bytes = pageImage.getWebResponse().
 
-            drawing = sheet.createDrawingPatriarch();
-
-            anchor = helper.createClientAnchor();
-
-            anchor.setCol1(columnIndex);
-            anchor.setRow1(rowIndex + 1);
-
-            Picture pict = drawing.createPicture(anchor, pictureIdx);
-
-            pict.resize(scaleX, scaleY);
+//            int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+//
+//            helper = workbook.getCreationHelper();
+//
+//            drawing = sheet.createDrawingPatriarch();
+//
+//            anchor = helper.createClientAnchor();
+//
+//            anchor.setCol1(columnIndex);
+//            anchor.setRow1(rowIndex + 1);
+//
+//            Picture pict = drawing.createPicture(anchor, pictureIdx);
+//
+//            pict.resize(scaleX, scaleY);
 
         } catch (IOException e) {
             e.printStackTrace();
