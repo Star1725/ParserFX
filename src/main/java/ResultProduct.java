@@ -4,6 +4,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResultProduct extends Product{
+    private int isFind;
     private String myBrand;
     private String category;
     private String productType;
@@ -60,6 +61,7 @@ public class ResultProduct extends Product{
 
 
     public ResultProduct(
+            int isFind,
             String myBrand,
             String category,
             String productType,
@@ -111,6 +113,7 @@ public class ResultProduct extends Product{
             String competitorName
             ) {
         super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorPremiumPriceForOzon, competitorName);
+        this.isFind = isFind;
         this.myBrand = myBrand;
         this.category = category;
         this.productType = productType;
@@ -122,7 +125,6 @@ public class ResultProduct extends Product{
         this.myOrderAssemblyForOzon = myOrderAssemblyForOzon;
         this.myTrunkForOzon = myTrunkForOzon;
         this.myLastMileForOzon = myLastMileForOzon;
-
 
         this.querySearchForWildberiesOrOzon = querySearchForWildberiesOrOzon;
         this.specPrice = specPrice;
@@ -138,6 +140,7 @@ public class ResultProduct extends Product{
     }
 
     public ResultProduct(
+            int isFind,
             String myBrand,
             String category,
             String productType,
@@ -162,6 +165,7 @@ public class ResultProduct extends Product{
             int recommendedPromoSale,
             int recommendedPriceU
     ) {
+        this.isFind = isFind;
         this.myBrand = myBrand;
         this.category = category;
         this.productType = productType;

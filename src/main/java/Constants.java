@@ -8,6 +8,8 @@ public class Constants {
     //заказчик
     public static final String MY_SELLER = "Продавец ООО «АКСЕСС»";
 
+    public static final String BLOCKING = "блокировка сервером";
+
 
     //ктегории для Wildberies с наценкой
     public static final String CATEGORY_WILD_5 = "Держатели в авто";//5
@@ -62,7 +64,7 @@ public class Constants {
     public static final String CATEGORY_WILD_47 = "Стилусы";//15
     public static final String CATEGORY_WILD_48 = "Насосы автомобильные";//15
 
-    //категории ozon
+    //категории по 1С
     public static final String PRODUCT_TYPE_1C_1 = "FM-трансмиттер";
     public static final String PRODUCT_TYPE_1C_2 = "USB-концентратор";
     public static final String PRODUCT_TYPE_1C_3 = "USB-хаб";
@@ -73,8 +75,8 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_9 = "Автомобильное зарядное устройство";
     public static final String PRODUCT_TYPE_1C_10 ="Автомобильное полотенце";
     public static final String PRODUCT_TYPE_1C_11 ="Автомобильный Bluetooth-приемник";
-    public static final String PRODUCT_TYPE_1C_12 ="Автомобильный держатель для телефона";
-    public static final String PRODUCT_TYPE_1C_13 ="Автомобильный держатель для телефона на подголовник с беспроводной зарядкой";
+    public static final String PRODUCT_TYPE_1C_12 ="Автомобильный держатель для телефона на подголовник с беспроводной зарядкой";
+    public static final String PRODUCT_TYPE_1C_13 ="Автомобильный держатель для телефона";
     public static final String PRODUCT_TYPE_1C_14 ="Автомобильный контейнер для мусора";
     public static final String PRODUCT_TYPE_1C_15 ="Автомобильный крюк";
     public static final String PRODUCT_TYPE_1C_16 ="Автомобильный крючок";
@@ -91,20 +93,20 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_28 ="Бесконтактный диспенсер-спрей для рук";
     public static final String PRODUCT_TYPE_1C_29 ="Беспроводная колонка";
     public static final String PRODUCT_TYPE_1C_30 ="Беспроводное зарядное устройство";
-    public static final String PRODUCT_TYPE_1C_31 ="Блок питания";
+    public static final String PRODUCT_TYPE_1C_31 ="Блок питания сетевой";
     public static final String PRODUCT_TYPE_1C_32 ="Блок питания автомобильный";
-    public static final String PRODUCT_TYPE_1C_33 ="Блок питания сетевой";
+    public static final String PRODUCT_TYPE_1C_33 ="Блок питания";
     public static final String PRODUCT_TYPE_1C_34 ="Велосипедный держатель для телефона";
     public static final String PRODUCT_TYPE_1C_35 ="Гарнитура Bluetooth";
     public static final String PRODUCT_TYPE_1C_36 ="Гарнитуры Bluetooth";
     public static final String PRODUCT_TYPE_1C_37 ="Двухрежимный массажный пистолет";
-    public static final String PRODUCT_TYPE_1C_38 ="Держатель";
+    public static final String PRODUCT_TYPE_1C_38 ="Держатель универсальный";
     public static final String PRODUCT_TYPE_1C_39 ="Держатель автомобильный";
     public static final String PRODUCT_TYPE_1C_40 ="Держатель для телефона на мотоцикл, велосипед, мопед ";
     public static final String PRODUCT_TYPE_1C_41 ="Держатель комнатный";
-    public static final String PRODUCT_TYPE_1C_42 ="Держатель настольный";
-    public static final String PRODUCT_TYPE_1C_43 ="Держатель настольный для ноутбука";
-    public static final String PRODUCT_TYPE_1C_44 ="Держатель универсальный";
+    public static final String PRODUCT_TYPE_1C_42 ="Держатель настольный для ноутбука";
+    public static final String PRODUCT_TYPE_1C_43 ="Держатель настольный";
+    public static final String PRODUCT_TYPE_1C_44 ="Держатель";
     public static final String PRODUCT_TYPE_1C_45 ="Дозатор для жидкого мыла";
     public static final String PRODUCT_TYPE_1C_46 ="Док-станция подставка для зарядки";
     public static final String PRODUCT_TYPE_1C_47 ="Зажим для очков";
@@ -133,8 +135,8 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_70 ="Наушники внутриканальные игровые";
     public static final String PRODUCT_TYPE_1C_71 ="Наушники внутриканальные на одно ухо";
     public static final String PRODUCT_TYPE_1C_72 ="Наушники полноразмерные";
-    public static final String PRODUCT_TYPE_1C_73 ="Ночник";
-    public static final String PRODUCT_TYPE_1C_74 ="Ночник переносной";
+    public static final String PRODUCT_TYPE_1C_73 ="Ночник переносной";
+    public static final String PRODUCT_TYPE_1C_74 ="Ночник";
     public static final String PRODUCT_TYPE_1C_75 ="Органайзер для проводов и аксессуаров";
     public static final String PRODUCT_TYPE_1C_76 ="Переносной автомобильный пылесос";
     public static final String PRODUCT_TYPE_1C_77 ="Переходник";

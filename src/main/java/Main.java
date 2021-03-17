@@ -53,6 +53,9 @@ public class Main extends Application implements Controller.ActionInController {
         Controller.subscribe(this);
         controller = mainWindowLoader.getController();
 
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(false);
+
         primaryStage.show();
 
     }
@@ -391,6 +394,7 @@ public class Main extends Application implements Controller.ActionInController {
         //2 - флаг для Wildberies
         public Product call() throws Exception {
             System.out.println("выполнение задачи - " + marketplaceFlag);
+            Thread.sleep(1000);
             if (marketplaceFlag == 1){
                 return parserOzon.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
             } else if (marketplaceFlag == 2){

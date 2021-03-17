@@ -214,7 +214,11 @@ public class TaskWriteExelForWildberries extends Task<File> {
 //Мой артикул поставщика(по 1С)
             cell = row.createCell(2);
             cell.setCellValue(productArrayList.get(i).getCode_1C());
-            cell.setCellStyle(style);
+            if (productArrayList.get(i).getIsFind() == 0){
+                cell.setCellStyle(styleRedCell);
+            } else {
+                cell.setCellStyle(style);
+            }
 
             //Мой артикул по Wildberies
             cell = row.createCell(3);

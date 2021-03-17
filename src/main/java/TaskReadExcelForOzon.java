@@ -162,6 +162,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 int myPremiumPrice = (int) (cell.getNumericCellValue() * 100);
 
                 resultProductHashMap.put(myVendorCodeOzon, new ResultProduct(
+                        0,
                         "-",
                         "-",
                         "-",
@@ -239,7 +240,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 String model ="-";
                 if (buff1[1].startsWith(",")){
                     String[] buff2 = buff1[1].trim().split(",", 3);
-                    model = buff2[0];
+                    model = buff2[1].trim();
                 } else {
                     //если запятой нет
                     String[] buff2 = buff1[1].trim().split(",", 2);
@@ -271,6 +272,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 String code_1C = entry.getValue().getCode_1C();
                 SupplierSpecPriceAndNameProduct supplierSpecPriceAndNameProduct1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
                 if (supplierSpecPriceAndNameProduct1 != null){
+                    entry.getValue().setIsFind(1);
                     entry.getValue().setSpecPrice(supplierSpecPriceAndNameProduct1.getSpecPrice());
                     entry.getValue().setMyBrand(supplierSpecPriceAndNameProduct1.getMyBrand());
                     entry.getValue().setProductType(supplierSpecPriceAndNameProduct1.getProductType());

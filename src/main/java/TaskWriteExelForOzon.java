@@ -230,8 +230,14 @@ public class TaskWriteExelForOzon extends Task<File> {
 
 //Мой артикул поставщика(по 1С)
             cell = row.createCell(2);
-            cell.setCellValue(productArrayList.get(i).getCode_1C());
-            cell.setCellStyle(style);
+            if (productArrayList.get(i).getIsFind() == 0){
+                cell.setCellValue(productArrayList.get(i).getCode_1C() + " - не найден в базе 1С");
+                cell.setCellStyle(styleRedCell);
+            }
+            if (productArrayList.get(i).getIsFind() == 1){
+                cell.setCellValue(productArrayList.get(i).getCode_1C());
+                cell.setCellStyle(style);
+            }
 
 //Мой артикул по Ozon
             cell = row.createCell(3);
@@ -282,10 +288,10 @@ public class TaskWriteExelForOzon extends Task<File> {
             cell.setCellStyle(style);
 
 //////////////расчитываем все необходимые цены /////////////////////////////////////////////////////////////////////////
-            int myLowerPrice = Math.round(productArrayList.get(i).getMyLowerPriceU() / 100);
-            int competitorLowerPrice = Math.round(productArrayList.get(i).getCompetitorLowerPriceU() / 100);
-            int specPrice = productArrayList.get(i).getSpecPrice() / 100;
-            int recommendLowerPrice = Math.round(productArrayList.get(i).getRecommendedMyLowerPrice() / 100);
+            double myLowerPrice = Math.round(productArrayList.get(i).getMyLowerPriceU() / 100);
+            double competitorLowerPrice = Math.round(productArrayList.get(i).getCompetitorLowerPriceU() / 100);
+            double specPrice = productArrayList.get(i).getSpecPrice() / 100;
+            double recommendLowerPrice = Math.round(productArrayList.get(i).getRecommendedMyLowerPrice() / 100);
 
 //Тек. роз. цена конкурента
             cell = row.createCell(10);
@@ -335,11 +341,11 @@ public class TaskWriteExelForOzon extends Task<File> {
 
 //Заработок
             cell = row.createCell(15);
-            double earnings = (specPrice/criticPrice - 1) * 100;
+            double earnings = Math.round((specPrice/criticPrice - 1) * 100);
             cell.setCellValue(earnings);
-            if (criticPrice >= 0 && criticPrice <= 5){
+            if (earnings >= 0 && earnings <= 5){
                 cell.setCellStyle(styleMyProduct);
-            } else if (criticPrice > 5){
+            } else if (earnings > 5){
                 cell.setCellStyle(styleRedCell);
             } else {
                 cell.setCellStyle(style);
@@ -385,21 +391,21 @@ public class TaskWriteExelForOzon extends Task<File> {
                 cell.setCellStyle(styleGreenCell);
             }
 
-            //установка картинки для моего товара
-            String myImageUrl = productArrayList.get(i).getMyRefForImage();
-            if (myImageUrl != null){
-                if (!myImageUrl.equals("-")){
-                    setImageForCell(myImageUrl, 5, i, 0.125, 0.125);
-                }
-            }
-
-            //установка картинки для конкурента
-            String imageUrl = productArrayList.get(i).getCompetitorRefForImage();
-            if (imageUrl != null){
-                if (!imageUrl.equals("-")){
-                    setImageForCell(imageUrl, 8, i, 0.25, 0.25);
-                }
-            }
+//            //установка картинки для моего товара
+//            String myImageUrl = productArrayList.get(i).getMyRefForImage();
+//            if (myImageUrl != null){
+//                if (!myImageUrl.equals("-")){
+//                    setImageForCell(myImageUrl, 5, i, 0.125, 0.125);
+//                }
+//            }
+//
+//            //установка картинки для конкурента
+//            String imageUrl = productArrayList.get(i).getCompetitorRefForImage();
+//            if (imageUrl != null){
+//                if (!imageUrl.equals("-")){
+//                    setImageForCell(imageUrl, 8, i, 0.25, 0.25);
+//                }
+//            }
 
             this.updateProgress(i + 1, countRows);
         }
@@ -422,33 +428,33 @@ public class TaskWriteExelForOzon extends Task<File> {
 
     private void setImageForCell(String url, int columnIndex, int rowIndex, double scaleX, double scaleY) {
         try {
-//            byte[] bytes = Jsoup.connect(url).userAgent("Chrome").timeout(30000).ignoreContentType(true).execute().bodyAsBytes();
+            byte[] bytes = Jsoup.connect(url).userAgent("Chrome").timeout(30000).ignoreContentType(true).execute().bodyAsBytes();
 
-            URL urlForImage = new URL(url);
-            BufferedImage img = ImageIO.read(urlForImage);
-
-            webClient.getOptions().setCssEnabled(false);
-            webClient.getOptions().setJavaScriptEnabled(false);
-            HtmlPage pageImage = webClient.getPage(url);
-            assert pageImage != null;
-            String html = pageImage.asText();
-            String contentType = pageImage.getWebResponse().getContentType();
+//            URL urlForImage = new URL(url);
+//            BufferedImage img = ImageIO.read(urlForImage);
+//
+//            webClient.getOptions().setCssEnabled(false);
+//            webClient.getOptions().setJavaScriptEnabled(false);
+//            HtmlPage pageImage = webClient.getPage(url);
+//            assert pageImage != null;
+//            String html = pageImage.asText();
+//            String contentType = pageImage.getWebResponse().getContentType();
 //            byte[] bytes = pageImage.getWebResponse().
 
-//            int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
-//
-//            helper = workbook.getCreationHelper();
-//
-//            drawing = sheet.createDrawingPatriarch();
-//
-//            anchor = helper.createClientAnchor();
-//
-//            anchor.setCol1(columnIndex);
-//            anchor.setRow1(rowIndex + 1);
-//
-//            Picture pict = drawing.createPicture(anchor, pictureIdx);
-//
-//            pict.resize(scaleX, scaleY);
+            int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+
+            helper = workbook.getCreationHelper();
+
+            drawing = sheet.createDrawingPatriarch();
+
+            anchor = helper.createClientAnchor();
+
+            anchor.setCol1(columnIndex);
+            anchor.setRow1(rowIndex + 1);
+
+            Picture pict = drawing.createPicture(anchor, pictureIdx);
+
+            pict.resize(scaleX, scaleY);
 
         } catch (IOException e) {
             e.printStackTrace();

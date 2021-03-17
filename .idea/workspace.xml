@@ -30,27 +30,19 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Constants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ParserOzon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ParserOzon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ParserWildBer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ParserWildBer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ResultProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ResultProduct.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/SupplierSpecPriceAndNameProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SupplierSpecPriceAndNameProduct.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/TaskReadExcelForOzon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskReadExcelForOzon.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TaskWriteExelForOzon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskWriteExelForOzon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TaskWriteExelForWildberries.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskWriteExelForWildberries.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Constants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/HttpUrlConnectionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/HttpUrlConnectionHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$3.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main$MyCall.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$MyCall.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/ParserWildBer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ParserWildBer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Product.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Product.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/ResultProduct.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ResultProduct.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/TaskReadExel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/TaskWriteExel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/TaskWriteExel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controllers/Controller$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controllers/Controller$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controllers/Controller$ActionInController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controllers/Controller$ActionInController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controllers/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controllers/Controller.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/TaskWriteExel.class" beforeDir="false" />
     </list>
     <list id="1019f6b8-5348-4ab5-b739-b8eb41122888" name="Revert &quot;версия 1.1&quot;" comment="Revert &quot;версия 1.1&quot;&#10;&#10;This reverts commit 1e6a163f" />
     <list id="7c07d6c2-34ea-49e6-96c6-03e9eb23df85" name="релизная версия 1.0.3 - отрабатывает все категории" comment="" />
@@ -694,46 +686,46 @@
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="749" y="368" key="Github.ShareDialog/0.0.1739.939@0.0.1739.939" timestamp="1613639192275" />
-    <state width="1696" height="461" key="GridCell.Tab.0.bottom" timestamp="1615790456322">
+    <state width="1696" height="338" key="GridCell.Tab.0.bottom" timestamp="1615949510103">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.bottom/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="461" key="GridCell.Tab.0.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615790456322" />
-    <state width="1696" height="461" key="GridCell.Tab.0.center" timestamp="1615790456322">
+    <state width="1696" height="338" key="GridCell.Tab.0.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615949510103" />
+    <state width="1696" height="338" key="GridCell.Tab.0.center" timestamp="1615949510102">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.center/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="461" key="GridCell.Tab.0.center/0.0.1739.939@0.0.1739.939" timestamp="1615790456322" />
-    <state width="1696" height="461" key="GridCell.Tab.0.left" timestamp="1615790456321">
+    <state width="1696" height="338" key="GridCell.Tab.0.center/0.0.1739.939@0.0.1739.939" timestamp="1615949510102" />
+    <state width="1696" height="338" key="GridCell.Tab.0.left" timestamp="1615949510102">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.left/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="461" key="GridCell.Tab.0.left/0.0.1739.939@0.0.1739.939" timestamp="1615790456321" />
-    <state width="1696" height="461" key="GridCell.Tab.0.right" timestamp="1615790456322">
+    <state width="1696" height="338" key="GridCell.Tab.0.left/0.0.1739.939@0.0.1739.939" timestamp="1615949510102" />
+    <state width="1696" height="338" key="GridCell.Tab.0.right" timestamp="1615949510103">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.0.right/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="461" key="GridCell.Tab.0.right/0.0.1739.939@0.0.1739.939" timestamp="1615790456322" />
-    <state width="1696" height="461" key="GridCell.Tab.1.bottom" timestamp="1615790478499">
+    <state width="1696" height="338" key="GridCell.Tab.0.right/0.0.1739.939@0.0.1739.939" timestamp="1615949510103" />
+    <state width="1696" height="192" key="GridCell.Tab.1.bottom" timestamp="1615921775121">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.1.bottom/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="461" key="GridCell.Tab.1.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615790478499" />
-    <state width="1696" height="461" key="GridCell.Tab.1.center" timestamp="1615790478499">
+    <state width="1696" height="192" key="GridCell.Tab.1.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615921775121" />
+    <state width="1696" height="192" key="GridCell.Tab.1.center" timestamp="1615921775121">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.1.center/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="461" key="GridCell.Tab.1.center/0.0.1739.939@0.0.1739.939" timestamp="1615790478499" />
-    <state width="1696" height="461" key="GridCell.Tab.1.left" timestamp="1615790478499">
+    <state width="1696" height="192" key="GridCell.Tab.1.center/0.0.1739.939@0.0.1739.939" timestamp="1615921775121" />
+    <state width="1696" height="192" key="GridCell.Tab.1.left" timestamp="1615921775121">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.1.left/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="461" key="GridCell.Tab.1.left/0.0.1739.939@0.0.1739.939" timestamp="1615790478499" />
-    <state width="1696" height="461" key="GridCell.Tab.1.right" timestamp="1615790478499">
+    <state width="1696" height="192" key="GridCell.Tab.1.left/0.0.1739.939@0.0.1739.939" timestamp="1615921775121" />
+    <state width="1696" height="192" key="GridCell.Tab.1.right" timestamp="1615921775121">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state width="1696" height="859" key="GridCell.Tab.1.right/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="461" key="GridCell.Tab.1.right/0.0.1739.939@0.0.1739.939" timestamp="1615790478499" />
+    <state width="1696" height="192" key="GridCell.Tab.1.right/0.0.1739.939@0.0.1739.939" timestamp="1615921775121" />
     <state x="226" y="20" key="MergeDialog" timestamp="1615285983415">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
@@ -766,10 +758,10 @@
       <screen x="0" y="0" width="1739" height="939" />
     </state>
     <state x="598" y="204" key="VcsDiffUtil.ChangesDialog/0.0.1739.939@0.0.1739.939" timestamp="1614282386720" />
-    <state width="1275" height="477" key="XDebugger.FullValuePopup" timestamp="1615736683550">
+    <state width="1275" height="477" key="XDebugger.FullValuePopup" timestamp="1615920532309">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="1275" height="477" key="XDebugger.FullValuePopup/0.0.1739.939@0.0.1739.939" timestamp="1615736683550" />
+    <state width="1275" height="477" key="XDebugger.FullValuePopup/0.0.1739.939@0.0.1739.939" timestamp="1615920532309" />
     <state x="641" y="277" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1614183629698">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
@@ -805,7 +797,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java</url>
-          <line>154</line>
+          <line>155</line>
           <option name="timeStamp" value="241" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -815,23 +807,33 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java</url>
-          <line>140</line>
+          <line>141</line>
           <option name="timeStamp" value="244" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/ParserOzon.java</url>
-          <line>265</line>
-          <option name="timeStamp" value="251" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserOzon.java</url>
-          <line>230</line>
+          <line>348</line>
           <option name="timeStamp" value="252" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForOzon.java</url>
-          <line>30</line>
-          <option name="timeStamp" value="255" />
+          <url>file://$PROJECT_DIR$/src/main/java/TaskWriteExelForOzon.java</url>
+          <line>430</line>
+          <option name="timeStamp" value="271" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/Main.java</url>
+          <line>297</line>
+          <option name="timeStamp" value="279" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/TaskWriteExelForOzon.java</url>
+          <line>342</line>
+          <option name="timeStamp" value="280" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserOzon.java</url>
+          <line>242</line>
+          <option name="timeStamp" value="281" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

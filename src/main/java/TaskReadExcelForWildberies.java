@@ -103,6 +103,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 int myPromoPriceU = (int) Math.round(((1 - (double) myPromoSale/100) * myBasicPriceU));
 
                 resultProductHashMap.put(myVendorCodeWildberies, new ResultProduct(
+                        0,
                         brand,
                         category,
                         "-",
@@ -206,12 +207,13 @@ public class TaskReadExcelForWildberies extends Task<Map> {
             for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
                 String key = entry.getKey();
                 String code_1C = entry.getValue().getCode_1C();
-                SupplierSpecPriceAndNameProduct supplierSpecPriceAndNameProduct1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
-                if (supplierSpecPriceAndNameProduct1 != null){
-                    entry.getValue().setSpecPrice(supplierSpecPriceAndNameProduct1.getSpecPrice());
-                    entry.getValue().setProductType(supplierSpecPriceAndNameProduct1.getProductType());
-                    entry.getValue().setMyNomenclature_1C(supplierSpecPriceAndNameProduct1.getNomenclature());
-                    entry.getValue().setQuerySearchForWildberiesOrOzon(supplierSpecPriceAndNameProduct1.getQuerySearch());
+                SupplierSpecPriceAndNameProduct supplierSpecPriceAndNameProduct = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
+                if (supplierSpecPriceAndNameProduct != null){
+                    entry.getValue().setIsFind(1);
+                    entry.getValue().setSpecPrice(supplierSpecPriceAndNameProduct.getSpecPrice());
+                    entry.getValue().setProductType(supplierSpecPriceAndNameProduct.getProductType());
+                    entry.getValue().setMyNomenclature_1C(supplierSpecPriceAndNameProduct.getNomenclature());
+                    entry.getValue().setQuerySearchForWildberiesOrOzon(supplierSpecPriceAndNameProduct.getQuerySearch());
                 } else entry.getValue().setSpecPrice(0);
             }
             return resultProductHashMap;
