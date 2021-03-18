@@ -368,15 +368,6 @@ public class Main extends Application implements Controller.ActionInController {
                                     lock.unlock();
                                 }
 
-//                                try {
-//                                    URL uri1 = new URL(Constants.URL_FOR_SWITCH_IP);
-//                                    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) uri1.openConnection();
-//                                    httpsURLConnection.setRequestMethod("GET");
-//                                    httpsURLConnection.setReadTimeout(30000);
-//                                } catch (IOException e) {
-//                                    e.printStackTrace();
-//                                }
-
                             }
                             //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                             myVendorCode = product.getMyVendorCodeFromRequest();
