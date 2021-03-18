@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,8 +18,9 @@ public class ParserOzon {
 
     private static Object mon = new Object();
     private static WebClient webClientForOzon;
+    private static String myQuery;
 
-    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient, int marketPlaceFlag){
+    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient, Lock lock){
         List<Product> productList = new ArrayList<>();
         Product product = new Product(myVendorCodeFromRequest,
                 "-",
@@ -46,6 +48,7 @@ public class ParserOzon {
 
                 "-");
         webClientForOzon = webClient;
+        myQuery = querySearchForOzon;
 
         StringBuilder query = new StringBuilder(querySearchForOzon);
         //в заввисимости от категории ozon определяем параметры запроса для поиска конкурентов
@@ -156,7 +159,11 @@ public class ParserOzon {
             case Constants.PRODUCT_TYPE_1C_107 :
             case Constants.PRODUCT_TYPE_1C_108 :
             case Constants.PRODUCT_TYPE_1C_109 :
+                lock.lock();
+                System.out.println("получение страницы ozon для запроса - " + querySearchForOzon);
                 productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+                System.out.println("страница ozon для запроса \"" + querySearchForOzon + "\" получена");
+                lock.unlock();
 
                 if (productList == null){
                     product.setCompetitorProductName(Constants.BLOCKING);
@@ -164,8 +171,12 @@ public class ParserOzon {
                     product.setCompetitorRefForPage(Constants.BLOCKING);
                     product.setCompetitorRefForPage(Constants.BLOCKING);
                     product.setCompetitorName(Constants.BLOCKING);
+                    product.setCompetitorSpecAction(Constants.BLOCKING);
                 } else {
-                    product = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest);
+                    Product productbuff = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest);
+                    if (productbuff != null){
+                        product = productbuff;
+                    }
                 }
                 break;
         }
@@ -219,44 +230,59 @@ public class ParserOzon {
 
         //final WebClient webClient = new WebClient(BrowserVersion.CHROME);
         synchronized (mon) {
-            try {
-                webClientForOzon.waitForBackgroundJavaScript(2000);
-                page = webClientForOzon.getPage(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+            int count = 3;
+            while (count > 0){
+                try {
+                    //webClientForOzon.waitForBackgroundJavaScript(5000);
+                    page = webClientForOzon.getPage(url);
+                    count = 0;
+                } catch (IOException e) {
+                    System.out.println("Ошибка при получении страницы для запроса \"" + myQuery + "\": " + e.getMessage());
+                    if (count == 0){
+                        webClientForOzon.close();
+                        return productList;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
+                    count--;
+                }
             }
             webClientForOzon.close();
         }
 
         assert page != null;
-        String pageString = page.asXml();
+        //String pageString = page.asXml();
 
         //проверка на бан сервером (name="ROBOTS")
         try {
             DomNodeList<DomElement> metas = page.getElementsByTagName("meta");
             if (metas.get(0).getAttribute("name").equals("ROBOTS")){
+                System.out.println(blocking);
                 return null;
             }
         } catch (Exception ignored) {
         }
 
-        DomNodeList<DomElement> mainsForPage = page.getElementsByTagName("main");
-        System.out.println("mainsForPage.size = " + mainsForPage.size());
-        category = mainsForPage.get(0).asText();
+       // DomNodeList<DomElement> mainsForPage = page.getElementsByTagName("main");
+
+        //category = mainsForPage.get(0).asText();
 
         //получаем кол-во найденных аналогов
         List<HtmlElement> itemsCountSearch = page.getByXPath("//div[@class='b6r7']");
-        if (itemsCountSearch.isEmpty()) {
-            System.out.println("No items found !");
+        if (itemsCountSearch == null) {
+            System.out.println("не нашёл html-элемент - div[@class='b6r7']");
         } else {
             querySearchAndCount = itemsCountSearch.get(0).asText();
+            System.out.println(querySearchAndCount);
         }
 
         //получаем список продуктов, полученный по поисковому запросу аналогов
         List<HtmlElement> itemsForListProducts = page.getByXPath("//div[@class='a0c4']");
 
         if (itemsForListProducts.isEmpty()) {
-            System.out.println("No items found !");
         } else {
             for (HtmlElement itemProduct: itemsForListProducts) {
                 String competitorBrand = "-";
@@ -300,9 +326,7 @@ public class ParserOzon {
 
                         //получение цен: currentBasicPriceString, competitorPriceU
                         DomNodeList<HtmlElement> divsFor_a0y9 = asFor_a0s9.get(0).getElementsByTagName("div");
-                        System.out.println(divsFor_a0y9.size());
                         DomNodeList<HtmlElement> spanFor_b5v4 = divsFor_a0y9.get(0).getElementsByTagName("span");
-                        System.out.println(spanFor_b5v4.size());
                         String currentBasicPriceString = spanFor_b5v4.get(0).asText();
                         competitorBasicPriceU = getPriceFromStringPrice(currentBasicPriceString) * 100;
 
@@ -336,7 +360,6 @@ public class ParserOzon {
 
                         //получение имени продавца
                         DomNodeList<HtmlElement> spanFor_a0s9 = elementFor_a0c4.getElementsByTagName("span");
-                        System.out.println(spanFor_a0s9.size());
                         //DomNodeList<HtmlElement> spansFor_a0t6 = divsFor_a0s9.get(1).getElementsByTagName("span");
                         seller = spanFor_a0s9.get(spanFor_a0s9.size() - 1).asText();
 
@@ -381,7 +404,6 @@ public class ParserOzon {
 
         Matcher m = p.matcher(price);
         while (m.find()) {
-            System.out.println(m.group());
             resultPrice = resultPrice + m.group();
         }
         return Integer.parseInt(resultPrice);
@@ -415,7 +437,11 @@ public class ParserOzon {
                 }
             }
             if (product == null){
-                product = productList.get(0);
+                try {
+                    product = productList.get(0);
+                } catch (Exception e) {
+                    System.out.println("Ошибка IndexOutOfBoundsException для " + myVendorCodeFromRequest + ". productList = " + productList.size());
+                }
             }
             return product;
         }

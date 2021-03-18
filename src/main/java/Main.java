@@ -1,5 +1,7 @@
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import controllers.Controller;
 import javafx.application.Application;
 import javafx.concurrent.WorkerStateEvent;
@@ -9,17 +11,23 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Main extends Application implements Controller.ActionInController {
 
     private Object mon = new Object();
-    final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+    WebClient webClient = null;
+    Lock lock = new ReentrantLock();
 
     private Controller controller;
     private static double preFld;
@@ -53,11 +61,37 @@ public class Main extends Application implements Controller.ActionInController {
         Controller.subscribe(this);
         controller = mainWindowLoader.getController();
 
+        webClient = new WebClient(BrowserVersion.CHROME);
+
+        ProxyConfig proxyConfig = new ProxyConfig("elena.ltespace.com", 17570);
+        DefaultCredentialsProvider credentialsProvider = new DefaultCredentialsProvider();
+        //указываем логин и пароль для прокси-сервера
+        credentialsProvider.addCredentials("wxcbh7yy", "d9mkvdvn");
+        webClient.setCredentialsProvider(credentialsProvider);
+
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setTimeout(20000);
+
+        /* Clearing Cache and Cookies */
+        webClient.getCookieManager().clearCookies();
+        webClient.getCache().clear();
+
+        /* Setting proxy to be used */
+        webClient.getOptions().setProxyConfig(proxyConfig);
+
+        //попробовать в классе ParserOzon
+        /* Create ProxyStatus record
+        WebResponse response = startPage.getWebResponse();
+    }catch (Exception e) {
+        e.printStackTrace();
+    }
+        */
 
         primaryStage.show();
-
     }
 
     public static void main(String[] args) {
@@ -158,7 +192,7 @@ public class Main extends Application implements Controller.ActionInController {
             @Override
             public void run() {
 
-                executorService = Executors.newFixedThreadPool(4);
+                executorService = Executors.newFixedThreadPool(1);
                 CompletionService<Product> executorCompletionService= new ExecutorCompletionService<>(executorService);
 
                 List<MyCall> myCalls = new ArrayList<>();
@@ -171,18 +205,37 @@ public class Main extends Application implements Controller.ActionInController {
                     String productType = entry.getValue().getProductType();
                     String querySearchForOzon = entry.getValue().getQuerySearchForWildberiesOrOzon();
 
-                    myCalls.add(new MyCall(key, category, brand, productType, setMyVendorCodes, querySearchForOzon, webClient));
+                    myCalls.add(new MyCall(key, category, brand, productType, setMyVendorCodes, querySearchForOzon, webClient, lock));
                 }
 
                 List<Future<Product>> futureList = new ArrayList<>();
 
+                int number = 1;
+
                 for (MyCall myCall : myCalls) {
                     futureList.add(executorCompletionService.submit(myCall));
-                }
 
-                for (int i =0; i < futureList.size(); i++) {
+                    String myVendorCode = "-";
+                    String myRefForPage = "-";
+                    String myRefForImage = "-";
+                    String myProductName = "-";
+                    String mySpecAction = "-";
+                    String competitorVendorCode = "-";
+                    String competitorProductName = "-";
+                    String competitorRefForPage = "-";
+                    String competitorRefForImage = "-";
+                    String competitorName = "-";
+                    String queryForSearch = "-";
+                    String competitorSpecAction = "-";
+                    int countSearch = 0;
+                    int competitorPriceU = 0;
+                    int competitorBasicSale = 0;
+                    int competitorBasicPriceU = 0;
+                    int competitorPromoSale = 0;
+                    int competitorPromoPriceU = 0;
+                    int competitorPremiumPriceForOzon = 0;
+                    int competitorRating = 0;
 
-                    String myVendorCode = null;
                     try {
                         //установка рекомендуемой скидки и розничной цены на основании процента демпинга
                         double present = 1 - preFld / 100;
@@ -191,24 +244,24 @@ public class Main extends Application implements Controller.ActionInController {
                             //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                             myVendorCode = product.getMyVendorCodeFromRequest();
 
-                            String myRefForPage = product.getMyRefForPage();
-                            String myRefForImage = product.getMyRefForImage();
-                            String myProductName = product.getMyProductName();
-                            String mySpecAction = product.getMySpecAction();
-                            String competitorVendorCode = product.getCompetitorVendorCode();
-                            String competitorProductName = product.getCompetitorProductName();
-                            String competitorRefForPage = product.getCompetitorRefForPage();
-                            String competitorRefForImage = product.getCompetitorRefForImage();
-                            String competitorName = product.getCompetitorName();
-                            String queryForSearch = product.getQueryForSearch();
-                            int countSearch = product.getCountSearch();
-                            int competitorPriceU = product.getCompetitorPriceU();
-                            int competitorBasicSale = product.getCompetitorBasicSale();
-                            int competitorBasicPriceU = product.getCompetitorBasicPriceU();
-                            int competitorPromoSale = product.getCompetitorPromoSale();
-                            int competitorPromoPriceU = product.getCompetitorPromoPriceU();
-                            String specAction = product.getCompetitorSpecAction();
-                            int competitorRating = product.getCompetitorRating();
+                            myRefForPage = product.getMyRefForPage();
+                            myRefForImage = product.getMyRefForImage();
+                            myProductName = product.getMyProductName();
+                            mySpecAction = product.getMySpecAction();
+                            competitorVendorCode = product.getCompetitorVendorCode();
+                            competitorProductName = product.getCompetitorProductName();
+                            competitorRefForPage = product.getCompetitorRefForPage();
+                            competitorRefForImage = product.getCompetitorRefForImage();
+                            competitorName = product.getCompetitorName();
+                            queryForSearch = product.getQueryForSearch();
+                            countSearch = product.getCountSearch();
+                            competitorPriceU = product.getCompetitorPriceU();
+                            competitorBasicSale = product.getCompetitorBasicSale();
+                            competitorBasicPriceU = product.getCompetitorBasicPriceU();
+                            competitorPromoSale = product.getCompetitorPromoSale();
+                            competitorPromoPriceU = product.getCompetitorPromoPriceU();
+                            competitorSpecAction = product.getCompetitorSpecAction();
+                            competitorRating = product.getCompetitorRating();
 
                             ResultProduct resultProduct = resultMap.get(myVendorCode);
 
@@ -228,10 +281,8 @@ public class Main extends Application implements Controller.ActionInController {
                             resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
                             resultProduct.setCompetitorPromoSale(competitorPromoSale);
                             resultProduct.setCompetitorPromoPriceU(competitorPromoPriceU);
-                            resultProduct.setCompetitorSpecAction(specAction);
-                            resultProduct.setCompetitorSpecAction(specAction);
+                            resultProduct.setCompetitorSpecAction(competitorSpecAction);
                             resultProduct.setCompetitorRating(competitorRating);
-
 
                             int currentPriceU = resultProduct.getMyPriceU();
                             int myCurrentLowerPriceU = resultProduct.getMyLowerPriceU();
@@ -285,29 +336,61 @@ public class Main extends Application implements Controller.ActionInController {
                             //дублирование кода
                             resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
 
-                            int finalI = i + 1;
                             synchronized (mon) {
                                 if (competitorVendorCode.equals("-")) {
-                                    controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
+                                    controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ошибка\n");
                                 } else {
-                                    controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");
+                                    controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ok\n");
                                 }
                             }
                             ///////////////////
                         } else {
+                            System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
                             Product product = executorCompletionService.take().get();
+                            if (number % 3 == 0){
+                                HtmlPage page = null;
+                                try {
+                                    URL uri = new URL(Constants.URL_FOR_SWITCH_IP);
+                                    lock.lock();
+                                    System.out.println("В main number кратен 3, смена IP");
+                                    webClient.close();
+                                    page = webClient.getPage(uri);
+                                    DomNodeList<DomElement> metas = page.getElementsByTagName("body");
+                                    //проверка ответа сервером (<body>ok</body>)
+                                    if (metas.get(0).asText().equals("ok")) {
+                                        System.out.println("смена IP успешна");
+                                    }
+                                    System.out.println();
+                                } catch (IOException ignored) {
+                                    System.out.println("проблема при смене IP");
+                                } finally {
+                                    Thread.sleep(1000);
+                                    lock.unlock();
+                                }
+
+//                                try {
+//                                    URL uri1 = new URL(Constants.URL_FOR_SWITCH_IP);
+//                                    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) uri1.openConnection();
+//                                    httpsURLConnection.setRequestMethod("GET");
+//                                    httpsURLConnection.setReadTimeout(30000);
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+
+                            }
                             //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                             myVendorCode = product.getMyVendorCodeFromRequest();
-
-                            String myRefForPage = product.getMyRefForPage();
-                            String competitorVendorCode = product.getCompetitorVendorCode();
-                            String competitorProductName = product.getCompetitorProductName();
-                            String competitorRefForPage = product.getCompetitorRefForPage();
-                            String competitorRefForImage = product.getCompetitorRefForImage();
-                            String competitorName = product.getCompetitorName();
-                            String queryForSearch = product.getQueryForSearch();
-                            int competitorBasicPriceU = product.getCompetitorBasicPriceU();
-                            int competitorPremiumPriceForOzon = product.getCompetitorPremiumPriceForOzon();
+                            System.out.println("Получили результат для задачи № " + myVendorCode);
+                            myRefForPage = product.getMyRefForPage();
+                            competitorVendorCode = product.getCompetitorVendorCode();
+                            competitorProductName = product.getCompetitorProductName();
+                            competitorRefForPage = product.getCompetitorRefForPage();
+                            competitorRefForImage = product.getCompetitorRefForImage();
+                            competitorName = product.getCompetitorName();
+                            competitorSpecAction = product.getCompetitorSpecAction();
+                            queryForSearch = product.getQueryForSearch();
+                            competitorBasicPriceU = product.getCompetitorBasicPriceU();
+                            competitorPremiumPriceForOzon = product.getCompetitorPremiumPriceForOzon();
 
                             ResultProduct resultProduct = resultMap.get(myVendorCode);
 
@@ -341,21 +424,27 @@ public class Main extends Application implements Controller.ActionInController {
                             //дублирование кода
                             resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
 
-                            int finalI = i + 1;
                             synchronized (mon) {
                                 if (competitorVendorCode.equals("-")) {
-                                    controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ошибка\n");
+                                    if (competitorSpecAction.equals(Constants.BLOCKING)){
+                                        controller.getAreaLog().appendText(number + " - " + myVendorCode + " - блокировка\n");
+                                    } else {
+                                        controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ошибка\n");
+                                    }
                                 } else {
-                                    controller.getAreaLog().appendText(finalI + " - " + myVendorCode + " - ok\n");
+                                    controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ok\n");
                                 }
                             }
-                            ///////////////////
                         }
-
                     } catch (InterruptedException | ExecutionException | NullPointerException e) {
                         System.out.println("для артикула " + myVendorCode + " ошибка - " + e.getMessage());
+                        e.printStackTrace();
                     }
+                    number++;
+                    System.out.println("resultProduct для " + myVendorCode + " записан в map");
+
                 }
+
                 controller.getAreaLog().appendText("Количество проанализированных позицый - " + futureList.size() + "\n");
                 executorService.shutdown();
                 controller.getAreaLog().appendText("Загрузка изображений...");
@@ -378,8 +467,9 @@ public class Main extends Application implements Controller.ActionInController {
         String querySearchForOzon;
         Set myVendorCodes;
         WebClient webClient;
+        Lock lock;
 
-        public MyCall(String key, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient) {
+        public MyCall(String key, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient, Lock lock) {
             this.key = key;
             this.category = category;
             this.brand = brand;
@@ -387,18 +477,17 @@ public class Main extends Application implements Controller.ActionInController {
             this.querySearchForOzon = querySearchForOzon;
             this.myVendorCodes = myVendorCodes;
             this.webClient = webClient;
+            this.lock = lock;
         }
 
         @Override
         //1 - флаг для Ozon
         //2 - флаг для Wildberies
         public Product call() throws Exception {
-            System.out.println("выполнение задачи - " + marketplaceFlag);
-            Thread.sleep(1000);
             if (marketplaceFlag == 1){
-                return parserOzon.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
+                return parserOzon.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient, lock);
             } else if (marketplaceFlag == 2){
-                return parserWildBer.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient, marketplaceFlag);
+                return parserWildBer.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient);
             } else return null;
         }
     }

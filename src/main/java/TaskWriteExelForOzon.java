@@ -256,16 +256,42 @@ public class TaskWriteExelForOzon extends Task<File> {
 
 //поисковый запрос
             cell = row.createCell(6);
-            cell.setCellValue(productArrayList.get(i).getQueryForSearch());
-            cell.setCellStyle(style);
+            String querySearchAndResult = productArrayList.get(i).getQueryForSearch();
+            cell.setCellValue(querySearchAndResult);
+            if (querySearchAndResult.equals(Constants.BLOCKING)){
+                cell.setCellStyle(styleRedCell);
+            } else {
+                cell.setCellStyle(style);
+            }
+
 
 //наименование продукта конкурента(если нашли)
             cell = row.createCell(7);
-            if (productArrayList.get(i).getCompetitorProductName().equals("-")){
-                cell.setCellValue(Constants.NOT_FOUND_PAGE);
-                cell.setCellStyle(styleGreenCell);
+            if (querySearchAndResult.equals(Constants.BLOCKING)){
+                cell.setCellValue(Constants.BLOCKING);
+                cell.setCellStyle(styleRedCell);
             } else {
-                cell.setCellValue((productArrayList.get(i).getCompetitorProductName()));
+                if (productArrayList.get(i).getCompetitorProductName().equals("-")){
+                    cell.setCellValue(Constants.NOT_FOUND_PAGE);
+                    cell.setCellStyle(styleGreenCell);
+                } else {
+                    cell.setCellValue((productArrayList.get(i).getCompetitorProductName()));
+                    if (isMy){
+                        cell.setCellStyle(styleMyProduct);
+                    } else {
+                        cell.setCellStyle(style);
+                    }
+                }
+            }
+
+
+//ссылка на конкурента, или самого себя, или мой аналогичный товар
+            cell = row.createCell(8);
+            if (querySearchAndResult.equals(Constants.BLOCKING)){
+                cell.setCellValue(Constants.BLOCKING);
+                cell.setCellStyle(styleRedCell);
+            } else {
+                cell.setCellValue(productArrayList.get(i).getCompetitorRefForPage());
                 if (isMy){
                     cell.setCellStyle(styleMyProduct);
                 } else {
@@ -273,19 +299,16 @@ public class TaskWriteExelForOzon extends Task<File> {
                 }
             }
 
-//ссылка на конкурента, или самого себя, или мой аналогичный товар
-            cell = row.createCell(8);
-            cell.setCellValue(productArrayList.get(i).getCompetitorRefForPage());
-            if (isMy){
-                cell.setCellStyle(styleMyProduct);
-            } else {
-                cell.setCellStyle(style);
-            }
 
 //Имя продавца
             cell = row.createCell(9);
-            cell.setCellValue(productArrayList.get(i).getCompetitorName());
-            cell.setCellStyle(style);
+            if (querySearchAndResult.equals(Constants.BLOCKING)){
+                cell.setCellValue(Constants.BLOCKING);
+                cell.setCellStyle(styleRedCell);
+            } else {
+                cell.setCellValue(productArrayList.get(i).getCompetitorName());
+                cell.setCellStyle(style);
+            }
 
 //////////////расчитываем все необходимые цены /////////////////////////////////////////////////////////////////////////
             double myLowerPrice = Math.round(productArrayList.get(i).getMyLowerPriceU() / 100);

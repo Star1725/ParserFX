@@ -20,7 +20,7 @@ public class ParserWildBer {
 
     private Object mon = new Object();
 
-    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient, int marketPlaceFlag){
+    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient){
         List<Product> productList;
         Product product = new Product(myVendorCodeFromRequest,
                 "-",
