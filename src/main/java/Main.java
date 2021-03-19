@@ -27,6 +27,7 @@ public class Main extends Application implements Controller.ActionInController {
 
     private Object mon = new Object();
     WebClient webClient = null;
+    public static int countSwitchIP = 0;
     Lock lock = new ReentrantLock();
 
     private Controller controller;
@@ -63,10 +64,10 @@ public class Main extends Application implements Controller.ActionInController {
 
         webClient = new WebClient(BrowserVersion.CHROME);
 
-        ProxyConfig proxyConfig = new ProxyConfig("elena.ltespace.com", 17570);
+        ProxyConfig proxyConfig = new ProxyConfig(Constants.PROXY_HOST, Constants.PROXY_PORT);
         DefaultCredentialsProvider credentialsProvider = new DefaultCredentialsProvider();
         //указываем логин и пароль для прокси-сервера
-        credentialsProvider.addCredentials("wxcbh7yy", "d9mkvdvn");
+        credentialsProvider.addCredentials(Constants.LOGIN, Constants.PASSWORD);
         webClient.setCredentialsProvider(credentialsProvider);
 
         webClient.getOptions().setCssEnabled(false);
@@ -212,6 +213,11 @@ public class Main extends Application implements Controller.ActionInController {
 
                 int number = 1;
 
+                try {
+                    switchIpForProxy();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 for (MyCall myCall : myCalls) {
                     futureList.add(executorCompletionService.submit(myCall));
 
@@ -348,30 +354,12 @@ public class Main extends Application implements Controller.ActionInController {
                             System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
                             Product product = executorCompletionService.take().get();
                             if (number % 3 == 0){
-                                HtmlPage page = null;
-                                try {
-                                    URL uri = new URL(Constants.URL_FOR_SWITCH_IP);
-                                    lock.lock();
-                                    System.out.println("В main number кратен 3, смена IP");
-                                    webClient.close();
-                                    page = webClient.getPage(uri);
-                                    DomNodeList<DomElement> metas = page.getElementsByTagName("body");
-                                    //проверка ответа сервером (<body>ok</body>)
-                                    if (metas.get(0).asText().equals("ok")) {
-                                        System.out.println("смена IP успешна");
-                                    }
-                                    System.out.println();
-                                } catch (IOException ignored) {
-                                    System.out.println("проблема при смене IP");
-                                } finally {
-                                    Thread.sleep(1000);
-                                    lock.unlock();
-                                }
-
+     //переключение на новый IP
+                                switchIpForProxy();
                             }
                             //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                             myVendorCode = product.getMyVendorCodeFromRequest();
-                            System.out.println("Получили результат для задачи № " + myVendorCode);
+                            System.out.println(number + " - получили результат для задачи № " + myVendorCode);
                             myRefForPage = product.getMyRefForPage();
                             competitorVendorCode = product.getCompetitorVendorCode();
                             competitorProductName = product.getCompetitorProductName();
@@ -418,7 +406,8 @@ public class Main extends Application implements Controller.ActionInController {
                             synchronized (mon) {
                                 if (competitorVendorCode.equals("-")) {
                                     if (competitorSpecAction.equals(Constants.BLOCKING)){
-                                        controller.getAreaLog().appendText(number + " - " + myVendorCode + " - блокировка\n");
+                                        controller.getAreaLog().appendText(number + " - " + myVendorCode + " - блокировка!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+                                        switchIpForProxy();
                                     } else {
                                         controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ошибка\n");
                                     }
@@ -447,6 +436,43 @@ public class Main extends Application implements Controller.ActionInController {
                 }
             }
         }).start();
+    }
+
+    private void switchIpForProxy() throws InterruptedException {
+        lock.lock();
+        System.out.println("В main number кратен 3, смена IP");
+        int count = 3;
+        HtmlPage page = null;
+        URL uri = null;
+        try {
+            uri = new URL(Constants.URL_FOR_SWITCH_IP);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        while (count > 0){
+            try {
+                page = webClient.getPage(uri);
+                count = 0;
+                DomNodeList<DomElement> metas = page.getElementsByTagName("body");
+                //проверка ответа сервером (<body>ok</body>)
+                if (metas.get(0).asText().equals("ok")) {
+                    System.out.println("смена IP успешна");
+                    countSwitchIP++;
+                    System.out.println();
+                    Thread.sleep(1000);
+                }
+            } catch (IOException ignored) {
+                System.out.println("проблема при смене IP. тело ответа - ");
+                if (count == 0) {
+                    webClient.close();
+                    lock.unlock();
+                    break;
+                }
+                count--;
+            }
+        }
+        webClient.close();
+        lock.unlock();
     }
 
     //колобэл, который выполняет запросы на wildberries

@@ -1,6 +1,15 @@
 import java.util.ArrayList;
 
 public class Constants {
+    //настройки для прокси-сервера
+    public static final String PROXY_HOST = "tatiana.ltespace.com";
+    public static final int PROXY_PORT = 18487;
+    public static final String LOGIN = "pttgua83";
+    public static final String PASSWORD = "xr791oom";
+    public static final String URL_FOR_SWITCH_IP = "https://ltespace.com/api/private/touch?port=" + PROXY_PORT + "&login=" + LOGIN + "&password=" + PASSWORD;
+                                                  //https://ltespace.com/api/private/touch?port=18487&login=pttgua83&password=xr791oom
+
+
     //marketplaces
     public static final String WILDBERIES = "Wildberies";
     public static final String OZON = "Ozon";
@@ -225,14 +234,10 @@ public class Constants {
     public static final String ELEMENT_WITH_SPEC_ACTION = "a[class=spec-actions-link]";//03.03.21
     public static final String ELEMENT_WITH_BRAND_NAME = "strong[class=brand-name c-text-sm]";
 
-
-
     //for json query
     public static final String URL_FOR_JSON = "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?spp=0&regions=69,58,64,40,48,70,1,38,4,30,22,66&" +
             "stores=119261,121631,1193,119400,116433,117501,507,3158,120762,1733,117986,686,117413,119781&" +
             "couponsGeo=2,12,6,9&pricemarginCoeff=1.0&reg=0&appType=1&offlineBonus=0&onlineBonus=0&emp=0&locale=ru&lang=ru&nm=";
-
-    public static final String URL_FOR_SWITCH_IP = "https://ltespace.com/api/private/touch?port=17570&login=wxcbh7yy&password=d9mkvdvn";
 
 
     public static final ArrayList<String> listForCabel = new ArrayList<>();

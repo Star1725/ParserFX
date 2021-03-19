@@ -1,6 +1,7 @@
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
+import org.w3c.dom.DOMException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -160,7 +161,7 @@ public class ParserOzon {
             case Constants.PRODUCT_TYPE_1C_108 :
             case Constants.PRODUCT_TYPE_1C_109 :
                 lock.lock();
-                System.out.println("получение страницы ozon для запроса - " + querySearchForOzon);
+                System.out.println( "IP №" + Main.countSwitchIP + ".Получение страницы ozon для запроса - " + querySearchForOzon);
                 productList = getCatalogProducts(query.toString().toLowerCase(), brand);
                 System.out.println("страница ozon для запроса \"" + querySearchForOzon + "\" получена");
                 lock.unlock();
@@ -297,7 +298,11 @@ public class ParserOzon {
                 int competitorPremiumPriceForOzon = 0;
 
                 //получение ссылки на продукт
-                refForProduct = "https://www.ozon.ru" + itemProduct.getFirstChild().getAttributes().getNamedItem("href").getNodeValue();
+                try {
+                    refForProduct = "https://www.ozon.ru" + itemProduct.getFirstChild().getAttributes().getNamedItem("href").getNodeValue();
+                } catch (DOMException ignored) {
+                    refForProduct = "https://www.ozon.ru" + itemProduct.getFirstChild().getFirstChild().getFirstChild().getAttributes().getNamedItem("href").getNodeValue();
+                }
                 String[] arrayBuff1 = refForProduct.split("/");
                 for (int i = 0; i < arrayBuff1.length; i++) {
                     if (arrayBuff1[i].equals("id")){
@@ -310,9 +315,11 @@ public class ParserOzon {
                     String vendorCodeBuff = arrayBuff2[arrayBuff2.length - 1];
                     vendorCode = vendorCodeBuff.substring(0, vendorCodeBuff.length() - 1);
                 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //исчем кол-во элементов, в которых вся нужная информация
+                Iterable<DomElement> elementsFor_a0c4 = getDomElements(itemProduct);
 
-                //элементы, в которых вся нужная информация
-                Iterable<DomElement> elementsFor_a0c4 = itemProduct.getChildElements();
+
                 int childFor_a0c4 = 1;
                 for (DomElement elementFor_a0c4 : elementsFor_a0c4) {
                     //получение ссылки на картинку
@@ -395,6 +402,21 @@ public class ParserOzon {
             }
         }
         return productList;
+    }
+
+    private static Iterable<DomElement> getDomElements(HtmlElement itemProduct) {
+        Iterable<DomElement> elementsFor_a0c4 = itemProduct.getChildElements();
+        int countChildren = 0;
+        while (countChildren != 3) {
+            for (DomElement elementFor_a0c4 : elementsFor_a0c4) {
+                countChildren++;
+            }
+            //если элемент один, значит мы ещё не добрались до нужных на элементов
+            if (countChildren == 1){
+                itemProduct = (HtmlElement) itemProduct.getFirstChild();
+            }
+        }
+        return elementsFor_a0c4;
     }
 
     private static int getPriceFromStringPrice(String price) {
