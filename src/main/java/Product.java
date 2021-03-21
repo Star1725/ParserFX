@@ -43,5 +43,10 @@ public class Product {
             return competitorPriceU;
         }
     }
+
+    public Product(String queryForSearch, int countSearch) {
+        this.queryForSearch = queryForSearch;
+        this.countSearch = countSearch;
+    }
 }
 

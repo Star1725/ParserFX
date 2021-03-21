@@ -247,10 +247,10 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     model = buff2[0];
                 }
 
-                //получаем поисковый запрос и категорию продукта
+                //получаем поисковый запрос
                 String querySearch = "-";
                 if (!myBrand.isEmpty() || !model.isEmpty()) {
-                    querySearch = myBrand + " " + model;
+                    querySearch = productType + " " + myBrand + " " + model;
                 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

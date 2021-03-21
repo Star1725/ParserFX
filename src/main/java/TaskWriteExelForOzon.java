@@ -64,7 +64,7 @@ public class TaskWriteExelForOzon extends Task<File> {
         headerStyle.setFont(font);
 ////////вывод столбцов
         Cell headerCell = header.createCell(0);
-        headerCell.setCellValue("Бренд");
+        headerCell.setCellValue("Бренд  ");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(1);
