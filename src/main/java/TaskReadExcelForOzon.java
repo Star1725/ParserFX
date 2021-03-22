@@ -10,7 +10,8 @@ import java.util.*;
 
 public class TaskReadExcelForOzon extends Task<Map> {
 
-    private int countRows;
+    private int countReadsRows;
+    private int countReadsRows_1C;
 
     public TaskReadExcelForOzon(List<File> files) {
         this.files = files;
@@ -189,13 +190,15 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 ));
                 //увеличиваем ProgressBar
                 this.updateProgress(i, countFull);
-                countRows = i;
+                countReadsRows = i;
                 i++;
             }
+            System.out.println("Кол-во строк - " + countReadsRows);
 
 //считываем информацию с отчёта 1C
             System.out.println("считываем информацию с отчёта 1C");
             rowIterator = sheet_1C.rowIterator();
+            countReadsRows_1C = 1;
             while (rowIterator.hasNext()){
                 //получаем строку
                 Row row = (Row) rowIterator.next();
@@ -236,6 +239,68 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     }
                 }
 
+                //для некоторых типов продуктов необходимы дополнительные параметры для запроса(кабели, )
+                StringBuilder paramsBuilder = new StringBuilder(" ");
+                String params = "";
+                switch (productType){
+                    //для масок кол-во штук в упаковке
+                    case Constants.PRODUCT_TYPE_1C_78:
+                        int start = myNomenclature.indexOf('(');
+                        int stop = myNomenclature.indexOf(')');
+                        params = myNomenclature.substring(start, stop);
+                        break;
+
+                    //для зарядок - с каким кабелем
+                    case Constants.PRODUCT_TYPE_1C_10:
+                    case Constants.PRODUCT_TYPE_1C_37:
+                    case Constants.PRODUCT_TYPE_1C_38:
+                    case Constants.PRODUCT_TYPE_1C_39:
+                    case Constants.PRODUCT_TYPE_1C_40:
+                    case Constants.PRODUCT_TYPE_1C_132:
+                    case Constants.PRODUCT_TYPE_1C_133:
+                    case Constants.PRODUCT_TYPE_1C_153:
+                    case Constants.PRODUCT_TYPE_1C_154:
+                        if (myNomenclature.contains("с кабелем") || myNomenclature.contains("кабель")){
+                            for (String type: Constants.listForCharging){
+                                if (myNomenclature.contains(type)){
+                                    paramsBuilder.append("c кабелем ").append(type);
+                                }
+                            }
+                        }
+                        params = paramsBuilder.toString().trim();
+                        break;
+
+                    //для кабелей - тип коннектора и длинна
+                    case Constants.PRODUCT_TYPE_1C_61:
+                    case Constants.PRODUCT_TYPE_1C_62:
+                    case Constants.PRODUCT_TYPE_1C_63:
+                    case Constants.PRODUCT_TYPE_1C_64:
+                    case Constants.PRODUCT_TYPE_1C_65:
+                    case Constants.PRODUCT_TYPE_1C_66:
+                    case Constants.PRODUCT_TYPE_1C_67:
+                    case Constants.PRODUCT_TYPE_1C_68:
+                    case Constants.PRODUCT_TYPE_1C_69:
+                    case Constants.PRODUCT_TYPE_1C_70:
+                    case Constants.PRODUCT_TYPE_1C_71:
+                        for (String type : Constants.listForCabel){
+                            if (myNomenclature.replaceAll(",", "").contains(type)) {
+                                paramsBuilder.append(type).append(" ");
+                            }
+                        }
+                        params = paramsBuilder.toString().trim();
+                        break;
+
+                    //для защитных стекол -  его тип
+                    case Constants.PRODUCT_TYPE_1C_139:
+                        for (String type : Constants.listForTypeGlass){
+                            if (myNomenclature.replaceAll(",", "").contains(type)) {
+                                paramsBuilder.append(type).append(" ");
+                            }
+                        }
+                        params = paramsBuilder.toString().trim();
+                        break;
+                }
+
                 //если модель сразу за брендом после запятой
                 String model ="-";
                 if (buff1[1].startsWith(",")){
@@ -250,7 +315,48 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 //получаем поисковый запрос
                 String querySearch = "-";
                 if (!myBrand.isEmpty() || !model.isEmpty()) {
-                    querySearch = productType + " " + myBrand + " " + model;
+                    switch (productType){
+                        //для этих типов в поисковом запросе убираем тип продукта
+                        case Constants.PRODUCT_TYPE_1C_30:
+                        case Constants.PRODUCT_TYPE_1C_113:
+                        case Constants.PRODUCT_TYPE_1C_114:
+                        case Constants.PRODUCT_TYPE_1C_115:
+                        case Constants.PRODUCT_TYPE_1C_116:
+                            querySearch = myBrand + " " + model + " " + params;
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("querySearch = " + querySearch);
+                            System.out.println();
+                            break;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //для этих типов в поисковом запросе тип немного видоизменяем
+                        case Constants.PRODUCT_TYPE_1C_68:
+                            productType = "Кабель USB 2 в 1";
+                            querySearch = productType + " " + myBrand + " " + model + " " + params;
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("querySearch = " + querySearch);
+                            System.out.println();
+                            break;
+                        case Constants.PRODUCT_TYPE_1C_69:
+                            productType = "Кабель USB 3 в 1";
+                            querySearch = productType + " " + myBrand + " " + model + " " + params;
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("querySearch = " + querySearch);
+                            System.out.println();
+                            break;
+                        case Constants.PRODUCT_TYPE_1C_85:
+                            productType = "Магнитный кабель USB 3 в 1";
+                            querySearch = productType + " " + myBrand + " " + model + " " + params;
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("querySearch = " + querySearch);
+                            System.out.println();
+                            break;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        default:
+                            querySearch = productType + " " + myBrand + " " + model + " " + params;
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("querySearch = " + querySearch);
+                            System.out.println();
+                    }
                 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,9 +368,10 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, myBrand, productType, myNomenclature, querySearch, specPrice_1C));
                 //увеличиваем ProgressBar
                 this.updateProgress(i, countFull);
-                countRows = i;
+                countReadsRows_1C++;
                 i++;
             }
+            System.out.println("Кол-во строк - " + countReadsRows);
 
             //пытаемся привязать specPrice_1C и productName к ResultProduct
             for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
@@ -283,7 +390,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
             return resultProductHashMap;
         }
         catch (Exception e) {
-            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countRows);
+            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countReadsRows_1C);
             return null;
         }
     }

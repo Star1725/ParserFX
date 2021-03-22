@@ -413,7 +413,7 @@ public class ParserWildBer {
             String[] arrayForTitle = title.split(",", 2);
             String[] arrayForParams = arrayForTitle[1].replace(",", "").split(" ");
             for (String s: arrayForParams){
-                for (String param : Constants.listForСharging) {
+                for (String param : Constants.listForCharging) {
                     if (s.equalsIgnoreCase(param)) {
                         paramsForRequest.add(param);
                     }

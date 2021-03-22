@@ -57,6 +57,7 @@ public class ParserOzon {
             case Constants.PRODUCT_TYPE_1C_1 :
             case Constants.PRODUCT_TYPE_1C_2 :
             case Constants.PRODUCT_TYPE_1C_3 :
+            case Constants.PRODUCT_TYPE_1C_4 :
             case Constants.PRODUCT_TYPE_1C_5 :
             case Constants.PRODUCT_TYPE_1C_6 :
             case Constants.PRODUCT_TYPE_1C_7 :
@@ -131,9 +132,6 @@ public class ParserOzon {
             case Constants.PRODUCT_TYPE_1C_77  :
             case Constants.PRODUCT_TYPE_1C_78  :
             case Constants.PRODUCT_TYPE_1C_79  :
-            case Constants.PRODUCT_TYPE_1C_80  :
-            case Constants.PRODUCT_TYPE_1C_81  :
-            case Constants.PRODUCT_TYPE_1C_82  :
             case Constants.PRODUCT_TYPE_1C_83  :
             case Constants.PRODUCT_TYPE_1C_84  :
             case Constants.PRODUCT_TYPE_1C_85  :
@@ -160,6 +158,17 @@ public class ParserOzon {
             case Constants.PRODUCT_TYPE_1C_107 :
             case Constants.PRODUCT_TYPE_1C_108 :
             case Constants.PRODUCT_TYPE_1C_109 :
+            case Constants.PRODUCT_TYPE_1C_110 :
+            case Constants.PRODUCT_TYPE_1C_111:
+            case Constants.PRODUCT_TYPE_1C_112:
+            case Constants.PRODUCT_TYPE_1C_113:
+            case Constants.PRODUCT_TYPE_1C_114:
+            case Constants.PRODUCT_TYPE_1C_115:
+            case Constants.PRODUCT_TYPE_1C_116:
+            case Constants.PRODUCT_TYPE_1C_117:
+            case Constants.PRODUCT_TYPE_1C_118:
+            case Constants.PRODUCT_TYPE_1C_119:
+            case Constants.PRODUCT_TYPE_1C_120:
                 System.out.println("проверка - lock свободен: " + lock.toString());
                 lock.lock();
                 System.out.println( "IP №" + Main.countSwitchIP + ".Получение страницы ozon для запроса - " + querySearchForOzon + ". Артикул Ozon - " + myVendorCodeFromRequest);
