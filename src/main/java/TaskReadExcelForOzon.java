@@ -69,6 +69,10 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     continue;
                 }
 
+                if (row.getPhysicalNumberOfCells() == 0){
+                    break;
+                }
+
                 //получаем артикул поставщика (code_1C)
                 Cell cell = row.getCell(0);
                 String code_1C = cell.getRichStringCellValue().getString();
@@ -390,6 +394,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
             return resultProductHashMap;
         }
         catch (Exception e) {
+            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countReadsRows);
             System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countReadsRows_1C);
             return null;
         }

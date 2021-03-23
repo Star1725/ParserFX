@@ -354,10 +354,14 @@ public class Main extends Application implements Controller.ActionInController {
                         } else {
                             System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
                             Product product = executorCompletionService.take().get();
-                            if (number % 3 == 0){
+                            if (number % 4 == 0){
                             //переключение на новый IP после трёх удачных запросов
+                                System.out.println("прверка - lock свободен: " + lock.toString());
+                                lock.lock();
                                 System.out.println("В main number кратен 3, смена IP");
                                 switchIpForProxy();
+                                lock.unlock();
+                                System.out.println("прверка - lock свободен: " + lock.toString());
                             }
                             //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                             myVendorCode = product.getMyVendorCodeFromRequest();
@@ -421,7 +425,6 @@ public class Main extends Application implements Controller.ActionInController {
                         System.out.println("для артикула " + myVendorCode + " ошибка - " + e.getMessage());
                         //lock.unlock();
                         e.printStackTrace();
-                        outputExcelFile(number);
                     }
                     number++;
                     System.out.println("resultProduct для " + myVendorCode + " записан в map");
@@ -444,8 +447,6 @@ public class Main extends Application implements Controller.ActionInController {
     }
 
     public static void switchIpForProxy() throws InterruptedException {
-        System.out.println("прверка - lock свободен: " + lock.toString());
-        lock.lock();
         int count = 10;//попытки смены IP
         HtmlPage page = null;
         URL uri = null;
@@ -468,19 +469,17 @@ public class Main extends Application implements Controller.ActionInController {
                     countSwitchIP++;
                     Thread.sleep(5000);
                 }
-            } catch (IOException ignored) {
-                System.out.println("проблема при смене IP. тело ответа - " + page.asText());
+            } catch (IOException e) {
+                System.out.println("проблема при смене IP");
+                e.printStackTrace();
                 if (count == 0) {
                     webClient.close();
-                    lock.unlock();
                     break;
                 }
                 count--;
             }
         }
         webClient.close();
-        lock.unlock();
-        System.out.println("прверка - lock свободен: " + lock.toString());
         System.out.println();
     }
 

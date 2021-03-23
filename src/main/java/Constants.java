@@ -2,10 +2,10 @@ import java.util.ArrayList;
 
 public class Constants {
     //настройки для прокси-сервера
-    public static final String PROXY_HOST = "elena.ltespace.com";
-    public static final int PROXY_PORT = 18979;
-    public static final String LOGIN = "nsbmtesc";
-    public static final String PASSWORD = "q4u9n24s";
+    public static final String PROXY_HOST = "marina.ltespace.com";
+    public static final int PROXY_PORT = 12426;
+    public static final String LOGIN = "6uxxte5v";
+    public static final String PASSWORD = "x1k7dfkc";
     public static final String URL_FOR_SWITCH_IP = "https://ltespace.com/api/private/touch?port=" + PROXY_PORT + "&login=" + LOGIN + "&password=" + PASSWORD;
                                                   //https://ltespace.com/api/private/touch?port=18487&login=pttgua83&password=xr791oom
 
