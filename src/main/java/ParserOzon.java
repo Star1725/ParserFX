@@ -521,21 +521,6 @@ public class ParserOzon {
         return Integer.parseInt(resultPrice.toString());
     }
 
-//    private Document getDocumentPageForVendorCode(String myVendorCodeFromRequest) {
-//        String url = getString("https://www.wildberries.ru/catalog/", myVendorCodeFromRequest, "/detail.aspx?targetUrl=SP");
-//        Document page = null;
-//        try {
-//            page = Jsoup.connect(url)
-//                    .userAgent("Mozilla")
-//                    .timeout(20000)
-//                    .referrer("https://google.com")
-//                    .get();
-//        } catch (IOException e) {
-//            System.out.println(Constants.NOT_FOUND_PAGE);
-//        }
-//        return page;
-//    }
-//
     private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes, String myVendorCodeFromRequest) {
         if (productList.size() == 1){
             return productList.get(0);
@@ -574,89 +559,4 @@ public class ParserOzon {
         }
         return queryUTF8;
     }
-//
-//    private static List<Product> getCatalogProductsForRequestPage(Document page, String myBrand){
-//        List<Product> productList = new ArrayList<>();
-//        if (page != null){
-//            Element catalog = page.select(Constants.ELEMENT_WITH_CATALOG).first();
-//            if (catalog == null){
-//                return productList;
-//            }
-//            Elements goods = catalog.select(Constants.ELEMENT_WITH_PRODUCT);
-//            int countSearch = goods.size();
-//            for (Element good : goods) {
-//                //артикул
-//                String vendorCode = good.attr(Constants.ATTRIBUTE_WITH_VENDOR_CODE);
-//
-//                Element fullProductCard = good.select(Constants.ELEMENT_WITH_CARD_PRODUCT).first();
-//
-//                //имя товара
-//                Element nameGoods = fullProductCard.select(Constants.ELEMENT_WITH_NAME_PRODUCT).first();
-//                String productName = nameGoods.text();
-//
-//                //ссылка на товар
-//                String refForPage = Constants.MARKETPLACE + fullProductCard.attr(Constants.ATTRIBUTE_WITH_REF_FOR_PAGE_PRODUCT);
-//
-//                //ссылка на картинку товара
-//                Element img = fullProductCard.select(Constants.ELEMENT_WITH_REF_FOR_IMAGE).first();
-//                String refForImg = "-";
-//                String refForImgTemp1 = img.attr(Constants.ATTRIBUTE_WITH_REF_FOR_IMAGE_1);
-//                String refForImgTemp2 = img.attr(Constants.ATTRIBUTE_WITH_REF_FOR_IMAGE_2);
-//                if (refForImgTemp2.equals("")){
-//                    refForImg = "https:" + refForImgTemp1;
-//                } else {
-//                    refForImg = "https:" + refForImgTemp2;
-//                }
-//
-//                //спец-акция
-//                Element priceGoods = fullProductCard.select(Constants.ELEMENT_WITH_SPEC_ACTION).first();
-//                String specAction = "-";
-//                if (priceGoods != null){
-//                    specAction = priceGoods.text();
-//                }
-//
-//                //рейтинг
-//                Element star = fullProductCard.getElementsByAttributeValueStarting("class", "c-stars").first();
-//                int rating = 0;
-//                if (star != null){
-//                    String nameClass = star.className();
-//                    rating = Integer.parseInt(String.valueOf(nameClass.charAt(nameClass.length() - 1)));
-//                }
-//
-//                //Brand
-//                Element brand = fullProductCard.select(Constants.ELEMENT_WITH_BRAND_NAME).first();
-//                String string = brand.text();
-//                String brandName = string.substring(0, string.length() - 2).toLowerCase();
-//                if (!myBrand.equals("Aiqura")){
-//                    if (!brandName.contains(myBrand.toLowerCase())) continue;
-//                }
-//
-//                productList.add(new Product("-",
-//                        "-",
-//                        "-",
-//                        "-",
-//                        "-",
-//
-//                        "-",
-//                        countSearch,
-//
-//                        brandName,
-//                        vendorCode,
-//                        productName,
-//                        refForPage,
-//                        refForImg,
-//                        specAction,
-//                        rating,
-//
-//                        0,
-//                        0,
-//                        0,
-//                        0,
-//                        0,
-//
-//                        "-"));
-//            }
-//        }
-//        return productList;
-//    }
 }

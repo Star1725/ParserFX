@@ -409,17 +409,17 @@ public class Main extends Application implements Controller.ActionInController {
                             //дублирование кода
                             resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
 
-                            synchronized (mon) {
-                                if (competitorVendorCode.equals("-")) {
-                                    if (competitorSpecAction.equals(Constants.BLOCKING)){
-                                        controller.getAreaLog().appendText(number + " - " + myVendorCode + " - блокировка!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-                                    } else {
-                                        controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ошибка\n");
-                                    }
-                                } else {
-                                    controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ok\n");
-                                }
-                            }
+//                            lock.tryLock();
+//                                if (competitorVendorCode.equals("-")) {
+//                                    if (competitorSpecAction.equals(Constants.BLOCKING)){
+//                                        controller.getAreaLog().appendText(number + " - " + myVendorCode + " - блокировка!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+//                                    } else {
+//                                        controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ошибка\n");
+//                                    }
+//                                } else {
+//                                    controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ok\n");
+//                                }
+//                            lock.unlock();
                         }
                     } catch (InterruptedException | ExecutionException | NullPointerException e) {
                         System.out.println("для артикула " + myVendorCode + " ошибка - " + e.getMessage());
