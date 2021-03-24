@@ -368,8 +368,8 @@ public class ParserOzon {
                     Iterable<DomElement> elementsFor_a0c4 = null;
                     try {
                         elementsFor_a0c4 = getDomElements(itemProduct);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception ignored) {
+                        //e.printStackTrace();
                         System.out.println("////////////////////////////////////////Невалидная страница///////////////////////////////////////////");
                         isException6 = true;
                         System.out.println("isException6 = " + isException6);

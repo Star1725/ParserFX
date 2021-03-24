@@ -326,6 +326,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_114:
                         case Constants.PRODUCT_TYPE_1C_115:
                         case Constants.PRODUCT_TYPE_1C_116:
+                        case Constants.PRODUCT_TYPE_1C_38:
                             querySearch = myBrand + " " + model + " " + params;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("querySearch = " + querySearch);
