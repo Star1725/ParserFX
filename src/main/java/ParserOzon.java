@@ -1,6 +1,8 @@
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
+import org.apache.cassandra.streaming.StreamOut;
 import org.w3c.dom.DOMException;
 
 import java.io.IOException;
@@ -69,7 +71,7 @@ public class ParserOzon {
             case Constants.PRODUCT_TYPE_1C_11 :
             case Constants.PRODUCT_TYPE_1C_12 :
             case Constants.PRODUCT_TYPE_1C_13 :
-            case Constants.PRODUCT_TYPE_1C_14 :
+            //case Constants.PRODUCT_TYPE_1C_14 :
             case Constants.PRODUCT_TYPE_1C_15 :
             case Constants.PRODUCT_TYPE_1C_16 :
             case Constants.PRODUCT_TYPE_1C_17 :
@@ -98,10 +100,10 @@ public class ParserOzon {
             case Constants.PRODUCT_TYPE_1C_41 :
             case Constants.PRODUCT_TYPE_1C_42 :
             case Constants.PRODUCT_TYPE_1C_43 :
-            case Constants.PRODUCT_TYPE_1C_44 :
-            case Constants.PRODUCT_TYPE_1C_45 :
+            //case Constants.PRODUCT_TYPE_1C_44 :
+            //case Constants.PRODUCT_TYPE_1C_45 :
             case Constants.PRODUCT_TYPE_1C_46 :
-            case Constants.PRODUCT_TYPE_1C_47 :
+            //case Constants.PRODUCT_TYPE_1C_47 :
             case Constants.PRODUCT_TYPE_1C_48 :
             case Constants.PRODUCT_TYPE_1C_49 :
             case Constants.PRODUCT_TYPE_1C_50 :
@@ -125,7 +127,7 @@ public class ParserOzon {
             case Constants.PRODUCT_TYPE_1C_68 :
             case Constants.PRODUCT_TYPE_1C_69 :
             case Constants.PRODUCT_TYPE_1C_70 :
-            case Constants.PRODUCT_TYPE_1C_71 :
+            //case Constants.PRODUCT_TYPE_1C_71 :
             case Constants.PRODUCT_TYPE_1C_72 :
             case Constants.PRODUCT_TYPE_1C_73 :
             case Constants.PRODUCT_TYPE_1C_74 :
@@ -242,54 +244,58 @@ public class ParserOzon {
 
         //final WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
-        int count = 10;//количество попыток получения валидной станицы ozon
-
+        boolean isBloking = true;
         boolean isNotGetValidPage = true;
         while (isNotGetValidPage){
             System.out.println("проверка - lock свободен: " + lockOzon.toString());
             lockOzon.lock();
-            while (count > 0) {
-                try {
-                    boolean isBloking = true;
-                    while (isBloking) {
+            while (isBloking) {
+                int count = 10;//количество попыток получения валидной станицы ozon
+                webClientForOzon.getOptions().setTimeout(15000);
+                int countPageNull = 0;
+                while (count > 0) {
+                    System.out.println("Непосредственно получение страницы. Время таймаута = " + webClientForOzon.getOptions().getTimeout() / 1000 + " c");
+                    try {
+                        if (countPageNull == 2){
+                            System.out.println("Кол-во полученных страниц NULL = 2. Меняем IP");
+                            Main.switchIpForProxy();
+                        }
                         page = webClientForOzon.getPage(url);
-
-                        //проверка на null
-                        if (page == null) {
-                            try {
-                                Main.switchIpForProxy();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            continue;
+                    } catch (Exception ignored) {
+                        System.out.println("Ошибка при получении страницы для запроса \"" + myQuery + "\": " + ignored.getMessage());
+                        if (count == 0) {
+                            System.out.println("Попытки получения страницы поискового запроса закончились");
+                            webClientForOzon.close();
+                            lockOzon.unlock();
+                            return productList;
                         }
-
-                        //проверка на бан сервером (name="ROBOTS")
                         try {
-                            DomNodeList<DomElement> metas = page.getElementsByTagName("meta");
-                            if (metas.get(0).getAttribute("name").equals("ROBOTS")) {
-                                System.out.println(blocking + "Блокировка сервером. Попытка смены IP");
-                                Main.switchIpForProxy();
-                            } else {
-                                isBloking = false;
-                            }
-                        } catch (Exception ignored) {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
                         }
+                        count--;
+                        System.out.println("Осталось попыток: " + count);
+                    }
+
+                    //проверка на null
+                    if (page == null) {
+                        System.out.println("countPageNull = " + countPageNull);
+                        countPageNull++;
+                        continue;
                     }
                     count = 0;
-                } catch (IOException e) {
-                    System.out.println("Ошибка при получении страницы для запроса \"" + myQuery + "\": " + e.getMessage());
-                    if (count == 0) {
-                        webClientForOzon.close();
-                        lockOzon.unlock();
-                        return productList;
+                }
+                //проверка на бан сервером (name="ROBOTS")
+                try {
+                    DomNodeList<DomElement> metas = page.getElementsByTagName("meta");
+                    if (metas.get(0).getAttribute("name").equals("ROBOTS")) {
+                        System.out.println(blocking + "Блокировка сервером. Попытка смены IP");
+                        Main.switchIpForProxy();
+                    } else {
+                        isBloking = false;
                     }
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
-                    }
-                    count--;
+                } catch (Exception ignored) {
                 }
             }
             System.out.println("IP №" + Main.countSwitchIP + ". Страница ozon для запроса \"" + myQuery + "\" получена");

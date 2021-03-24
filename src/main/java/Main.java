@@ -354,7 +354,7 @@ public class Main extends Application implements Controller.ActionInController {
                         } else {
                             System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
                             Product product = executorCompletionService.take().get();
-                            if (number % 4 == 0){
+                            if (number % 3 == 0){
                             //переключение на новый IP после трёх удачных запросов
                                 System.out.println("прверка - lock свободен: " + lock.toString());
                                 lock.lock();
@@ -460,7 +460,6 @@ public class Main extends Application implements Controller.ActionInController {
         while (count > 0){
             System.out.println("количество попыток смены IP - " + count);
             try {
-                webClient.getOptions().setTimeout(10000);
                 page = webClient.getPage(uri);
                 count = 0;
                 DomNodeList<DomElement> metas = page.getElementsByTagName("body");
@@ -468,7 +467,7 @@ public class Main extends Application implements Controller.ActionInController {
                 if (metas.get(0).asText().equals("ok")) {
                     System.out.println("смена IP успешна");
                     countSwitchIP++;
-                    Thread.sleep(5000);
+                    Thread.sleep(7000);
                 }
             } catch (IOException e) {
                 System.out.println("проблема при смене IP");

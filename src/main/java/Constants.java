@@ -2,10 +2,16 @@ import java.util.ArrayList;
 
 public class Constants {
     //настройки для прокси-сервера
-    public static final String PROXY_HOST = "marina.ltespace.com";
-    public static final int PROXY_PORT = 12426;
-    public static final String LOGIN = "6uxxte5v";
-    public static final String PASSWORD = "x1k7dfkc";
+    public static final String PROXY_HOST = "svetlana.ltespace.com";
+    public static final int PROXY_PORT = 16565;
+    public static final String LOGIN = "4soy9fg6";
+    public static final String PASSWORD = "boxhyr84";
+
+//    public static final String PROXY_HOST = "marina.ltespace.com";
+//    public static final int PROXY_PORT = 12426;
+//    public static final String LOGIN = "6uxxte5v";
+//    public static final String PASSWORD = "x1k7dfkc";
+
     public static final String URL_FOR_SWITCH_IP = "https://ltespace.com/api/private/touch?port=" + PROXY_PORT + "&login=" + LOGIN + "&password=" + PASSWORD;
                                                   //https://ltespace.com/api/private/touch?port=18487&login=pttgua83&password=xr791oom
 
@@ -19,7 +25,7 @@ public class Constants {
     public static final String BLOCKING = "блокировка сервером";
 
 
-    //ктегории для Wildberies с наценкой
+    //категории для Wildberies с наценкой
     public static final String CATEGORY_WILD_5 = "Держатели в авто";//5
     public static final String CATEGORY_WILD_13 = "Пылесосы автомобильные";//5
     public static final String CATEGORY_WILD_18 = "Подставки для мобильных устройств";//5
@@ -85,8 +91,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_10  = "Автомобильное зарядное устройство";
     public static final String PRODUCT_TYPE_1C_11  ="Автомобильное полотенце";
     public static final String PRODUCT_TYPE_1C_12  ="Автомобильный Bluetooth-приемник";
-    public static final String PRODUCT_TYPE_1C_13  ="Автомобильный держатель для телефона на подголовник с беспроводной зарядкой";
-    public static final String PRODUCT_TYPE_1C_14  ="Автомобильный держатель для телефона";
+    public static final String PRODUCT_TYPE_1C_13  ="держатель";
     public static final String PRODUCT_TYPE_1C_15  ="Автомобильный контейнер для мусора";
     public static final String PRODUCT_TYPE_1C_16  ="Автомобильный крюк";
     public static final String PRODUCT_TYPE_1C_17  ="Автомобильный крючок";
@@ -95,7 +100,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_21  ="Автомобильный светильник";
     public static final String PRODUCT_TYPE_1C_22  ="Автомобильный стеклоочиститель";
     public static final String PRODUCT_TYPE_1C_23  ="Автомобильный увлажнитель воздуха";
-    public static final String PRODUCT_TYPE_1C_24  ="Адаптер-переходник Type-C";
+    public static final String PRODUCT_TYPE_1C_24  ="Адаптер";
     public static final String PRODUCT_TYPE_1C_25  ="Аккумулятор внешний";
     public static final String PRODUCT_TYPE_1C_26  ="Аккумуляторный светильник";
     public static final String PRODUCT_TYPE_1C_27  ="Ароматизатор автомобильный";
@@ -112,21 +117,19 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_38 ="Блок питания сетевой";
     public static final String PRODUCT_TYPE_1C_39 ="Блок питания автомобильный";
     public static final String PRODUCT_TYPE_1C_40 ="Блок питания";
-    public static final String PRODUCT_TYPE_1C_41 ="Велосипедный держатель для телефона";
-    public static final String PRODUCT_TYPE_1C_42 ="Гарнитура Bluetooth";
-    public static final String PRODUCT_TYPE_1C_43 ="Гарнитуры Bluetooth";
-    public static final String PRODUCT_TYPE_1C_44 ="Гарнитуры bluetooth";
-    public static final String PRODUCT_TYPE_1C_45 ="Гарнитура bluetooth";
+    public static final String PRODUCT_TYPE_1C_41 ="Держатель";
+    public static final String PRODUCT_TYPE_1C_42 ="Гарнитур";
+    public static final String PRODUCT_TYPE_1C_43 ="Лампа в машину";
+
     public static final String PRODUCT_TYPE_1C_46 ="Двухрежимный массажный пистолет";
-    public static final String PRODUCT_TYPE_1C_47 ="Держатель универсальный";
-    public static final String PRODUCT_TYPE_1C_48 ="Держатель автомобильный";
-    public static final String PRODUCT_TYPE_1C_49 ="Держатель для телефона на мотоцикл, велосипед, мопед ";
-    public static final String PRODUCT_TYPE_1C_50 ="Держатель комнатный";
-    public static final String PRODUCT_TYPE_1C_51 ="Держатель настольный для ноутбука";
-    public static final String PRODUCT_TYPE_1C_52 ="Держатель настольный";
-    public static final String PRODUCT_TYPE_1C_53 ="Держатель";
-    public static final String PRODUCT_TYPE_1C_54 ="Дозатор для жидкого мыла";
-    public static final String PRODUCT_TYPE_1C_55 ="Док-станция подставка для зарядки";
+    public static final String PRODUCT_TYPE_1C_48 ="Кабель USB - Apple 8 pin, Type-C, микро USB";
+    public static final String PRODUCT_TYPE_1C_49 ="Кабель Type-C - Type-C";
+    public static final String PRODUCT_TYPE_1C_50 ="Кабель Type-C - Apple 8 pin";
+    public static final String PRODUCT_TYPE_1C_51 ="Кабель HDMI";
+    public static final String PRODUCT_TYPE_1C_52 ="Кабель 4KHD";
+    public static final String PRODUCT_TYPE_1C_53 ="Кабель 8 pin";
+    public static final String PRODUCT_TYPE_1C_54 ="Дозатор";
+    public static final String PRODUCT_TYPE_1C_55 ="Док-станция";
     public static final String PRODUCT_TYPE_1C_56 ="Зажим для очков";
     public static final String PRODUCT_TYPE_1C_57 ="Зарядная подставка";
     public static final String PRODUCT_TYPE_1C_58 ="Зарядная станция";
@@ -134,7 +137,8 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_60 ="Защитный чехол";
 
     public static final String PRODUCT_TYPE_1C_61 ="Кабель AUX";
-    public static final String PRODUCT_TYPE_1C_62 ="Кабель Type-C";
+    public static final String PRODUCT_TYPE_1C_62 ="Кабель Type-C - 8 pin";
+
     public static final String PRODUCT_TYPE_1C_63 ="Кабель USB - 8 pin";
     public static final String PRODUCT_TYPE_1C_64 ="Кабель USB - Apple 8 pin";
     public static final String PRODUCT_TYPE_1C_65 ="Кабель USB - Type-C";
@@ -144,7 +148,6 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_69 ="Кабель USB Series 3-in";//в запросе заменить на Кабель USB 3 в 1
     public static final String PRODUCT_TYPE_1C_70 ="Кабель USB Series 4-in";
 
-    public static final String PRODUCT_TYPE_1C_71 ="Кабель";
     public static final String PRODUCT_TYPE_1C_72 ="Картридер";
     public static final String PRODUCT_TYPE_1C_73 ="Козырек от солнца";
     public static final String PRODUCT_TYPE_1C_74 ="Колонка портативная";
@@ -312,7 +315,7 @@ public class Constants {
         listForHeadset.add("3,5");
         listForHeadset.add("3.5");
 
-        listForCabel.add("угловой");
+
         listForCabel.add("0.2м");
         listForCabel.add("0.25м");
         listForCabel.add("1.0м");
@@ -375,7 +378,7 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_11);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_12);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_13);
-        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_14);
+        //listForCategoryBy_1C.add(PRODUCT_TYPE_1C_14);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_15);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_16);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_17);
@@ -404,10 +407,10 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_41);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_42);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_43);
-        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_44);
-        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_45);
+        //listForCategoryBy_1C.add(PRODUCT_TYPE_1C_44);
+        //listForCategoryBy_1C.add(PRODUCT_TYPE_1C_45);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_46);
-        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_47);
+        //listForCategoryBy_1C.add(PRODUCT_TYPE_1C_47);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_48);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_49);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_50);
@@ -431,7 +434,7 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_68);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_69);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_70);
-        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_71);
+        //listForCategoryBy_1C.add(PRODUCT_TYPE_1C_71);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_72);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_73);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_74);
