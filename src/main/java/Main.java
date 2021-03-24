@@ -365,7 +365,7 @@ public class Main extends Application implements Controller.ActionInController {
                             }
                             //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                             myVendorCode = product.getMyVendorCodeFromRequest();
-                            System.out.println(number + " - получили результат для задачи № " + myVendorCode);
+                            System.out.println(number + "/" + resultMap.size() + " - получили результат для задачи № " + myVendorCode);
                             myRefForPage = product.getMyRefForPage();
                             competitorVendorCode = product.getCompetitorVendorCode();
                             competitorProductName = product.getCompetitorProductName();
@@ -428,6 +428,7 @@ public class Main extends Application implements Controller.ActionInController {
                     }
                     number++;
                     System.out.println("resultProduct для " + myVendorCode + " записан в map");
+                    System.out.println();
                 }
                 outputExcelFile(number);
             }
@@ -480,7 +481,6 @@ public class Main extends Application implements Controller.ActionInController {
             }
         }
         webClient.close();
-        System.out.println();
     }
 
     //колобэл, который выполняет запросы на wildberries

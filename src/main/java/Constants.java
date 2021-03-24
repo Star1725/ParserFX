@@ -232,6 +232,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_161="Штатив для селфи";
     public static final String PRODUCT_TYPE_1C_162="Щетка для автомобиля";
     public static final String PRODUCT_TYPE_1C_163="Электрическая мухобойка";
+    public static final String PRODUCT_TYPE_1C_164="Автомойка";
 
     public static final String MARKETPLACE = "https://www.wildberries.ru";
 
@@ -517,5 +518,6 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_161);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_162);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_163);
+        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_164);
     }
 }
