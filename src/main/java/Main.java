@@ -36,6 +36,7 @@ public class Main extends Application implements Controller.ActionInController {
     private static Set<String> setMyVendorCodes;
 
     static int marketplaceFlag;
+    static int stepFlag;
     private TaskReadExcelForWildberies taskReadExcelForWildberies;
     private TaskReadExcelForOzon taskReadExcelForOzon;
     private TaskWriteExelForWildberries taskWriteExelForWildberries;
@@ -100,10 +101,14 @@ public class Main extends Application implements Controller.ActionInController {
     }
 
     @Override
-    public void selectFile(List<File> files, String marketPlace) {
-        System.out.println("selectFile - " + marketPlace);
+    public void selectFile(List<File> files, String marketPlace, String step) {
+        System.out.println("selectFile - " + marketPlace + ", " + step);
+
         if (marketPlace.equals(Constants.OZON)) marketplaceFlag = 1;//Ozon
         else if (marketPlace.equals(Constants.WILDBERIES)) marketplaceFlag = 2;//Wildberies
+        if (step.equals(Constants.RUB)) stepFlag = 1;//рубли
+        else if (step.equals(Constants.PERCENT)) stepFlag = 2;//проценты
+
         System.out.println("selectFile - " + marketplaceFlag);
         if (marketplaceFlag == 1){
             taskReadExcelForOzon = new TaskReadExcelForOzon(files);

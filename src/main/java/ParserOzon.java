@@ -56,144 +56,26 @@ public class ParserOzon {
         myQuery = querySearchForOzon;
 
         StringBuilder query = new StringBuilder(querySearchForOzon);
-        //в заввисимости от категории ozon определяем параметры запроса для поиска конкурентов
-        switch (productType) {
-            case Constants.PRODUCT_TYPE_1C_1 :
-            case Constants.PRODUCT_TYPE_1C_2 :
-            case Constants.PRODUCT_TYPE_1C_3 :
-            case Constants.PRODUCT_TYPE_1C_4 :
-            case Constants.PRODUCT_TYPE_1C_5 :
-            case Constants.PRODUCT_TYPE_1C_6 :
-            case Constants.PRODUCT_TYPE_1C_7 :
-            case Constants.PRODUCT_TYPE_1C_8 :
-            case Constants.PRODUCT_TYPE_1C_9 :
-            case Constants.PRODUCT_TYPE_1C_10 :
-            case Constants.PRODUCT_TYPE_1C_11 :
-            case Constants.PRODUCT_TYPE_1C_12 :
-            case Constants.PRODUCT_TYPE_1C_13 :
-            //case Constants.PRODUCT_TYPE_1C_14 :
-            case Constants.PRODUCT_TYPE_1C_15 :
-            case Constants.PRODUCT_TYPE_1C_16 :
-            case Constants.PRODUCT_TYPE_1C_17 :
-            case Constants.PRODUCT_TYPE_1C_18 :
-            case Constants.PRODUCT_TYPE_1C_20 :
-            case Constants.PRODUCT_TYPE_1C_21 :
-            case Constants.PRODUCT_TYPE_1C_22 :
-            case Constants.PRODUCT_TYPE_1C_23 :
-            case Constants.PRODUCT_TYPE_1C_24 :
-            case Constants.PRODUCT_TYPE_1C_25 :
-            case Constants.PRODUCT_TYPE_1C_26 :
-            case Constants.PRODUCT_TYPE_1C_27 :
-            case Constants.PRODUCT_TYPE_1C_28 :
-            case Constants.PRODUCT_TYPE_1C_29 :
-            case Constants.PRODUCT_TYPE_1C_30 :
-            case Constants.PRODUCT_TYPE_1C_31 :
-            case Constants.PRODUCT_TYPE_1C_32 :
-            case Constants.PRODUCT_TYPE_1C_33 :
-            case Constants.PRODUCT_TYPE_1C_34 :
-            case Constants.PRODUCT_TYPE_1C_35 :
-            case Constants.PRODUCT_TYPE_1C_36 :
-            case Constants.PRODUCT_TYPE_1C_37 :
-            case Constants.PRODUCT_TYPE_1C_38 :
-            case Constants.PRODUCT_TYPE_1C_39 :
-            case Constants.PRODUCT_TYPE_1C_40 :
-            case Constants.PRODUCT_TYPE_1C_41 :
-            case Constants.PRODUCT_TYPE_1C_42 :
-            case Constants.PRODUCT_TYPE_1C_43 :
-            //case Constants.PRODUCT_TYPE_1C_44 :
-            //case Constants.PRODUCT_TYPE_1C_45 :
-            case Constants.PRODUCT_TYPE_1C_46 :
-            //case Constants.PRODUCT_TYPE_1C_47 :
-            case Constants.PRODUCT_TYPE_1C_48 :
-            case Constants.PRODUCT_TYPE_1C_49 :
-            case Constants.PRODUCT_TYPE_1C_50 :
-            case Constants.PRODUCT_TYPE_1C_51 :
-            case Constants.PRODUCT_TYPE_1C_52 :
-            case Constants.PRODUCT_TYPE_1C_53 :
-            case Constants.PRODUCT_TYPE_1C_54 :
-            case Constants.PRODUCT_TYPE_1C_55 :
-            case Constants.PRODUCT_TYPE_1C_56 :
-            case Constants.PRODUCT_TYPE_1C_57 :
-            case Constants.PRODUCT_TYPE_1C_58 :
-            case Constants.PRODUCT_TYPE_1C_59 :
-            case Constants.PRODUCT_TYPE_1C_60 :
-            case Constants.PRODUCT_TYPE_1C_61 :
-            case Constants.PRODUCT_TYPE_1C_62 :
-            case Constants.PRODUCT_TYPE_1C_63 :
-            case Constants.PRODUCT_TYPE_1C_64 :
-            case Constants.PRODUCT_TYPE_1C_65 :
-            case Constants.PRODUCT_TYPE_1C_66 :
-            case Constants.PRODUCT_TYPE_1C_67 :
-            case Constants.PRODUCT_TYPE_1C_68 :
-            case Constants.PRODUCT_TYPE_1C_69 :
-            case Constants.PRODUCT_TYPE_1C_70 :
-            //case Constants.PRODUCT_TYPE_1C_71 :
-            case Constants.PRODUCT_TYPE_1C_72 :
-            case Constants.PRODUCT_TYPE_1C_73 :
-            case Constants.PRODUCT_TYPE_1C_74 :
-            case Constants.PRODUCT_TYPE_1C_75  :
-            case Constants.PRODUCT_TYPE_1C_76  :
-            case Constants.PRODUCT_TYPE_1C_77  :
-            case Constants.PRODUCT_TYPE_1C_78  :
-            case Constants.PRODUCT_TYPE_1C_79  :
-            case Constants.PRODUCT_TYPE_1C_83  :
-            case Constants.PRODUCT_TYPE_1C_84  :
-            case Constants.PRODUCT_TYPE_1C_85  :
-            case Constants.PRODUCT_TYPE_1C_86  :
-            case Constants.PRODUCT_TYPE_1C_87  :
-            case Constants.PRODUCT_TYPE_1C_88  :
-            case Constants.PRODUCT_TYPE_1C_89  :
-            case Constants.PRODUCT_TYPE_1C_90  :
-            case Constants.PRODUCT_TYPE_1C_91  :
-            case Constants.PRODUCT_TYPE_1C_92  :
-            case Constants.PRODUCT_TYPE_1C_93  :
-            case Constants.PRODUCT_TYPE_1C_94  :
-            case Constants.PRODUCT_TYPE_1C_96  :
-            case Constants.PRODUCT_TYPE_1C_97  :
-            case Constants.PRODUCT_TYPE_1C_98  :
-            case Constants.PRODUCT_TYPE_1C_99  :
-            case Constants.PRODUCT_TYPE_1C_100 :
-            case Constants.PRODUCT_TYPE_1C_101 :
-            case Constants.PRODUCT_TYPE_1C_102 :
-            case Constants.PRODUCT_TYPE_1C_103 :
-            case Constants.PRODUCT_TYPE_1C_104 :
-            case Constants.PRODUCT_TYPE_1C_105 :
-            case Constants.PRODUCT_TYPE_1C_106 :
-            case Constants.PRODUCT_TYPE_1C_107 :
-            case Constants.PRODUCT_TYPE_1C_108 :
-            case Constants.PRODUCT_TYPE_1C_109 :
-            case Constants.PRODUCT_TYPE_1C_110 :
-            case Constants.PRODUCT_TYPE_1C_111:
-            case Constants.PRODUCT_TYPE_1C_112:
-            case Constants.PRODUCT_TYPE_1C_113:
-            case Constants.PRODUCT_TYPE_1C_114:
-            case Constants.PRODUCT_TYPE_1C_115:
-            case Constants.PRODUCT_TYPE_1C_116:
-            case Constants.PRODUCT_TYPE_1C_117:
-            case Constants.PRODUCT_TYPE_1C_118:
-            case Constants.PRODUCT_TYPE_1C_119:
-            case Constants.PRODUCT_TYPE_1C_120:
 
-                System.out.println( "IP №" + Main.countSwitchIP + ".Получение страницы ozon для запроса - " + querySearchForOzon + ". Артикул Ozon - " + myVendorCodeFromRequest);
-                productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+        System.out.println("IP №" + Main.countSwitchIP + ".Получение страницы ozon для запроса - " + querySearchForOzon + ". Артикул Ozon - " + myVendorCodeFromRequest);
+        productList = getCatalogProducts(query.toString().toLowerCase(), brand);
 
-                if (productList == null){
-                    product.setCompetitorProductName(Constants.BLOCKING);
-                    product.setQueryForSearch(Constants.BLOCKING);
-                    product.setCompetitorRefForPage(Constants.BLOCKING);
-                    product.setCompetitorRefForPage(Constants.BLOCKING);
-                    product.setCompetitorName(Constants.BLOCKING);
-                    product.setCompetitorSpecAction(Constants.BLOCKING);
-                } else if (productList.get(0).getCountSearch() == -1){
-                    product.setQueryForSearch(productList.get(0).getQueryForSearch());
-                } else {
-                    Product productbuff = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest);
-                    if (productbuff != null){
-                        product = productbuff;
-                    }
-                }
-                break;
+        if (productList == null) {
+            product.setCompetitorProductName(Constants.BLOCKING);
+            product.setQueryForSearch(Constants.BLOCKING);
+            product.setCompetitorRefForPage(Constants.BLOCKING);
+            product.setCompetitorRefForPage(Constants.BLOCKING);
+            product.setCompetitorName(Constants.BLOCKING);
+            product.setCompetitorSpecAction(Constants.BLOCKING);
+        } else if (productList.get(0).getCountSearch() == -1) {
+            product.setQueryForSearch(productList.get(0).getQueryForSearch());
+        } else {
+            Product productbuff = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest);
+            if (productbuff != null) {
+                product = productbuff;
+            }
         }
+
 
 //
 //        //устанавливаем мою спецакцию, если она есть

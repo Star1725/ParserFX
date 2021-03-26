@@ -14,9 +14,9 @@
          </font></Button>
         <ProgressBar fx:id="progressBar" layoutX="10.0" layoutY="90.0" prefHeight="18.0" prefWidth="575.0" progress="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="90.0" />
         <TextArea fx:id="areaLog" layoutX="10.0" layoutY="116.0" prefHeight="274.0" prefWidth="580.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="116.0" />
-      <Label layoutX="172.0" layoutY="19.0" text="процент - " />
-      <TextField fx:id="percentTxtFld" layoutX="237.0" layoutY="14.0" prefHeight="29.0" prefWidth="34.0" />
-      <Label layoutX="274.0" layoutY="19.0" text="\%" />
+      <Label layoutX="172.0" layoutY="19.0" text="снижение -" />
+      <TextField fx:id="percentTxtFld" layoutX="247.0" layoutY="14.0" prefHeight="29.0" prefWidth="34.0" />
       <ChoiceBox fx:id="choiceBoxMarketPlace" layoutX="14.0" layoutY="14.0" prefWidth="150.0" />
+      <ChoiceBox fx:id="choiceBoxSteps" layoutX="288.0" layoutY="14.0" prefHeight="29.0" prefWidth="59.0" />
     </children>
 </AnchorPane>

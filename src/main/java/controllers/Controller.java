@@ -30,6 +30,7 @@ public class Controller implements Initializable {
     @FXML
     public TextField percentTxtFld;
 
+
     @FXML
     private TextArea areaLog;
 
@@ -45,10 +46,14 @@ public class Controller implements Initializable {
     @FXML
     ChoiceBox<String> choiceBoxMarketPlace;
 
+    @FXML
+    ChoiceBox<String> choiceBoxSteps;
+
     private String marketPlace;
+    private String step;
 
     public interface ActionInController{
-        void selectFile(List<File> files, String marketPlace);
+        void selectFile(List<File> files, String marketPlace, String step);
     }
 
     private static final List<ActionInController> listSubscribers = new ArrayList<>();
@@ -57,10 +62,10 @@ public class Controller implements Initializable {
         listSubscribers.add(subscriber);
     }
 
-    private void notifySubscriber(List<File> files, String marketPlace){
+    private void notifySubscriber(List<File> files, String marketPlace, String step){
         for (ActionInController subscriber : listSubscribers) {
             System.out.println(marketPlace);
-            subscriber.selectFile(files, marketPlace);
+            subscriber.selectFile(files, marketPlace, step);
         }
     }
 
@@ -71,11 +76,25 @@ public class Controller implements Initializable {
         choiceBoxMarketPlace.setValue("Wildberies");
         marketPlace = "Wildberies";
 
+        ObservableList<String> steps = FXCollections.observableArrayList("₽", "%");
+        choiceBoxSteps.setItems(steps);
+        choiceBoxMarketPlace.setValue("₽");
+        step = "₽";
+
+
         choiceBoxMarketPlace.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 marketPlace = choiceBoxMarketPlace.getValue();
                 System.out.println("выбран - " + marketPlace);
+            }
+        });
+
+        choiceBoxSteps.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                step = choiceBoxSteps.getValue();
+                System.out.println("выбран - " + step);
             }
         });
 
@@ -87,7 +106,7 @@ public class Controller implements Initializable {
                 txtFldShowPathFile.clear();
                 Node node = (Node) event.getSource();
                 List<File> files = fileChooser.showOpenMultipleDialog(node.getScene().getWindow());
-                notifySubscriber(files, marketPlace);
+                notifySubscriber(files, marketPlace, step);
                 if (files.size() == 1){
                     txtFldShowPathFile.appendText(files.get(0).getAbsolutePath());
                 } else if (files.size() == 2){
