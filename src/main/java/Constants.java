@@ -114,7 +114,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_35 ="Бесконтактный диспенсер-спрей для рук";
     public static final String PRODUCT_TYPE_1C_36 ="Беспроводная колонка";
     public static final String PRODUCT_TYPE_1C_37 ="Беспроводное зарядное устройство";
-    public static final String PRODUCT_TYPE_1C_38 ="Блок питания сетевой";
+    //public static final String PRODUCT_TYPE_1C_38 ="Блок питания сетевой";
     public static final String PRODUCT_TYPE_1C_39 ="Блок питания автомобильный";
     public static final String PRODUCT_TYPE_1C_40 ="Блок питания";
     public static final String PRODUCT_TYPE_1C_41 ="Держатель";
@@ -155,7 +155,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_76 ="Контейнер";
     public static final String PRODUCT_TYPE_1C_77 ="Крючок для телефона";
     public static final String PRODUCT_TYPE_1C_78 ="Маска";
-    public static final String PRODUCT_TYPE_1C_79 ="Магнитный  кабель USB - Apple 8 pin";
+    public static final String PRODUCT_TYPE_1C_79 ="Магнитный кабель USB - Apple 8 pin";
     public static final String PRODUCT_TYPE_1C_83 ="Магнитный кабель USB - Type-C";
     public static final String PRODUCT_TYPE_1C_84 ="Магнитный кабель USB - микро USB";
     public static final String PRODUCT_TYPE_1C_85 ="Магнитный кабель USB Series 3-in-";//в запросе заменить на Магнитный кабель USB 3 в 1
@@ -204,8 +204,8 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_129="Салфетка Автомобильная";
     public static final String PRODUCT_TYPE_1C_130="Светильник";
     public static final String PRODUCT_TYPE_1C_131="Селфи палка-штатив";
-    public static final String PRODUCT_TYPE_1C_132="Сетевое зарядное устройство 1 USB";
-    public static final String PRODUCT_TYPE_1C_133="Сетевое зарядное устройство 2 USB";
+    public static final String PRODUCT_TYPE_1C_132="Сетевое зарядное устройство";
+    //public static final String PRODUCT_TYPE_1C_133="Сетевое зарядное устройство 2 USB";
     public static final String PRODUCT_TYPE_1C_134="Сетевой разветвитель для кабеля HDMI";
     public static final String PRODUCT_TYPE_1C_135="Сетевой разветвитель для кабеля RJ45";
     public static final String PRODUCT_TYPE_1C_136="Силиконовый чехол";
@@ -401,7 +401,7 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_35);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_36);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_37);
-        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_38);
+        //listForCategoryBy_1C.add(PRODUCT_TYPE_1C_38);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_39);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_40);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_41);
@@ -491,7 +491,7 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_130);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_131);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_132);
-        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_133);
+        //listForCategoryBy_1C.add(PRODUCT_TYPE_1C_133);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_134);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_135);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_136);
