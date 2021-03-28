@@ -20,7 +20,7 @@ public class ParserWildBer {
 
     private Object mon = new Object();
 
-    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient){
+    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, String productType, Set myVendorCodes, String querySearch, WebClient webClient){
         List<Product> productList;
         Product product = new Product(myVendorCodeFromRequest,
                 "-",
@@ -59,118 +59,127 @@ public class ParserWildBer {
         if (page == null){
             return product;
         }
+
         //обработка html-страницы для формирования поискового запроса аналогов
-        paramsForRequest = getDataForRequestFromCategory(page, category, brand);
-        if (paramsForRequest.size() == 0){
-            product.setQueryForSearch("Мало данных для формирования поискового запроса");
-            return product;
-        }
+        if (querySearch.isEmpty()){
+            paramsForRequest = getDataForRequestFromCategory(page, category, brand);
+            if (paramsForRequest.size() == 0){
+                product.setQueryForSearch("Мало данных для формирования поискового запроса");
+                return product;
+            }
 
-        //в заввисимости от категории определяем параметры запроса для поиска конкурентов
-        switch (category){
-            case Constants.CATEGORY_WILD_10:
-                String count = paramsForRequest.get(0);
-                //для поиска по маскам надо в запросе передать "Маски одноразовые" и кол-во штук в упаковке
-                query = new StringBuilder(category + " " + count);
-                productList = getCatalogProducts(query.toString().toLowerCase(), brand);
-                if (productList.size() != 0){
-                    product = productList.stream().filter(p -> p.getCompetitorProductName().contains(count)).findAny().orElse(null);
-                }
-                break;
+            //в заввисимости от категории определяем параметры запроса для поиска конкурентов
+            switch (category){
+                case Constants.CATEGORY_WILD_10:
+                    String count = paramsForRequest.get(0);
+                    //для поиска по маскам надо в запросе передать "Маски одноразовые" и кол-во штук в упаковке
+                    query = new StringBuilder(category + " " + count);
+                    productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+                    if (productList.size() != 0){
+                        product = productList.stream().filter(p -> p.getCompetitorProductName().contains(count)).findAny().orElse(null);
+                    }
+                    break;
 
-            case Constants.CATEGORY_WILD_4:
-                query = new StringBuilder(paramsForRequest.get(0));
-                productList = getCatalogProducts(query.toString().toLowerCase(), brand);
-                if (productList.size() != 0){
-                    product = productList.stream().findFirst().orElse(null);
-                }
-                break;
+                case Constants.CATEGORY_WILD_4:
+                    query = new StringBuilder(paramsForRequest.get(0));
+                    productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+                    if (productList.size() != 0){
+                        product = productList.stream().findFirst().orElse(null);
+                    }
+                    break;
 
                 //для данных категорий запрос формирунтся из бренда и модели
-            case Constants.CATEGORY_WILD_1:
-            case Constants.CATEGORY_WILD_2:
-            case Constants.CATEGORY_WILD_5:
-            case Constants.CATEGORY_WILD_6:
-            case Constants.CATEGORY_WILD_7:
-            case Constants.CATEGORY_WILD_8:
-            case Constants.CATEGORY_WILD_15:
-            case Constants.CATEGORY_WILD_18:
-            case Constants.CATEGORY_WILD_20:
-            case Constants.CATEGORY_WILD_21:
-            case Constants.CATEGORY_WILD_22:
-            case Constants.CATEGORY_WILD_34:
-            case Constants.CATEGORY_WILD_35:
-            case Constants.CATEGORY_WILD_37:
-            case Constants.CATEGORY_WILD_40:
-                query = new StringBuilder(brand);
-                for (String s : paramsForRequest) {
-                    query.append(" ").append(s);
-                }
-                query = new StringBuilder(query.toString().toLowerCase());
-                productList = getCatalogProducts(query.toString().toLowerCase(), brand);
-                if (productList.size() != 0){
-                    //проходимся по всему списку и находим продукт с наименьшей ценой
-                    product = getProductWithLowerPrice(productList, myVendorCodes);
-                }
-                break;
+                case Constants.CATEGORY_WILD_1:
+                case Constants.CATEGORY_WILD_2:
+                case Constants.CATEGORY_WILD_5:
+                case Constants.CATEGORY_WILD_6:
+                case Constants.CATEGORY_WILD_7:
+                case Constants.CATEGORY_WILD_8:
+                case Constants.CATEGORY_WILD_15:
+                case Constants.CATEGORY_WILD_18:
+                case Constants.CATEGORY_WILD_20:
+                case Constants.CATEGORY_WILD_21:
+                case Constants.CATEGORY_WILD_22:
+                case Constants.CATEGORY_WILD_34:
+                case Constants.CATEGORY_WILD_35:
+                case Constants.CATEGORY_WILD_37:
+                case Constants.CATEGORY_WILD_40:
+                    query = new StringBuilder(brand);
+                    for (String s : paramsForRequest) {
+                        query.append(" ").append(s);
+                    }
+                    query = new StringBuilder(query.toString().toLowerCase());
+                    productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+                    if (productList.size() != 0){
+                        //проходимся по всему списку и находим продукт с наименьшей ценой
+                        product = getProductWithLowerPrice(productList, myVendorCodes);
+                    }
+                    break;
 
-            //для данных категорий запрос формирунтся из бренда, категории и модели
-            case Constants.CATEGORY_WILD_3:
-            case Constants.CATEGORY_WILD_9:
-            case Constants.CATEGORY_WILD_11:
-            case Constants.CATEGORY_WILD_12:
-            case Constants.CATEGORY_WILD_13:
-            case Constants.CATEGORY_WILD_14:
+                //для данных категорий запрос формирунтся из бренда, категории и модели
+                case Constants.CATEGORY_WILD_3:
+                case Constants.CATEGORY_WILD_9:
+                case Constants.CATEGORY_WILD_11:
+                case Constants.CATEGORY_WILD_12:
+                case Constants.CATEGORY_WILD_13:
+                case Constants.CATEGORY_WILD_14:
 
-            case Constants.CATEGORY_WILD_17:
-            case Constants.CATEGORY_WILD_23:
-            case Constants.CATEGORY_WILD_24:
-            case Constants.CATEGORY_WILD_25:
-            case Constants.CATEGORY_WILD_26:
-            case Constants.CATEGORY_WILD_27:
-            case Constants.CATEGORY_WILD_28:
-            case Constants.CATEGORY_WILD_29:
-            case Constants.CATEGORY_WILD_30:
-            case Constants.CATEGORY_WILD_31:
-            case Constants.CATEGORY_WILD_32:
-            case Constants.CATEGORY_WILD_33:
-            case Constants.CATEGORY_WILD_36:
-            case Constants.CATEGORY_WILD_38:
-            case Constants.CATEGORY_WILD_39:
-            case Constants.CATEGORY_WILD_41:
-            case Constants.CATEGORY_WILD_42:
-            case Constants.CATEGORY_WILD_43:
-            case Constants.CATEGORY_WILD_44:
-            case Constants.CATEGORY_WILD_45:
-            case Constants.CATEGORY_WILD_46:
-            case Constants.CATEGORY_WILD_47:
-            case Constants.CATEGORY_WILD_48:
+                case Constants.CATEGORY_WILD_17:
+                case Constants.CATEGORY_WILD_23:
+                case Constants.CATEGORY_WILD_24:
+                case Constants.CATEGORY_WILD_25:
+                case Constants.CATEGORY_WILD_26:
+                case Constants.CATEGORY_WILD_27:
+                case Constants.CATEGORY_WILD_28:
+                case Constants.CATEGORY_WILD_29:
+                case Constants.CATEGORY_WILD_30:
+                case Constants.CATEGORY_WILD_31:
+                case Constants.CATEGORY_WILD_32:
+                case Constants.CATEGORY_WILD_33:
+                case Constants.CATEGORY_WILD_36:
+                case Constants.CATEGORY_WILD_38:
+                case Constants.CATEGORY_WILD_39:
+                case Constants.CATEGORY_WILD_41:
+                case Constants.CATEGORY_WILD_42:
+                case Constants.CATEGORY_WILD_43:
+                case Constants.CATEGORY_WILD_44:
+                case Constants.CATEGORY_WILD_45:
+                case Constants.CATEGORY_WILD_46:
+                case Constants.CATEGORY_WILD_47:
+                case Constants.CATEGORY_WILD_48:
 
-                query = new StringBuilder(brand + " " + category);
-                for (String s : paramsForRequest) {
-                    query.append(" ").append(s);
-                }
-                query = new StringBuilder(query.toString().toLowerCase());
-                productList = getCatalogProducts(query.toString().toLowerCase(), brand);
-                if (productList.size() != 0){
-                    //проходимся по всему списку и находим продукт с наименьшей ценой
-                    product = getProductWithLowerPrice(productList, myVendorCodes);
-                }
-                break;
+                    query = new StringBuilder(brand + " " + category);
+                    for (String s : paramsForRequest) {
+                        query.append(" ").append(s);
+                    }
+                    query = new StringBuilder(query.toString().toLowerCase());
+                    productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+                    if (productList.size() != 0){
+                        //проходимся по всему списку и находим продукт с наименьшей ценой
+                        product = getProductWithLowerPrice(productList, myVendorCodes);
+                    }
+                    break;
 
-            case Constants.CATEGORY_WILD_16:
+                case Constants.CATEGORY_WILD_16:
 
-                String[] buffArray1 = paramsForRequest.get(0).split("/");
-                String[] buffArray2 = buffArray1[1].split(",");
-                query = new StringBuilder(brand + " " + buffArray2[0].trim());
+                    String[] buffArray1 = paramsForRequest.get(0).split("/");
+                    String[] buffArray2 = buffArray1[1].split(",");
+                    query = new StringBuilder(brand + " " + buffArray2[0].trim());
 
-                query = new StringBuilder(query.toString().toLowerCase());
-                productList = getCatalogProducts(query.toString().toLowerCase(), brand);
-                if (productList.size() != 0){
-                    //проходимся по всему списку и находим продукт с наименьшей ценой
-                    product = getProductWithLowerPrice(productList, myVendorCodes);
-                }
-                break;
+                    query = new StringBuilder(query.toString().toLowerCase());
+                    productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+                    if (productList.size() != 0){
+                        //проходимся по всему списку и находим продукт с наименьшей ценой
+                        product = getProductWithLowerPrice(productList, myVendorCodes);
+                    }
+                    break;
+            }
+        } else {
+            productList = getCatalogProducts(querySearch.toLowerCase(), brand);
+            if (productList.size() != 0){
+                //проходимся по всему списку и находим продукт с наименьшей ценой
+                product = getProductWithLowerPrice(productList, myVendorCodes);
+            }
         }
 
         assert product != null;
@@ -186,7 +195,7 @@ public class ParserWildBer {
         product.setMyRefForImage(getMyProductsPhoto(page));
 
         //устанавливаем поисковый запрос аналогов
-        product.setQueryForSearch(query.toString());
+        product.setQueryForSearch(querySearch);
 
         //устанавливаем наименование моего товара
         product.setMyProductName(getMyProductsTitle(page));
@@ -202,6 +211,7 @@ public class ParserWildBer {
 
     private Document getDocumentPageForVendorCode(String myVendorCodeFromRequest) {
         String url = getString("https://www.wildberries.ru/catalog/", myVendorCodeFromRequest, "/detail.aspx?targetUrl=SP");
+
         Document page = null;
         try {
             page = Jsoup.connect(url)

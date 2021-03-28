@@ -101,47 +101,6 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 cell = row.getCell(10);
                 double myLastMileForOzon = cell.getNumericCellValue();
 
-// эту информацию мы получаем из файла 1С!!!!!!!!!!!!!!
-//                //получаем бренд и наименование продукта и сразу пытаемся получить поисковый запрос
-//                cell = row.getCell(2);
-//                String ProductTypeBrandAndModel = cell.getRichStringCellValue().getString();
-//                //определяем какой бренд
-//                String myBrand = "-";
-//                for (String s: Constants.listForBrands){
-//                    if (ProductTypeBrandAndModel.contains(s)){
-//                        myBrand = s;
-//                        break;
-//                    }
-//                }
-//                //делим брендом ProductTypeBrandAndModel на ProductType и модель с характеристиками
-//                String[] buff1 = ProductTypeBrandAndModel.split(myBrand);
-//                //определяем категорию
-//                String productType = "-";
-//                for (String s: Constants.listForCategoryBy_1C){
-//                    if (buff1[0].startsWith(s)){
-//                        productType = s;
-//                        break;
-//                    }
-//                }
-//
-//                //если модель сразу за брендом запяьтая
-//                String model ="-";
-//                if (buff1[1].startsWith(",")){
-//                    String[] buff2 = buff1[1].trim().split(",", 2);
-//                    model = buff2[0];
-//                } else {
-//                    String[] buff2 = buff1[1].trim().split(",", 3);
-//                    model = buff2[0];
-//                }
-//
-//                //получаем поисковый запрос и категорию продукта
-//                String querySearch = "-";
-//                if (!myBrand.isEmpty() || !model.isEmpty()) {
-//                    querySearch = myBrand + " " + model;
-//                }
-
-                //получаем комиссию
-
                 //получаем цену до скидки
                 cell = row.getCell(16);
                 int myPriceU = (int) (cell.getNumericCellValue() * 100);

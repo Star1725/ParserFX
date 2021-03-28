@@ -213,10 +213,14 @@ public class TaskWriteExelForWildberries extends Task<File> {
 
 //Мой артикул поставщика(по 1С)
             cell = row.createCell(2);
-            cell.setCellValue(productArrayList.get(i).getCode_1C());
-            if (productArrayList.get(i).getIsFind() == 0){
+            if (productArrayList.get(i).getIsFind() == 0) {
+                System.out.println(productArrayList.get(i).getCode_1C() + " - не найден в базе 1С");
+                cell.setCellValue(productArrayList.get(i).getCode_1C() + " - не найден в базе 1С");
                 cell.setCellStyle(styleRedCell);
-            } else {
+            }
+            if (productArrayList.get(i).getIsFind() == 1) {
+                System.out.println(productArrayList.get(i).getCode_1C());
+                cell.setCellValue(productArrayList.get(i).getCode_1C());
                 cell.setCellStyle(style);
             }
 
@@ -480,8 +484,10 @@ public class TaskWriteExelForWildberries extends Task<File> {
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(fileLocation);
+            System.out.println("Запись данных в файл Excel");
             workbook.write(outputStream);
             workbook.close();
+            System.out.println("Запись закончена!");
 
         } catch (IOException e) {
             e.printStackTrace();

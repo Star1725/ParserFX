@@ -226,7 +226,6 @@ public class Main extends Application implements Controller.ActionInController {
                 }
                 for (MyCall myCall : myCalls) {
                     futureList.add(executorCompletionService.submit(myCall));
-
                     String myVendorCode = "-";
                     String myRefForPage = "-";
                     String myRefForImage = "-";
@@ -249,8 +248,16 @@ public class Main extends Application implements Controller.ActionInController {
                     int competitorRating = 0;
 
                     try {
-                        //установка рекомендуемой скидки и розничной цены на основании процента демпинга
-                        double present = 1 - preFld / 100;
+                        //установка рекомендуемой скидки и розничной цены на основании величины скидки(рубли или проценты)
+                        double rub = 0;
+                        double present = 0;
+                        if (stepFlag == 1){
+                            rub = preFld * 100;
+                        } else {
+                            present = 1 - preFld / 100;
+                        }
+
+////////////////////////для wildberries//////////////////////////////////////////////////////////////////////////////////
                         if (marketplaceFlag == 2){
                             Product product = executorCompletionService.take().get();
                             //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
@@ -311,8 +318,13 @@ public class Main extends Application implements Controller.ActionInController {
                                 resultProduct.setRecommendedPromoSale(resultProduct.getMyPromoSale());
 
                             } else {
-                                //расчитываем рекомендованню розничную цену с учётом процента демпинга
-                                double count1 = (double) competitorLowerPriceU * present;
+                                //расчитываем рекомендованню розничную цену с учётом уровня демпинга
+                                double count1 = 0;
+                                if (stepFlag == 1){
+                                    count1 = (double) competitorLowerPriceU * present;
+                                } else {
+                                    count1 = (double) competitorLowerPriceU - rub;
+                                }
                                 long count2 = Math.round(count1);
                                 int count3 = (int) count2;
                                 int recommendedMyLowerPrice = count3;
@@ -403,8 +415,13 @@ public class Main extends Application implements Controller.ActionInController {
                             if (competitorName.equals(Constants.MY_SELLER) || (dumpingPresent == 1)){
                                 resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
                             } else {
-                                //расчитываем рекомендованню розничную цену с учётом процента демпинга
-                                double count1 = (double) competitorLowerPriceU * present;
+                                //расчитываем рекомендованню розничную цену с учётом величины демпинга
+                                double count1 = 0;
+                                if (stepFlag == 1){
+                                    count1 = (double) competitorLowerPriceU * present;
+                                } else {
+                                    count1 = (double) competitorLowerPriceU - rub;
+                                }
                                 long count2 = Math.round(count1);
                                 int count3 = (int) count2;
                                 int recommendedMyLowerPrice = count3;
