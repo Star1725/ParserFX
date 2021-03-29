@@ -51,30 +51,35 @@ public class ParserOzon {
                 0,
 
                 "-");
-        webClientForOzon = webClient;
-        lockOzon = lock;
-        myQuery = querySearchForOzon;
 
-        StringBuilder query = new StringBuilder(querySearchForOzon);
-
-        System.out.println("IP №" + Main.countSwitchIP + ".Получение страницы ozon для запроса - " + querySearchForOzon + ". Артикул Ozon - " + myVendorCodeFromRequest);
-        productList = getCatalogProducts(query.toString().toLowerCase(), brand);
-
-        if (productList == null) {
-            product.setCompetitorProductName(Constants.BLOCKING);
-            product.setQueryForSearch(Constants.BLOCKING);
-            product.setCompetitorRefForPage(Constants.BLOCKING);
-            product.setCompetitorRefForPage(Constants.BLOCKING);
-            product.setCompetitorName(Constants.BLOCKING);
-            product.setCompetitorSpecAction(Constants.BLOCKING);
-        } else if (productList.get(0).getCountSearch() == -1) {
-            product.setQueryForSearch(productList.get(0).getQueryForSearch());
+        if (querySearchForOzon.equals("-")){
+            product.setQueryForSearch("отсутствует поисковый запрос");
+            return product;
         } else {
-            Product productbuff = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest);
-            if (productbuff != null) {
-                product = productbuff;
+            webClientForOzon = webClient;
+            lockOzon = lock;
+            myQuery = querySearchForOzon;
+
+            StringBuilder query = new StringBuilder(querySearchForOzon);
+
+            System.out.println("IP №" + Main.countSwitchIP + ".Получение страницы ozon для запроса - " + querySearchForOzon + ". Артикул Ozon - " + myVendorCodeFromRequest);
+            productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+
+            if (productList == null) {
+                product.setCompetitorProductName(Constants.BLOCKING);
+                product.setQueryForSearch(Constants.BLOCKING);
+                product.setCompetitorRefForPage(Constants.BLOCKING);
+                product.setCompetitorRefForPage(Constants.BLOCKING);
+                product.setCompetitorName(Constants.BLOCKING);
+                product.setCompetitorSpecAction(Constants.BLOCKING);
+            } else if (productList.get(0).getCountSearch() == -1) {
+                product.setQueryForSearch(productList.get(0).getQueryForSearch());
+            } else {
+                Product productbuff = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest);
+                if (productbuff != null) {
+                    product = productbuff;
+                }
             }
-        }
 
 
 //
@@ -83,7 +88,7 @@ public class ParserOzon {
 //
 //        //устанавливаем ссылку на картинку моего товара
 //        product.setMyRefForImage(getMyProductsPhoto(page));
-        product.setMyRefForImage("-");
+            product.setMyRefForImage("-");
 //
 //        //устанавливаем поисковый запрос аналогов
 //        product.setQueryForSearch(query.toString());
@@ -91,13 +96,14 @@ public class ParserOzon {
 //        //устанавливаем наименование моего товара
 //        product.setMyProductName(getMyProductsTitle(page));
 //
-        //устанавливаем ссылку на артикул моего товара
-        product.setMyRefForPage(getString("https://www.ozon.ru/search/?text=", myVendorCodeFromRequest, "&from_global=true"));
+            //устанавливаем ссылку на артикул моего товара
+            product.setMyRefForPage(getString("https://www.ozon.ru/search/?text=", myVendorCodeFromRequest, "&from_global=true"));
 //                                            https://www.ozon.ru/search/?text=210646439&from_global=true
-        //устанавливаем мой vendorCode
-        product.setMyVendorCodeFromRequest(myVendorCodeFromRequest);
+            //устанавливаем мой vendorCode
+            product.setMyVendorCodeFromRequest(myVendorCodeFromRequest);
 
-        return product;
+            return product;
+        }
     }
 
     private static List<Product> getCatalogProducts(String query, String brand) {

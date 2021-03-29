@@ -431,7 +431,6 @@ public class TaskWriteExelForWildberries extends Task<File> {
                 cell.setCellStyle(styleRedCell);
             }
 
-
             //Тек. роз. цена конкурента
             cell = row.createCell(18);
             cell.setCellValue(competitorLowerPrice);

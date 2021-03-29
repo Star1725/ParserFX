@@ -189,7 +189,7 @@ public class Main extends Application implements Controller.ActionInController {
             taskWriteExelForWildberries.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
-                    openFile(taskWriteExelForWildberries.writeWorkbook(resultMap));
+                    openFile(taskWriteExelForWildberries.getValue());
                 }
             });
         }
@@ -321,9 +321,9 @@ public class Main extends Application implements Controller.ActionInController {
                                 //расчитываем рекомендованню розничную цену с учётом уровня демпинга
                                 double count1 = 0;
                                 if (stepFlag == 1){
-                                    count1 = (double) competitorLowerPriceU * present;
-                                } else {
                                     count1 = (double) competitorLowerPriceU - rub;
+                                } else {
+                                    count1 = (double) competitorLowerPriceU * present;
                                 }
                                 long count2 = Math.round(count1);
                                 int count3 = (int) count2;
@@ -418,9 +418,9 @@ public class Main extends Application implements Controller.ActionInController {
                                 //расчитываем рекомендованню розничную цену с учётом величины демпинга
                                 double count1 = 0;
                                 if (stepFlag == 1){
-                                    count1 = (double) competitorLowerPriceU * present;
-                                } else {
                                     count1 = (double) competitorLowerPriceU - rub;
+                                } else {
+                                    count1 = (double) competitorLowerPriceU * present;
                                 }
                                 long count2 = Math.round(count1);
                                 int count3 = (int) count2;
@@ -452,22 +452,33 @@ public class Main extends Application implements Controller.ActionInController {
                     System.out.println("resultProduct для " + myVendorCode + " записан в map");
                     System.out.println();
                 }
-                outputExcelFile(number);
+                //outputExcelFile(number);
+                controller.getAreaLog().appendText("Количество проанализированных позицый - " + number + "\n");
+                executorService.shutdown();
+                controller.getAreaLog().appendText("Загрузка изображений...");
+
+                System.out.println("Запуск записи excel из main");
+                if (marketplaceFlag == 1){
+                    taskWriteExelForOzon.run();
+                } else {
+                    taskWriteExelForWildberries.run();
+                }
             }
+
         }).start();
     }
 
-    private void outputExcelFile(int number) {
-        controller.getAreaLog().appendText("Количество проанализированных позицый - " + number + "\n");
-        executorService.shutdown();
-        controller.getAreaLog().appendText("Загрузка изображений...");
-
-        if (marketplaceFlag == 1){
-            taskWriteExelForOzon.run();
-        } else {
-            taskWriteExelForWildberries.run();
-        }
-    }
+//    private void outputExcelFile(int number) {
+//        controller.getAreaLog().appendText("Количество проанализированных позицый - " + number + "\n");
+//        executorService.shutdown();
+//        controller.getAreaLog().appendText("Загрузка изображений...");
+//
+//        if (marketplaceFlag == 1){
+//            taskWriteExelForOzon.run();
+//        } else {
+//            taskWriteExelForWildberries.run();
+//        }
+//    }
 
     public static void switchIpForProxy() throws InterruptedException {
         int count = 10;//попытки смены IP
