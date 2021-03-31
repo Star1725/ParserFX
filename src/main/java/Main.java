@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -24,6 +25,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Main extends Application implements Controller.ActionInController {
+
+    private long start;
+    private long stop;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm");
 
     private Object mon = new Object();
     private static WebClient webClient = null;
@@ -172,6 +177,11 @@ public class Main extends Application implements Controller.ActionInController {
 
     private void getResultProduct(Map<String, ResultProduct> resultMap){
 
+        start = System.currentTimeMillis();
+        Date dateStart = new Date(start);
+        controller.getAreaLog().appendText(dateFormat.format(dateStart) + " - старт\n");
+
+
         preFld = Double.parseDouble(controller.percentTxtFld.getText());
 
         if (marketplaceFlag == 1){
@@ -181,6 +191,12 @@ public class Main extends Application implements Controller.ActionInController {
                 @Override
                 public void handle(WorkerStateEvent event) {
                     openFile(taskWriteExelForOzon.writeWorkbook(resultMap));
+
+                    stop = System.currentTimeMillis();
+                    Date dateStart = new Date(stop);
+                    long timeWorkCode = stop - start;
+                    controller.getAreaLog().appendText(dateFormat.format(dateStart) + " - стоп\n " +
+                            "Длительность парсинга - " + (int) timeWorkCode/(1000 * 60) + " мин. " + (timeWorkCode % (1000 * 60))/1000 + " сек.");
                 }
             });
         } else {
@@ -190,6 +206,11 @@ public class Main extends Application implements Controller.ActionInController {
                 @Override
                 public void handle(WorkerStateEvent event) {
                     openFile(taskWriteExelForWildberries.getValue());
+                    stop = System.currentTimeMillis();
+                    Date dateStart = new Date(stop);
+                    long timeWorkCode = stop - start;
+                    controller.getAreaLog().appendText(dateFormat.format(dateStart) + " - стоп\n " +
+                            "Длительность парсинга - " + (int) timeWorkCode/(1000 * 60) + " мин. " + (timeWorkCode % (1000 * 60))/1000 + " сек.");
                 }
             });
         }
@@ -411,23 +432,32 @@ public class Main extends Application implements Controller.ActionInController {
                             int competitorLowerPriceU = resultProduct.getCompetitorLowerPriceU();
 
                             int dumpingPresent = (int) (Math.round(100 - 100 * ((double) myCurrentLowerPriceU/competitorLowerPriceU)));
-
-                            if (competitorName.equals(Constants.MY_SELLER) || (dumpingPresent == 1)){
+                            double count1 = 0;
+                            int recommendedMyLowerPrice = 0;
+                            if (competitorName.equals(Constants.MY_SELLER)) {
                                 resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
                             } else {
-                                //расчитываем рекомендованню розничную цену с учётом величины демпинга
-                                double count1 = 0;
                                 if (stepFlag == 1){
                                     count1 = (double) competitorLowerPriceU - rub;
+                                    //расчитываем рекомендованню розничную цену с учётом величины демпинга
+                                    long count2 = Math.round(count1);
+                                    int count3 = (int) count2;
+                                    recommendedMyLowerPrice = count3;
+                                    resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
                                 } else {
-                                    count1 = (double) competitorLowerPriceU * present;
+                                    if ((dumpingPresent == 1)){
+                                        resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
+                                    } else {
+                                        count1 = (double) competitorLowerPriceU * present;
+                                        //расчитываем рекомендованню розничную цену с учётом величины демпинга
+                                        long count2 = Math.round(count1);
+                                        int count3 = (int) count2;
+                                        recommendedMyLowerPrice = count3;
+                                        resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
+                                    }
                                 }
-                                long count2 = Math.round(count1);
-                                int count3 = (int) count2;
-                                int recommendedMyLowerPrice = count3;
-
-                                resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
                             }
+
                             //дублирование кода
                             resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
 
@@ -455,7 +485,7 @@ public class Main extends Application implements Controller.ActionInController {
                 //outputExcelFile(number);
                 controller.getAreaLog().appendText("Количество проанализированных позицый - " + number + "\n");
                 executorService.shutdown();
-                controller.getAreaLog().appendText("Загрузка изображений...");
+                controller.getAreaLog().appendText("Загрузка изображений...\n");
 
                 System.out.println("Запуск записи excel из main");
                 if (marketplaceFlag == 1){

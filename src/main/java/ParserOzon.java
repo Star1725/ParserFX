@@ -23,10 +23,11 @@ public class ParserOzon {
     private static WebClient webClientForOzon;
     private static Lock lockOzon;
     private static String myQuery;
+    private static String myVendorCodeFromRequest;
 
-    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient, Lock lock){
+    public Product getProduct(String vendorCodeFromRequest, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient, Lock lock){
         List<Product> productList = new ArrayList<>();
-        Product product = new Product(myVendorCodeFromRequest,
+        Product product = new Product(vendorCodeFromRequest,
                 "-",
                 "-",
                 "-",
@@ -59,10 +60,10 @@ public class ParserOzon {
             webClientForOzon = webClient;
             lockOzon = lock;
             myQuery = querySearchForOzon;
+            myVendorCodeFromRequest = vendorCodeFromRequest;
 
             StringBuilder query = new StringBuilder(querySearchForOzon);
 
-            System.out.println("IP №" + Main.countSwitchIP + ".Получение страницы ozon для запроса - " + querySearchForOzon + ". Артикул Ozon - " + myVendorCodeFromRequest);
             productList = getCatalogProducts(query.toString().toLowerCase(), brand);
 
             if (productList == null) {
@@ -75,7 +76,7 @@ public class ParserOzon {
             } else if (productList.get(0).getCountSearch() == -1) {
                 product.setQueryForSearch(productList.get(0).getQueryForSearch());
             } else {
-                Product productbuff = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest);
+                Product productbuff = getProductWithLowerPrice(productList, myVendorCodes, vendorCodeFromRequest);
                 if (productbuff != null) {
                     product = productbuff;
                 }
@@ -97,10 +98,10 @@ public class ParserOzon {
 //        product.setMyProductName(getMyProductsTitle(page));
 //
             //устанавливаем ссылку на артикул моего товара
-            product.setMyRefForPage(getString("https://www.ozon.ru/search/?text=", myVendorCodeFromRequest, "&from_global=true"));
+            product.setMyRefForPage(getString("https://www.ozon.ru/search/?text=", vendorCodeFromRequest, "&from_global=true"));
 //                                            https://www.ozon.ru/search/?text=210646439&from_global=true
             //устанавливаем мой vendorCode
-            product.setMyVendorCodeFromRequest(myVendorCodeFromRequest);
+            product.setMyVendorCodeFromRequest(vendorCodeFromRequest);
 
             return product;
         }
@@ -128,15 +129,15 @@ public class ParserOzon {
         HtmlPage page = null;
         String querySearchAndCount = "-";
         String category = "-";
-        String blocking = "блокировка сервером";
+        String blocking = "Блокировка сервером";
 
         //final WebClient webClient = new WebClient(BrowserVersion.CHROME);
-
-        boolean isBloking = true;
+        System.out.println("IP №" + Main.countSwitchIP + ".Получение страницы ozon для запроса - " + myQuery + ". Артикул Ozon - " + myVendorCodeFromRequest);
         boolean isNotGetValidPage = true;
         while (isNotGetValidPage){
             System.out.println("проверка - lock свободен: " + lockOzon.toString());
             lockOzon.lock();
+            boolean isBloking = true;
             while (isBloking) {
                 int count = 10;//количество попыток получения валидной станицы ozon
                 webClientForOzon.getOptions().setTimeout(15000);
@@ -178,7 +179,7 @@ public class ParserOzon {
                 try {
                     DomNodeList<DomElement> metas = page.getElementsByTagName("meta");
                     if (metas.get(0).getAttribute("name").equals("ROBOTS")) {
-                        System.out.println(blocking + "Блокировка сервером. Попытка смены IP");
+                        System.out.println(getRedString(blocking) + ". Попытка смены IP");
                         Main.switchIpForProxy();
                     } else {
                         isBloking = false;
@@ -186,7 +187,7 @@ public class ParserOzon {
                 } catch (Exception ignored) {
                 }
             }
-            System.out.println("IP №" + Main.countSwitchIP + ". Страница ozon для запроса \"" + myQuery + "\" получена");
+            System.out.println(getGreenString("IP №" + Main.countSwitchIP) + ". Страница ozon для запроса \"" + myQuery + "\" получена");
             lockOzon.unlock();
             System.out.println("проверка - lock свободен: " + lockOzon.toString());
             webClientForOzon.close();
@@ -202,6 +203,7 @@ public class ParserOzon {
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("////////////////////////////////////////Невалидная страница///////////////////////////////////////////");
+                    System.out.println(page.asXml());
                     continue;
                 }
             }
@@ -277,7 +279,6 @@ public class ParserOzon {
                             //refImage = elementFor_a0t0.getFirstChild().getFirstChild().getFirstChild().getAttributes().getNamedItem("src").getNodeValue();
                             refImage = elementFor_a0t0.getElementsByTagName("img").get(0).getAttributes().getNamedItem("src").getNodeValue();
                         }
-
 
                         //2 элемент
                         if (childFor_a0c4 == 2) {
@@ -486,5 +487,29 @@ public class ParserOzon {
             System.out.println("Ошибка декодирования в UTF8");
         }
         return queryUTF8;
+    }
+
+    private static String getRedString(String s){
+        /*
+        Если хочешь другой цвет, то измени "[31mWarning!". Например, на "[35mWarning!". Текст будет пурпурным.
+        30 - черный. 31 - красный. 32 - зеленый. 33 - желтый. 34 - синий. 35 - пурпурный. 36 - голубой. 37 - белый.
+         */
+        return (char) 27 + "[31m" + s + (char)27 + "[0m";
+    }
+
+    private static String getBlueString(String s){
+        /*
+        Если хочешь другой цвет, то измени "[31mWarning!". Например, на "[35mWarning!". Текст будет пурпурным.
+        30 - черный. 31 - красный. 32 - зеленый. 33 - желтый. 34 - синий. 35 - пурпурный. 36 - голубой. 37 - белый.
+         */
+        return (char) 27 + "[34m" + s + (char)27 + "[0m";
+    }
+
+    private static String getGreenString(String s){
+        /*
+        Если хочешь другой цвет, то измени "[31mWarning!". Например, на "[35mWarning!". Текст будет пурпурным.
+        30 - черный. 31 - красный. 32 - зеленый. 33 - желтый. 34 - синий. 35 - пурпурный. 36 - голубой. 37 - белый.
+         */
+        return (char) 27 + "[32m" + s + (char)27 + "[0m";
     }
 }

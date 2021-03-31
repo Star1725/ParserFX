@@ -1,20 +1,13 @@
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPicture;
 import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.Jsoup;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -367,7 +360,7 @@ public class TaskWriteExelForOzon extends Task<File> {
 
                 //Коммисия
                 cell = row.createCell(12);
-                double commissionPercentage = productArrayList.get(i).getMyCommissionForOzon();
+                double commissionPercentage = productArrayList.get(i).getMyCommissionForOzonOrWildberries();
                 System.out.println(1 - (commissionPercentage / 100));
                 cell.setCellValue(1 - (commissionPercentage / 100));
                 cell.setCellStyle(style);
@@ -376,7 +369,7 @@ public class TaskWriteExelForOzon extends Task<File> {
                 cell = row.createCell(13);
                 double myOrderAssemblyForOzon = productArrayList.get(i).getMyOrderAssemblyForOzon();
                 double myTrunkForOzon = productArrayList.get(i).getMyTrunkForOzon();
-                double myLastMileForOzon = productArrayList.get(i).getMyLastMileForOzon();
+                double myLastMileForOzon = productArrayList.get(i).getMyLastMileForOzonOrWildberries();
                 double logistic = myOrderAssemblyForOzon + myTrunkForOzon + myLastMileForOzon;
                 System.out.println(logistic);
                 cell.setCellValue(logistic);

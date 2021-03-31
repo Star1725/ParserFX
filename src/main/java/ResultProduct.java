@@ -12,10 +12,10 @@ public class ResultProduct extends Product{
     private String myNomenclature_1C;
     private String myVendorCodeForWildberiesOrOzon;
 
-    private double myCommissionForOzon;
+    private double myCommissionForOzonOrWildberries;
     private double myOrderAssemblyForOzon;
     private double myTrunkForOzon;
-    private double myLastMileForOzon;
+    private double myLastMileForOzonOrWildberries;
 
     private String querySearchForWildberiesOrOzon;
     private int specPrice;
@@ -69,10 +69,10 @@ public class ResultProduct extends Product{
             String myNomenclature_1C,
             String myVendorCodeForWildberiesOrOzon,
 
-            double myCommissionForOzon,
+            double myCommissionForOzonOrWildberries,
             double myOrderAssemblyForOzon,
             double myTrunkForOzon,
-            double myLastMileForOzon,
+            double myLastMileForOzonOrWildberries,
 
             String querySearchForWildberiesOrOzon,
             int specPrice,
@@ -121,10 +121,10 @@ public class ResultProduct extends Product{
         this.myNomenclature_1C = myNomenclature_1C;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
 
-        this.myCommissionForOzon = myCommissionForOzon;
+        this.myCommissionForOzonOrWildberries = myCommissionForOzonOrWildberries;
         this.myOrderAssemblyForOzon = myOrderAssemblyForOzon;
         this.myTrunkForOzon = myTrunkForOzon;
-        this.myLastMileForOzon = myLastMileForOzon;
+        this.myLastMileForOzonOrWildberries = myLastMileForOzonOrWildberries;
 
         this.querySearchForWildberiesOrOzon = querySearchForWildberiesOrOzon;
         this.specPrice = specPrice;
@@ -148,10 +148,10 @@ public class ResultProduct extends Product{
             String myNomenclature_1C,
             String myVendorCodeForWildberiesOrOzon,
 
-            double myCommissionForOzon,
+            double myCommissionForOzonOrWildberries,
             double myOrderAssemblyForOzon,
             double myTrunkForOzon,
-            double myLastMileForOzon,
+            double myLastMileForOzonOrWildberries,
 
             String querySearchForWildberiesOrOzon,
             int specPrice,
@@ -173,10 +173,10 @@ public class ResultProduct extends Product{
         this.myNomenclature_1C = myNomenclature_1C;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
 
-        this.myCommissionForOzon = myCommissionForOzon;
+        this.myCommissionForOzonOrWildberries = myCommissionForOzonOrWildberries;
         this.myOrderAssemblyForOzon = myOrderAssemblyForOzon;
         this.myTrunkForOzon = myTrunkForOzon;
-        this.myLastMileForOzon = myLastMileForOzon;
+        this.myLastMileForOzonOrWildberries = myLastMileForOzonOrWildberries;
 
         this.querySearchForWildberiesOrOzon = querySearchForWildberiesOrOzon;
         this.specPrice = specPrice;

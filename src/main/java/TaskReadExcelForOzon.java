@@ -22,7 +22,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
     public Map<String, ResultProduct> readWorkbook(List<File> files) {
         try {
             Map<String, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
-            Map<String, SupplierSpecPriceAndNameProduct> supplierSpecPriceHashMapWithKeyCode_1C = new HashMap<>();
+            Map<String, Supplier> supplierSpecPriceHashMapWithKeyCode_1C = new HashMap<>();
 
             //читаем файл отчёта Ozon и файл 1С
             Workbook workbookOzon = new XSSFWorkbook(files.get(0));
@@ -201,6 +201,9 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         break;
                     }
                 }
+                if (productType.equals("-")){
+                    productType = "Новая категория ";
+                }
 
                 //для некоторых типов продуктов необходимы дополнительные параметры для запроса(кабели, )
                 StringBuilder paramsBuilder = new StringBuilder(" ");
@@ -210,7 +213,11 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     case Constants.PRODUCT_TYPE_1C_78:
                         int start = myNomenclature.indexOf('(');
                         int stop = myNomenclature.indexOf(')');
-                        params = myNomenclature.substring(start + 1, stop);
+                        if (start == -1 || stop == -1){
+                            params = "одноразовая трехслойная не медицинская";
+                        } else {
+                            params = myNomenclature.substring(start + 1, stop) + " шт";
+                        }
                         break;
 
                     //для зарядок - с каким кабелем
@@ -411,13 +418,12 @@ public class TaskReadExcelForOzon extends Task<Map> {
                             System.out.println("querySearch = " + querySearch);
                             System.out.println();
                             break;
-//                        case Constants.PRODUCT_TYPE_1C_85:
-//                            productType = "Магнитный кабель USB 3 в 1";
-//                            querySearch = myBrand + " " + model + " " + params;
-//                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
-//                            System.out.println("querySearch = " + querySearch);
-//                            System.out.println();
-//                            break;
+                        case "Новая категория":
+                            querySearch = "-";
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature + " - новая категория");
+                            System.out.println("querySearch = " + querySearch);
+                            System.out.println();
+                            break;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         default:
                             querySearch = productType + " " + myBrand + " " + model + " " + params;
@@ -430,10 +436,15 @@ public class TaskReadExcelForOzon extends Task<Map> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 //получаем спец-цену
-                cell = row.getCell(4);
-                int specPrice_1C = (int) cell.getNumericCellValue() * 100;
+                int specPrice_1C = 0;
+                try {
+                    cell = row.getCell(4);
+                    specPrice_1C = (int) cell.getNumericCellValue() * 100;
+                } catch (Exception ignored) {
+                    //e.printStackTrace();
+                }
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new SupplierSpecPriceAndNameProduct(code_1C, myBrand, productType, myNomenclature, querySearch, specPrice_1C));
+                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, myBrand, productType, myNomenclature, querySearch, specPrice_1C));
                 //увеличиваем ProgressBar
                 this.updateProgress(i, countFull);
                 countReadsRows_1C++;
@@ -445,14 +456,14 @@ public class TaskReadExcelForOzon extends Task<Map> {
             for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
                 String key = entry.getKey();
                 String code_1C = entry.getValue().getCode_1C();
-                SupplierSpecPriceAndNameProduct supplierSpecPriceAndNameProduct1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
-                if (supplierSpecPriceAndNameProduct1 != null){
+                Supplier supplier1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
+                if (supplier1 != null){
                     entry.getValue().setIsFind(1);
-                    entry.getValue().setSpecPrice(supplierSpecPriceAndNameProduct1.getSpecPrice());
-                    entry.getValue().setMyBrand(supplierSpecPriceAndNameProduct1.getMyBrand());
-                    entry.getValue().setProductType(supplierSpecPriceAndNameProduct1.getProductType());
-                    entry.getValue().setMyNomenclature_1C(supplierSpecPriceAndNameProduct1.getNomenclature());
-                    entry.getValue().setQuerySearchForWildberiesOrOzon(supplierSpecPriceAndNameProduct1.getQuerySearch());
+                    entry.getValue().setSpecPrice(supplier1.getSpecPrice());
+                    entry.getValue().setMyBrand(supplier1.getMyBrand());
+                    entry.getValue().setProductType(supplier1.getProductType());
+                    entry.getValue().setMyNomenclature_1C(supplier1.getNomenclature());
+                    entry.getValue().setQuerySearchForWildberiesOrOzon(supplier1.getQuerySearch());
                 } else entry.getValue().setSpecPrice(0);
             }
             return resultProductHashMap;
@@ -482,9 +493,9 @@ public class TaskReadExcelForOzon extends Task<Map> {
     private boolean checkFile_1C(Sheet sheet){
         Row headRow = sheet.getRow(0);
         try {
-            boolean checkCode_1C = headRow.getCell(1).getRichStringCellValue().getString().equals(Constants.CODE_1C);
-            boolean checkProductName = headRow.getCell(2).getRichStringCellValue().getString().trim().equals(Constants.NOMENCLATURE_1C);
-            boolean checkSpecPrice = headRow.getCell(4).getRichStringCellValue().getString().trim().equals(Constants.SPEC_PRICE_1C);
+            boolean checkCode_1C = headRow.getCell(1).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.CODE_1C);
+            boolean checkProductName = headRow.getCell(2).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.NOMENCLATURE_1C);
+            boolean checkSpecPrice = headRow.getCell(4).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.SPEC_PRICE_1C);
             return checkCode_1C & checkProductName & checkProductName & checkSpecPrice;
         } catch (Exception e) {
             return false;

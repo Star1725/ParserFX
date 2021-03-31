@@ -257,9 +257,11 @@ public class Constants {
     public static final String PROMO_SALE_IN_FILE_WILDBERIES = "Текущая скидка по промокоду, %";//16-й столбец
 
     //статика для проверки заговков столбцов файла отчёта 1С
-    public static final String CODE_1C = "Код";//1-й столбец
-    public static final String NOMENCLATURE_1C = "Номенклатура";//2-й столбец
-    public static final String SPEC_PRICE_1C = "Цена";//4-й столбец
+    public static final String CODE_1C = "код 1с";//1-й столбец
+    public static final String NOMENCLATURE_1C = "номенклатура";//2-й столбец
+    public static final String SPEC_PRICE_1C = "спец-цена";//4-й столбец
+    public static final String COMMISSION_1C_FOR_WILD = "комиссия";//6-й столбец
+    public static final String DELIVERY_1C_FOR_WILD = "Доставка";//4-й столбец
 
     //статика для проверки заговков столбцов файла отчёта Ozon
     public static final String VENDOR_CODE_1C_IN_FILE_OZON = "Артикул";//0-й столбец
