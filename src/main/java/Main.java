@@ -68,7 +68,7 @@ public class Main extends Application implements Controller.ActionInController {
         Controller.subscribe(this);
         controller = mainWindowLoader.getController();
 
-        webClient = new WebClient(BrowserVersion.CHROME);
+        webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 
         ProxyConfig proxyConfig = new ProxyConfig(Constants.PROXY_HOST, Constants.PROXY_PORT);
         DefaultCredentialsProvider credentialsProvider = new DefaultCredentialsProvider();
@@ -81,7 +81,7 @@ public class Main extends Application implements Controller.ActionInController {
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setUseInsecureSSL(true);
-        webClient.getOptions().setTimeout(20000);
+        webClient.getOptions().setTimeout(15000);
 
         /* Clearing Cache and Cookies */
         webClient.getCookieManager().clearCookies();
@@ -392,11 +392,11 @@ public class Main extends Application implements Controller.ActionInController {
                         } else {
                             System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
                             Product product = executorCompletionService.take().get();
-                            if (number % 3 == 0){
+                            if (number % 4 == 0){
                             //переключение на новый IP после трёх удачных запросов
                                 System.out.println("прверка - lock свободен: " + lock.toString());
                                 lock.lock();
-                                System.out.println("В main number кратен 3, смена IP");
+                                System.out.println("В main number кратен 4, смена IP");
                                 switchIpForProxy();
                                 lock.unlock();
                                 System.out.println("прверка - lock свободен: " + lock.toString());
@@ -530,7 +530,7 @@ public class Main extends Application implements Controller.ActionInController {
                 if (metas.get(0).asText().equals("ok")) {
                     System.out.println("смена IP успешна");
                     countSwitchIP++;
-                    Thread.sleep(7000);
+                    Thread.sleep(2000);
                 }
             } catch (IOException e) {
                 System.out.println("проблема при смене IP");

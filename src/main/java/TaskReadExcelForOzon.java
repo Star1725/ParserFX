@@ -233,7 +233,8 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         if (myNomenclature.contains("с кабелем") || myNomenclature.contains("кабель")){
                             for (String type: Constants.listForCharging){
                                 if (myNomenclature.contains(type)){
-                                    paramsBuilder.append("c кабелем ").append(type);
+                                    paramsBuilder.append(type);
+                                    break;
                                 }
                             }
                         }
@@ -304,52 +305,148 @@ public class TaskReadExcelForOzon extends Task<Map> {
                             System.out.println();
                             break;
                         //для этих типов в поисковом запросе указываем только бренд и модель
-                        case Constants.PRODUCT_TYPE_1C_1://
-                        case Constants.PRODUCT_TYPE_1C_2:
-                        case Constants.PRODUCT_TYPE_1C_5:
-                        case Constants.PRODUCT_TYPE_1C_9:
-                        case Constants.PRODUCT_TYPE_1C_12:
-                        case Constants.PRODUCT_TYPE_1C_13:
-                        case Constants.PRODUCT_TYPE_1C_16:
-                        case Constants.PRODUCT_TYPE_1C_17:
-                        case Constants.PRODUCT_TYPE_1C_24:
-                        case Constants.PRODUCT_TYPE_1C_26:
-                        case Constants.PRODUCT_TYPE_1C_29:
-                        case Constants.PRODUCT_TYPE_1C_28:
-                        case Constants.PRODUCT_TYPE_1C_30:
-                        case Constants.PRODUCT_TYPE_1C_31:
-                        case Constants.PRODUCT_TYPE_1C_35:
-                        case Constants.PRODUCT_TYPE_1C_37:
-                        case Constants.PRODUCT_TYPE_1C_39:
-                        case Constants.PRODUCT_TYPE_1C_40://
-                        case Constants.PRODUCT_TYPE_1C_41:
-                        case Constants.PRODUCT_TYPE_1C_42:
-                        case Constants.PRODUCT_TYPE_1C_43:
-                        case Constants.PRODUCT_TYPE_1C_46:
-                        case Constants.PRODUCT_TYPE_1C_51:
-                        case Constants.PRODUCT_TYPE_1C_52:
-                        case Constants.PRODUCT_TYPE_1C_53:
-                        case Constants.PRODUCT_TYPE_1C_54:
-                        case Constants.PRODUCT_TYPE_1C_55:
-                        case Constants.PRODUCT_TYPE_1C_56:
-                        case Constants.PRODUCT_TYPE_1C_57:
-                        case Constants.PRODUCT_TYPE_1C_58:
-                        case Constants.PRODUCT_TYPE_1C_59:
-                        case Constants.PRODUCT_TYPE_1C_60:
-                        case Constants.PRODUCT_TYPE_1C_62:
-                        case Constants.PRODUCT_TYPE_1C_67:
-                        case Constants.PRODUCT_TYPE_1C_72:
-                        case Constants.PRODUCT_TYPE_1C_73:
-                        case Constants.PRODUCT_TYPE_1C_74:
-                        case Constants.PRODUCT_TYPE_1C_75:
-                        case Constants.PRODUCT_TYPE_1C_79:
-                        case Constants.PRODUCT_TYPE_1C_83:
-                        case Constants.PRODUCT_TYPE_1C_84:
-                        case Constants.PRODUCT_TYPE_1C_86:
+                        case Constants.PRODUCT_TYPE_1C_1  :
+                        case Constants.PRODUCT_TYPE_1C_2  :
+                        case Constants.PRODUCT_TYPE_1C_3  :
+                        case Constants.PRODUCT_TYPE_1C_5  :
+                        case Constants.PRODUCT_TYPE_1C_6  :
+                        case Constants.PRODUCT_TYPE_1C_7  :
+                        case Constants.PRODUCT_TYPE_1C_8  :
+                        case Constants.PRODUCT_TYPE_1C_9  :
+
+                        case Constants.PRODUCT_TYPE_1C_11 :
+                        case Constants.PRODUCT_TYPE_1C_12 :
+                        case Constants.PRODUCT_TYPE_1C_13 :
+                        case Constants.PRODUCT_TYPE_1C_15 :
+                        case Constants.PRODUCT_TYPE_1C_16 :
+                        case Constants.PRODUCT_TYPE_1C_17 :
+                        case Constants.PRODUCT_TYPE_1C_18 :
+                        case Constants.PRODUCT_TYPE_1C_19 :
+                        case Constants.PRODUCT_TYPE_1C_20 :
+                        case Constants.PRODUCT_TYPE_1C_21 :
+                        case Constants.PRODUCT_TYPE_1C_22 :
+                        case Constants.PRODUCT_TYPE_1C_23 :
+                        case Constants.PRODUCT_TYPE_1C_24 :
+                        case Constants.PRODUCT_TYPE_1C_25 :
+                        case Constants.PRODUCT_TYPE_1C_26 :
+                        case Constants.PRODUCT_TYPE_1C_27 :
+                        case Constants.PRODUCT_TYPE_1C_28 :
+                        case Constants.PRODUCT_TYPE_1C_29 :
+                        case Constants.PRODUCT_TYPE_1C_30 :
+                        case Constants.PRODUCT_TYPE_1C_31 :
+                        case Constants.PRODUCT_TYPE_1C_32 :
+                        case Constants.PRODUCT_TYPE_1C_33 :
+                        case Constants.PRODUCT_TYPE_1C_34 :
+                        case Constants.PRODUCT_TYPE_1C_35 :
+                        case Constants.PRODUCT_TYPE_1C_36 :
+
+
+                        case Constants.PRODUCT_TYPE_1C_41 :
+                        case Constants.PRODUCT_TYPE_1C_42 :
+                        case Constants.PRODUCT_TYPE_1C_43 :
+                        case Constants.PRODUCT_TYPE_1C_46 :
+
+                        case Constants.PRODUCT_TYPE_1C_51 :
+                        case Constants.PRODUCT_TYPE_1C_52 :
+                        case Constants.PRODUCT_TYPE_1C_53 :
+                        case Constants.PRODUCT_TYPE_1C_54 :
+                        case Constants.PRODUCT_TYPE_1C_55 :
+                        case Constants.PRODUCT_TYPE_1C_56 :
+                        case Constants.PRODUCT_TYPE_1C_57 :
+                        case Constants.PRODUCT_TYPE_1C_58 :
+                        case Constants.PRODUCT_TYPE_1C_59 :
+                        case Constants.PRODUCT_TYPE_1C_60 :
+
+                        case Constants.PRODUCT_TYPE_1C_62 :
+
+
+                        case Constants.PRODUCT_TYPE_1C_72 :
+                        case Constants.PRODUCT_TYPE_1C_73 :
+                        case Constants.PRODUCT_TYPE_1C_74 :
+                        case Constants.PRODUCT_TYPE_1C_75 :
+                        case Constants.PRODUCT_TYPE_1C_76 :
+                        case Constants.PRODUCT_TYPE_1C_77 :
+
+                        case Constants.PRODUCT_TYPE_1C_79 :
+                        case Constants.PRODUCT_TYPE_1C_83 :
+                        case Constants.PRODUCT_TYPE_1C_84 :
+
+                        case Constants.PRODUCT_TYPE_1C_86 :
+                        case Constants.PRODUCT_TYPE_1C_87 :
+                        case Constants.PRODUCT_TYPE_1C_88 :
+                        case Constants.PRODUCT_TYPE_1C_89 :
+                        case Constants.PRODUCT_TYPE_1C_90 :
+                        case Constants.PRODUCT_TYPE_1C_91 :
+                        case Constants.PRODUCT_TYPE_1C_92 :
+                        case Constants.PRODUCT_TYPE_1C_93 :
+                        case Constants.PRODUCT_TYPE_1C_94 :
+                        case Constants.PRODUCT_TYPE_1C_96 :
+                        case Constants.PRODUCT_TYPE_1C_97 :
+                        case Constants.PRODUCT_TYPE_1C_98 :
+                        case Constants.PRODUCT_TYPE_1C_99 :
+                        case Constants.PRODUCT_TYPE_1C_100:
+                        case Constants.PRODUCT_TYPE_1C_101:
+                        case Constants.PRODUCT_TYPE_1C_102:
+                        case Constants.PRODUCT_TYPE_1C_103:
+                        case Constants.PRODUCT_TYPE_1C_104:
+                        case Constants.PRODUCT_TYPE_1C_105:
+                        case Constants.PRODUCT_TYPE_1C_106:
+                        case Constants.PRODUCT_TYPE_1C_107:
+                        case Constants.PRODUCT_TYPE_1C_108:
+                        case Constants.PRODUCT_TYPE_1C_109:
+                        case Constants.PRODUCT_TYPE_1C_110:
+                        case Constants.PRODUCT_TYPE_1C_111:
+                        case Constants.PRODUCT_TYPE_1C_112:
                         case Constants.PRODUCT_TYPE_1C_113:
                         case Constants.PRODUCT_TYPE_1C_114:
                         case Constants.PRODUCT_TYPE_1C_115:
                         case Constants.PRODUCT_TYPE_1C_116:
+                        case Constants.PRODUCT_TYPE_1C_117:
+                        case Constants.PRODUCT_TYPE_1C_118:
+                        case Constants.PRODUCT_TYPE_1C_119:
+                        case Constants.PRODUCT_TYPE_1C_120:
+                        case Constants.PRODUCT_TYPE_1C_121:
+                        case Constants.PRODUCT_TYPE_1C_122:
+                        case Constants.PRODUCT_TYPE_1C_123:
+                        case Constants.PRODUCT_TYPE_1C_124:
+                        case Constants.PRODUCT_TYPE_1C_125:
+                        case Constants.PRODUCT_TYPE_1C_126:
+                        case Constants.PRODUCT_TYPE_1C_127:
+                        case Constants.PRODUCT_TYPE_1C_128:
+                        case Constants.PRODUCT_TYPE_1C_129:
+                        case Constants.PRODUCT_TYPE_1C_130:
+                        case Constants.PRODUCT_TYPE_1C_131:
+
+                        case Constants.PRODUCT_TYPE_1C_134:
+                        case Constants.PRODUCT_TYPE_1C_135:
+                        case Constants.PRODUCT_TYPE_1C_136:
+                        case Constants.PRODUCT_TYPE_1C_137:
+                        case Constants.PRODUCT_TYPE_1C_138:
+                        case Constants.PRODUCT_TYPE_1C_139:
+                        case Constants.PRODUCT_TYPE_1C_140:
+                        case Constants.PRODUCT_TYPE_1C_142:
+                        case Constants.PRODUCT_TYPE_1C_143:
+                        case Constants.PRODUCT_TYPE_1C_144:
+                        case Constants.PRODUCT_TYPE_1C_145:
+                        case Constants.PRODUCT_TYPE_1C_146:
+                        case Constants.PRODUCT_TYPE_1C_147:
+                        case Constants.PRODUCT_TYPE_1C_148:
+                        case Constants.PRODUCT_TYPE_1C_149:
+                        case Constants.PRODUCT_TYPE_1C_150:
+                        case Constants.PRODUCT_TYPE_1C_151:
+                        case Constants.PRODUCT_TYPE_1C_152:
+
+                        case Constants.PRODUCT_TYPE_1C_155:
+                        case Constants.PRODUCT_TYPE_1C_156:
+                        case Constants.PRODUCT_TYPE_1C_157:
+                        case Constants.PRODUCT_TYPE_1C_158:
+                        case Constants.PRODUCT_TYPE_1C_159:
+                        case Constants.PRODUCT_TYPE_1C_160:
+                        case Constants.PRODUCT_TYPE_1C_161:
+                        case Constants.PRODUCT_TYPE_1C_162:
+                        case Constants.PRODUCT_TYPE_1C_163:
+                        case Constants.PRODUCT_TYPE_1C_164:
+
 
                             querySearch = myBrand + " " + model;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
@@ -358,9 +455,17 @@ public class TaskReadExcelForOzon extends Task<Map> {
                             break;
                         //для этих типов в поисковом запросе указываем бренд, модель и некоторыу параметры
                         //case Constants.PRODUCT_TYPE_1C_38:
+                        case Constants.PRODUCT_TYPE_1C_10 :
+                        case Constants.PRODUCT_TYPE_1C_37 :
+                        case Constants.PRODUCT_TYPE_1C_39 :
+                        case Constants.PRODUCT_TYPE_1C_40 :
                         case Constants.PRODUCT_TYPE_1C_49:
                         case Constants.PRODUCT_TYPE_1C_50:
                         case Constants.PRODUCT_TYPE_1C_61:
+                        case Constants.PRODUCT_TYPE_1C_67 :
+                        case Constants.PRODUCT_TYPE_1C_132:
+                        case Constants.PRODUCT_TYPE_1C_153:
+                        case Constants.PRODUCT_TYPE_1C_154:
                             querySearch = myBrand + " " + model + " " + params;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("querySearch = " + querySearch);

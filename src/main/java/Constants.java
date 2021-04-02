@@ -86,7 +86,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_1   = "FM-трансмиттер";
     public static final String PRODUCT_TYPE_1C_2   = "USB-концентратор";
     public static final String PRODUCT_TYPE_1C_3   = "USB-хаб";
-    //public static final String PRODUCT_TYPE_1C_4   = "USB- хаб";
+
     public static final String PRODUCT_TYPE_1C_5   = "Автовизитка";
     public static final String PRODUCT_TYPE_1C_6   = "Автомобильная лампа";
     public static final String PRODUCT_TYPE_1C_7   = "Автомобильная пепельница";
@@ -119,7 +119,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_35 ="Бесконтактный диспенсер-спрей для рук";
     public static final String PRODUCT_TYPE_1C_36 ="Беспроводная колонка";
     public static final String PRODUCT_TYPE_1C_37 ="Беспроводное зарядное устройство";
-    //public static final String PRODUCT_TYPE_1C_38 ="Блок питания сетевой";
+
     public static final String PRODUCT_TYPE_1C_39 ="Блок питания автомобильный";
     public static final String PRODUCT_TYPE_1C_40 ="Блок питания";
     public static final String PRODUCT_TYPE_1C_41 ="Держатель";
@@ -210,7 +210,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_130="Светильник";
     public static final String PRODUCT_TYPE_1C_131="Селфи палка-штатив";
     public static final String PRODUCT_TYPE_1C_132="Сетевое зарядное устройство";
-    //public static final String PRODUCT_TYPE_1C_133="Сетевое зарядное устройство 2 USB";
+
     public static final String PRODUCT_TYPE_1C_134="Сетевой разветвитель для кабеля HDMI";
     public static final String PRODUCT_TYPE_1C_135="Сетевой разветвитель для кабеля RJ45";
     public static final String PRODUCT_TYPE_1C_136="Силиконовый чехол";
@@ -350,15 +350,14 @@ public class Constants {
         listForCharging.add("микро");
         listForCharging.add("Micro");
         listForCharging.add("micro");
+        listForCharging.add("Apple 8 pin");
         listForCharging.add("Apple");
-        listForCharging.add("8");
-        listForCharging.add("pin");
+        listForCharging.add("8 pin");
         listForCharging.add("lightning");
         listForCharging.add("Type-C");
         listForCharging.add("type-C");
         listForCharging.add("Type");
         listForCharging.add("type");
-        listForCharging.add("C");
 
         listForBugs.add("(S)");
         listForBugs.add("(L)");

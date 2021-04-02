@@ -1,11 +1,10 @@
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.*;
-import org.apache.cassandra.streaming.StreamOut;
-import org.w3c.dom.DOMException;
+import javafx.scene.web.WebEngine;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -76,6 +75,15 @@ public class ParserOzon {
             } else if (productList.get(0).getCountSearch() == -1) {
                 product.setQueryForSearch(productList.get(0).getQueryForSearch());
             } else {
+
+                switch (productType){
+                    case Constants.PRODUCT_TYPE_1C_78:
+                        if (productList.size() != 0){
+                            product = productList.stream().filter(p -> p.getCompetitorProductName().contains("" + getIntegerFromString(querySearchForOzon))).findAny().orElse(null);
+                        }
+                        break;
+                }
+
                 Product productbuff = getProductWithLowerPrice(productList, myVendorCodes, vendorCodeFromRequest);
                 if (productbuff != null) {
                     product = productbuff;
@@ -127,6 +135,7 @@ public class ParserOzon {
     private static List<Product> getCatalogFromFPageForHtmlUnit(String url) {
         List<Product> productList = new ArrayList<>();
         HtmlPage page = null;
+        String stringPage = null;
         String querySearchAndCount = "-";
         String category = "-";
         String blocking = "Блокировка сервером";
@@ -140,7 +149,7 @@ public class ParserOzon {
             boolean isBloking = true;
             while (isBloking) {
                 int count = 10;//количество попыток получения валидной станицы ozon
-                webClientForOzon.getOptions().setTimeout(15000);
+                //webClientForOzon.getOptions().setTimeout(15000);
                 int countPageNull = 0;
                 while (count > 0) {
                     System.out.println("Непосредственно получение страницы. Время таймаута = " + webClientForOzon.getOptions().getTimeout() / 1000 + " c");
@@ -149,7 +158,37 @@ public class ParserOzon {
                             System.out.println("Кол-во полученных страниц NULL = 2. Меняем IP");
                             Main.switchIpForProxy();
                         }
+
+//                        webClientForOzon.getOptions().setJavaScriptEnabled(true);
+//                        webClientForOzon.setAjaxController(new NicelyResynchronizingAjaxController());
                         page = webClientForOzon.getPage(url);
+//                        webClientForOzon.waitForBackgroundJavaScript(30000);
+
+//                        WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
+//                        webClient.getOptions().setJavaScriptEnabled(true);
+//                        webClient.getOptions().setThrowExceptionOnScriptError(false);
+//                        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+//                        WebRequest request = new WebRequest(new URL(url));
+//                        page = webClient.getPage(request);
+//                        int i = webClient.waitForBackgroundJavaScriptStartingBefore(10000);
+//                        while (i > 0)
+//                        {
+//                           // i = webClient.waitForBackgroundJavaScript(1000);
+//                            i = webClient.waitForBackgroundJavaScriptStartingBefore(1000);
+//
+//                            if (i == 0)
+//                            {
+//                                break;
+//                            }
+//                            synchronized (page)
+//                            {
+//                                System.out.println("wait");
+//                                page.wait(500);
+//                            }
+//                        }
+//                        webClient.getAjaxController().processSynchron(page, request, false);
+//                        stringPage = page.asXml();
+
                     } catch (Exception ignored) {
                         System.out.println("Ошибка при получении страницы для запроса \"" + myQuery + "\": " + ignored.getMessage());
                         if (count == 0) {
@@ -214,6 +253,7 @@ public class ParserOzon {
             }
 
             //получаем список продуктов, полученный по поисковому запросу аналогов
+            List<HtmlElement> itemsForListProducts1 = page.getByXPath("//div[@class='a0c6 a0c9']");
             List<HtmlElement> itemsForListProducts = page.getByXPath("//div[@class='a0c4']");
             boolean isException1 = false;
             boolean isException2 = false;
@@ -302,12 +342,12 @@ public class ParserOzon {
                                         currentBasicPriceString = elementsFor_b5v4.get(0).asText();
                                     }
                                 }
-                                competitorBasicPriceU = getPriceFromStringPrice(currentBasicPriceString) * 100;
+                                competitorBasicPriceU = getIntegerFromString(currentBasicPriceString) * 100;
 
                                 //получение цены currentPriceUString
                                 try {
                                     String currentPriceUString = elementsFor_b5v4.get(1).asText();
-                                    competitorPriceU = getPriceFromStringPrice(currentPriceUString) * 100;
+                                    competitorPriceU = getIntegerFromString(currentPriceUString) * 100;
                                 } catch (Exception e) {
 //                                    e.printStackTrace();
 //                                    System.out.println("////////////////////////////////////////Невалидная страница///////////////////////////////////////////");
@@ -320,7 +360,7 @@ public class ParserOzon {
                                     //пробуем получить премиум цену, если есть
                                     String premiumPriceString = divsFor_a0y9.get(divsFor_a0y9.size() - 1).asText();
                                     if (premiumPriceString.contains("Premium")) {
-                                        competitorPremiumPriceForOzon = getPriceFromStringPrice(premiumPriceString) * 100;
+                                        competitorPremiumPriceForOzon = getIntegerFromString(premiumPriceString) * 100;
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -361,12 +401,12 @@ public class ParserOzon {
                                 //получение цен: currentBasicPriceString, competitorPriceU
                                 DomNodeList<HtmlElement> spanFor_a0t0 = asFor_a0s9.get(0).getElementsByTagName("span");
                                 String currentBasicPriceString = spanFor_a0t0.get(0).asText();
-                                competitorBasicPriceU = getPriceFromStringPrice(currentBasicPriceString) * 100;
+                                competitorBasicPriceU = getIntegerFromString(currentBasicPriceString) * 100;
 
                                 //получение цены currentPriceUString
                                 try {
                                     String currentPriceUString = spanFor_a0t0.get(1).asText();
-                                    competitorPriceU = getPriceFromStringPrice(currentPriceUString) * 100;
+                                    competitorPriceU = getIntegerFromString(currentPriceUString) * 100;
                                 } catch (Exception e) {
 //                                    e.printStackTrace();
 //                                    System.out.println("////////////////////////////////////////Невалидная страница///////////////////////////////////////////");
@@ -380,7 +420,7 @@ public class ParserOzon {
                                     //пробуем получить премиум цену, если есть
                                     String premiumPriceString = divsFor_a0y9.get(divsFor_a0y9.size() - 1).asText();
                                     if (premiumPriceString.contains("Premium")) {
-                                        competitorPremiumPriceForOzon = getPriceFromStringPrice(premiumPriceString) * 100;
+                                        competitorPremiumPriceForOzon = getIntegerFromString(premiumPriceString) * 100;
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -438,7 +478,7 @@ public class ParserOzon {
         return itemProduct.getChildElements();
     }
 
-    private static int getPriceFromStringPrice(String price) {
+    private static int getIntegerFromString(String price) {
         StringBuilder resultPrice = new StringBuilder();
 
         Pattern p = Pattern.compile("-?\\d+");
