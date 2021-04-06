@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.html.*;
 import javafx.scene.web.WebEngine;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class ParserOzon {
 
             StringBuilder query = new StringBuilder(querySearchForOzon);
 
-            productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+            productList = getCatalogProducts(query.toString().toLowerCase(), productType);
 
             if (productList == null) {
                 product.setCompetitorProductName(Constants.BLOCKING);
@@ -115,13 +116,13 @@ public class ParserOzon {
         }
     }
 
-    private static List<Product> getCatalogProducts(String query, String brand) {
+    private static List<Product> getCatalogProducts(String query, String productType) {
         List<Product> productList;
         String url = "-";
         url = getUrlForSearchQuery(query);
 
         //получение бренда, артикула, имени товара, ссылки на страницу товара, ссылки на картинкау товара, спец-акции, рейтинга
-        productList = getCatalogFromFPageForHtmlUnit(url);
+        productList = getCatalogFromFPageForHtmlUnit(url, productType, query);
 
         return productList;
     }
@@ -132,7 +133,7 @@ public class ParserOzon {
         return url;
     }
 
-    private static List<Product> getCatalogFromFPageForHtmlUnit(String url) {
+    private static List<Product> getCatalogFromFPageForHtmlUnit(String url, String productType, String query) {
         List<Product> productList = new ArrayList<>();
         HtmlPage page = null;
         String stringPage = null;
@@ -166,7 +167,7 @@ public class ParserOzon {
 
 //                        WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 //                        webClient.getOptions().setJavaScriptEnabled(true);
-//                        webClient.getOptions().setThrowExceptionOnScriptError(false);
+//                        webClient.getOptions().setThrowExceptionOnScriptError(true);
 //                        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 //                        WebRequest request = new WebRequest(new URL(url));
 //                        page = webClient.getPage(request);
@@ -262,6 +263,7 @@ public class ParserOzon {
             boolean isException5 = false;
             boolean isException6 = false;
             if (itemsForListProducts.isEmpty()) {
+
             } else {
                 for (HtmlElement itemProduct: itemsForListProducts) {
                     String competitorBrand = "-";
@@ -466,6 +468,51 @@ public class ParserOzon {
                 System.out.println("//////////////////////////////////////Попытка получения новой валидной страницы//////////////////////////////////////");
                 System.out.println("isNotGetValidPage = " + isNotGetValidPage);
             }
+/*TO-DO
+            switch (productType){
+                case Constants.PRODUCT_TYPE_1C_39:
+                case Constants.PRODUCT_TYPE_1C_40:
+                case Constants.PRODUCT_TYPE_1C_132:
+                    //из запроса получаем те элементы, которые хотим проконтроллировать в описании(модель, тип кабеля)
+                    String[] elementsForQuery = query.split(" ");
+                    String model = elementsForQuery[1];
+
+                    //получаем кол-во элементов javascript
+                    List<HtmlElement> itemsCountSearchJavascript = page.getByXPath("//div[@class='a1j1']");
+                    if (itemsCountSearchJavascript == null) {
+                        System.out.println("не нашёл html-элемент javascript - div[@class='a1j1']");
+                    } else {
+                        try {
+                            int countJavascript =  itemsCountSearchJavascript.size();
+                            int countForAnalise = 0;
+                            if (countJavascript > 5){
+                                countForAnalise = 5;
+                            } else {
+                                countForAnalise = countJavascript;
+                            }
+                            for (int i = 0; i < countForAnalise; i++){
+                                String description = itemsCountSearchJavascript.get(i).asText();
+                                if (description.contains(model)){
+                                    //проверяем вариант, если у на только название модели
+                                    if (elementsForQuery.length == 2){
+                                        for (String type: Constants.listForCharging){
+                                            if (description.contains(type)){
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            System.out.println(querySearchAndCount);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.out.println("////////////////////////////////////////Невалидная страница///////////////////////////////////////////");
+                            System.out.println(page.asXml());
+                            continue;
+                        }
+                    }
+            }
+*/
         }
         return productList;
     }

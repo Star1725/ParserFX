@@ -84,8 +84,8 @@ public class Main extends Application implements Controller.ActionInController {
         webClient.getOptions().setTimeout(15000);
 
         /* Clearing Cache and Cookies */
-        webClient.getCookieManager().clearCookies();
-        webClient.getCache().clear();
+        //webClient.getCookieManager().clearCookies();
+        //webClient.getCache().clear();
 
         /* Setting proxy to be used */
         webClient.getOptions().setProxyConfig(proxyConfig);

@@ -1,4 +1,5 @@
 import javafx.concurrent.Task;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -6,6 +7,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class TaskReadExcelForOzon extends Task<Map> {
@@ -20,44 +22,51 @@ public class TaskReadExcelForOzon extends Task<Map> {
     private final List<File> files;
 
     public Map<String, ResultProduct> readWorkbook(List<File> files) {
+
+        Map<String, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
+        Map<String, Supplier> supplierSpecPriceHashMapWithKeyCode_1C = new HashMap<>();
+
+        //читаем файл отчёта Ozon и файл 1С
+        Workbook workbookOzon = null;
+        Workbook workbook_1C = null;
         try {
-            Map<String, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
-            Map<String, Supplier> supplierSpecPriceHashMapWithKeyCode_1C = new HashMap<>();
+            workbookOzon = new XSSFWorkbook(files.get(0));
+            workbook_1C = new XSSFWorkbook(files.get(1));
+        } catch (IOException | InvalidFormatException e) {
+            e.printStackTrace();
+        }
 
-            //читаем файл отчёта Ozon и файл 1С
-            Workbook workbookOzon = new XSSFWorkbook(files.get(0));
-            Workbook workbook_1C = new XSSFWorkbook(files.get(1));
+        //получаем страницы
+        Sheet sheetOzon = null;
+        Sheet sheet_1C = null;
+        try {
+            sheetOzon = workbookOzon.getSheetAt(1);
+            sheet_1C = workbook_1C.getSheetAt(0);
+        } catch (Exception e) {
+            sheetOzon = workbook_1C.getSheetAt(1);
+            sheet_1C = workbookOzon.getSheetAt(0);
+        }
 
-            //получаем страницы
-            Sheet sheetOzon = null;
-            Sheet sheet_1C = null;
-            try {
-                sheetOzon = workbookOzon.getSheetAt(1);
-                sheet_1C = workbook_1C.getSheetAt(0);
-            } catch (Exception e) {
-                sheetOzon = workbook_1C.getSheetAt(1);
-                sheet_1C = workbookOzon.getSheetAt(0);
+        //проверяем, правильно ли мы прочитали файлы
+        if (!checkFileOzon(sheetOzon) || !checkFile_1C(sheet_1C)) {
+            Sheet sheetBuff = sheet_1C;
+            sheet_1C = sheetOzon;
+            sheetOzon = sheetBuff;
+            if (!checkFileOzon(sheetOzon) || !checkFile_1C(sheet_1C)) {
+                System.out.println("ошибка чтения файлов Excel. Проверьте правильность написания названий столбцов, и их очерёдность\n" +
+                        "");
+                resultProductHashMap.put("Ошибка чтения файла Excel с остатками Ozon", null);
+                return resultProductHashMap;
             }
+        }
 
-            //проверяем, правильно ли мы прочитали файлы
-            if (!checkFileOzon(sheetOzon) || !checkFile_1C(sheet_1C)){
-                Sheet sheetBuff = sheet_1C;
-                sheet_1C = sheetOzon;
-                sheetOzon = sheetBuff;
-                if (!checkFileOzon(sheetOzon) || !checkFile_1C(sheet_1C)){
-                    System.out.println("ошибка чтения файлов Excel. Проверьте правильность написания названий столбцов, и их очерёдность\n" +
-                            "");
-                    resultProductHashMap.put("Ошибка чтения файло Excel", null);
-                    return resultProductHashMap;
-                }
-            }
+        //считаем кол-во строк в файлах для работы ProgressBar
+        int countRowsInWildberies = sheetOzon.getLastRowNum();
+        int countRowsIn_1C = sheet_1C.getLastRowNum();
+        int countFull = countRowsInWildberies + countRowsIn_1C;
+        int i = 1;
 
-            //считаем кол-во строк в файлах для работы ProgressBar
-            int countRowsInWildberies = sheetOzon.getLastRowNum();
-            int countRowsIn_1C = sheet_1C.getLastRowNum();
-            int countFull = countRowsInWildberies + countRowsIn_1C;
-            int i = 1;
-
+        try {
             //считываем информацию с отчёта Ozon
             System.out.println("считываем информацию с отчёта Ozon");
             Iterator rowIterator = sheetOzon.rowIterator();
@@ -65,11 +74,11 @@ public class TaskReadExcelForOzon extends Task<Map> {
 
                 //получаем строку
                 Row row = (Row) rowIterator.next();
-                if (row.getRowNum() == 0 || row.getRowNum() == 1 || row.getRowNum() == 2 || row.getRowNum() == 3){
+                if (row.getRowNum() == 0 || row.getRowNum() == 1 || row.getRowNum() == 2 || row.getRowNum() == 3) {
                     continue;
                 }
 
-                if (row.getPhysicalNumberOfCells() == 0){
+                if (row.getPhysicalNumberOfCells() == 0) {
                     break;
                 }
 
@@ -80,7 +89,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 //получаем артикл Ozon
                 cell = row.getCell(1);
                 int code = (int) cell.getNumericCellValue();
-                if (code == 0){
+                if (code == 0) {
                     continue;
                 }
                 String myVendorCodeOzon = String.valueOf(code);
@@ -157,10 +166,15 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 i++;
             }
             System.out.println("Кол-во строк - " + countReadsRows);
+        } catch (Exception e) {
+            System.out.println("ошибка при чтении файла Excel с отчётом Ozon. Смотри строку - " + countReadsRows);
+            return null;
+        }
 
 //считываем информацию с отчёта 1C
-            System.out.println("считываем информацию с отчёта 1C");
-            rowIterator = sheet_1C.rowIterator();
+        try {
+            System.out.println("считываем информацию с базы 1C");
+            Iterator rowIterator = sheet_1C.rowIterator();
             countReadsRows_1C = 1;
             while (rowIterator.hasNext()){
                 //получаем строку
@@ -171,8 +185,9 @@ public class TaskReadExcelForOzon extends Task<Map> {
 
                 //получаем код товара по 1С
                 Cell cell = row.getCell(1);
-                if (cell == null){
-                    continue;
+                if (cell.getRichStringCellValue().getString().equals("")) {
+                    System.out.println("Пустая ячейка в базе 1С для строки " + row.getRowNum());
+                    break;
                 }
                 String code_1C = cell.getRichStringCellValue().getString();
 
@@ -555,29 +570,27 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 countReadsRows_1C++;
                 i++;
             }
-            System.out.println("Кол-во строк - " + countReadsRows);
-
-            //пытаемся привязать specPrice_1C и productName к ResultProduct
-            for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
-                String key = entry.getKey();
-                String code_1C = entry.getValue().getCode_1C();
-                Supplier supplier1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
-                if (supplier1 != null){
-                    entry.getValue().setIsFind(1);
-                    entry.getValue().setSpecPrice(supplier1.getSpecPrice());
-                    entry.getValue().setMyBrand(supplier1.getMyBrand());
-                    entry.getValue().setProductType(supplier1.getProductType());
-                    entry.getValue().setMyNomenclature_1C(supplier1.getNomenclature());
-                    entry.getValue().setQuerySearchForWildberiesOrOzon(supplier1.getQuerySearch());
-                } else entry.getValue().setSpecPrice(0);
-            }
-            return resultProductHashMap;
-        }
-        catch (Exception e) {
-            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countReadsRows);
-            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countReadsRows_1C);
+            System.out.println("Кол-во строк - " + countReadsRows_1C);
+        } catch (Exception e) {
+            System.out.println("ошибка при чтении файла Excel с базой 1C. Смотри строку - " + countReadsRows_1C);
             return null;
         }
+
+//пытаемся привязать specPrice_1C и productName к ResultProduct
+        for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
+            String key = entry.getKey();
+            String code_1C = entry.getValue().getCode_1C();
+            Supplier supplier1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
+            if (supplier1 != null){
+                entry.getValue().setIsFind(1);
+                entry.getValue().setSpecPrice(supplier1.getSpecPrice());
+                entry.getValue().setMyBrand(supplier1.getMyBrand());
+                entry.getValue().setProductType(supplier1.getProductType());
+                entry.getValue().setMyNomenclature_1C(supplier1.getNomenclature());
+                entry.getValue().setQuerySearchForWildberiesOrOzon(supplier1.getQuerySearch());
+            } else entry.getValue().setSpecPrice(0);
+        }
+        return resultProductHashMap;
     }
 
     private boolean checkFileOzon(Sheet sheet){

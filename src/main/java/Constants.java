@@ -7,10 +7,15 @@ public class Constants {
 //    public static final String LOGIN = "4soy9fg6";
 //    public static final String PASSWORD = "boxhyr84";
 
-    public static final String PROXY_HOST = "marina.ltespace.com";
-    public static final int PROXY_PORT = 12426;
-    public static final String LOGIN = "6uxxte5v";
-    public static final String PASSWORD = "x1k7dfkc";
+//    public static final String PROXY_HOST = "marina.ltespace.com";
+//    public static final int PROXY_PORT = 12426;
+//    public static final String LOGIN = "6uxxte5v";
+//    public static final String PASSWORD = "x1k7dfkc";
+
+    public static final String PROXY_HOST = "elena.ltespace.com";
+    public static final int PROXY_PORT = 19211;
+    public static final String LOGIN = "f8asf6bz";
+    public static final String PASSWORD = "a4f17r9f";
 
     public static final String URL_FOR_SWITCH_IP = "https://ltespace.com/api/private/touch?port=" + PROXY_PORT + "&login=" + LOGIN + "&password=" + PASSWORD;
                                                   //https://ltespace.com/api/private/touch?port=18487&login=pttgua83&password=xr791oom
@@ -350,10 +355,11 @@ public class Constants {
         listForCharging.add("микро");
         listForCharging.add("Micro");
         listForCharging.add("micro");
-        listForCharging.add("Apple 8 pin");
-        listForCharging.add("Apple");
+        listForCharging.add("apple 8 pin");
+        listForCharging.add("apple");
         listForCharging.add("8 pin");
         listForCharging.add("lightning");
+        listForCharging.add("iphone");
         listForCharging.add("Type-C");
         listForCharging.add("type-C");
         listForCharging.add("Type");
