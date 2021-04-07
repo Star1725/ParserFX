@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -112,7 +113,7 @@ public class ParserWildBer {
                     productList = getCatalogProducts(query.toString().toLowerCase(), brand);
                     if (productList.size() != 0){
                         //проходимся по всему списку и находим продукт с наименьшей ценой
-                        product = getProductWithLowerPrice(productList, myVendorCodes);
+                        product = getProductWithLowerPrice(productList, myVendorCodes, null);
                     }
                     break;
 
@@ -156,7 +157,7 @@ public class ParserWildBer {
                     productList = getCatalogProducts(query.toString().toLowerCase(), brand);
                     if (productList.size() != 0){
                         //проходимся по всему списку и находим продукт с наименьшей ценой
-                        product = getProductWithLowerPrice(productList, myVendorCodes);
+                        product = getProductWithLowerPrice(productList, myVendorCodes, null);
                     }
                     break;
 
@@ -170,15 +171,28 @@ public class ParserWildBer {
                     productList = getCatalogProducts(query.toString().toLowerCase(), brand);
                     if (productList.size() != 0){
                         //проходимся по всему списку и находим продукт с наименьшей ценой
-                        product = getProductWithLowerPrice(productList, myVendorCodes);
+                        product = getProductWithLowerPrice(productList, myVendorCodes, null);
                     }
                     break;
             }
+            //пользуемся поисковым запросом, полученным на основании анализа номенклатуры из базы 1С
         } else {
-            productList = getCatalogProducts(querySearch.toLowerCase(), brand);
-            if (productList.size() != 0){
-                //проходимся по всему списку и находим продукт с наименьшей ценой
-                product = getProductWithLowerPrice(productList, myVendorCodes);
+            switch (productType){
+                case Constants.PRODUCT_TYPE_1C_39:
+                    String[] arrayQuerySearch = querySearch.split(" ");
+                    productList = getCatalogProducts(arrayQuerySearch[0].toLowerCase() + " " + arrayQuerySearch[1].toLowerCase(), brand);
+                    if (productList.size() != 0){
+                        //проходимся по всему списку и находим продукт с наименьшей ценой
+                        product = getProductWithLowerPrice(productList, myVendorCodes, querySearch);
+                    }
+                    break;
+
+                default:
+                    productList = getCatalogProducts(querySearch.toLowerCase(), brand);
+                    if (productList.size() != 0){
+                        //проходимся по всему списку и находим продукт с наименьшей ценой
+                        product = getProductWithLowerPrice(productList, myVendorCodes, null);
+                    }
             }
         }
 
@@ -225,12 +239,61 @@ public class ParserWildBer {
         return page;
     }
 
-    private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes) {
+    private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes, String querySearch) {
         if (productList.size() == 1){
             return productList.get(0);
         } else {
             Product product = null;
             productList.sort(comparing(Product::getCompetitorLowerPriceU));
+
+            if (querySearch != null){
+                String[] arraySearch = querySearch.split(" ", 3);
+                //если в запросе только бренд и модель, то из productList нужно исключить те продукты, в названии которых есть кабели
+                if (arraySearch.length == 2){
+                    for (Product p : productList) {
+                        for (String s: Constants.listForCharging){
+                            if (p.getMyProductName().contains(s)){
+                                productList.remove(p);
+                            }
+                        }
+                    }
+                }
+                //если в запросе бренд, модель и кабель то из productList нужно исключить те продукты, в названии которых либо нет кабелей, либо нетот который исчем
+                else {
+                   // System.out.println(arraySearch.toString());
+
+                    List<String> listWithCable = new ArrayList();
+                    //определяем коллекцию с названием одного и того же кабеля
+                    String param = arraySearch[2];
+                    boolean b = Constants.listForChargingMicro.contains(param);
+
+                    if (b){
+                        listWithCable = Constants.listForChargingMicro;
+                    } else if (Constants.listForChargingApple.contains(arraySearch[2])){
+                        listWithCable = Constants.listForChargingApple;
+                    } else if (Constants.listForChargingType.contains(arraySearch[2])){
+                        listWithCable = Constants.listForChargingType;
+                    } else {
+                        System.out.println("Уточнить параметр кабеля для запроса \"" + querySearch + "\"");
+                    }
+
+                    for (int i = 0; i < productList.size();) {
+                        int numberOfCoincidences = 0;
+                        String productName = productList.get(i).getCompetitorProductName();
+                        for (String s: listWithCable){
+                            if (productName.contains(s)){
+                                numberOfCoincidences++;
+                            }
+                        }
+                        if (numberOfCoincidences == 0){
+                            productList.remove(i);
+                            i--;
+                        }
+                        i++;
+                    }
+                }
+            }
+
             for (Product p : productList) {
                 if (!myVendorCodes.contains(p.getCompetitorVendorCode())) {
                     product = p;

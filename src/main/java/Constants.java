@@ -246,6 +246,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_162="Щетка для автомобиля";
     public static final String PRODUCT_TYPE_1C_163="Электрическая мухобойка";
     public static final String PRODUCT_TYPE_1C_164="Автомойка";
+    public static final String PRODUCT_TYPE_1C_165="Велосипедный держатель";
 
     public static final String MARKETPLACE = "https://www.wildberries.ru";
 
@@ -311,6 +312,9 @@ public class Constants {
     //public static final ArrayList<String> listForLength = new ArrayList<>();
     public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
     public static final ArrayList<String> listForCharging = new ArrayList<>();
+    public static final ArrayList<String> listForChargingApple = new ArrayList<>();
+    public static final ArrayList<String> listForChargingMicro = new ArrayList<>();
+    public static final ArrayList<String> listForChargingType = new ArrayList<>();
     public static final ArrayList<String> listForBugs = new ArrayList<>();
     public static final ArrayList<String> listForHeadset = new ArrayList<>();
     public static final ArrayList<String> listForBrands = new ArrayList<>();
@@ -326,7 +330,6 @@ public class Constants {
         listForHeadset.add("type-c");
         listForHeadset.add("3,5");
         listForHeadset.add("3.5");
-
 
         listForCabel.add("0.2м");
         listForCabel.add("0.25м");
@@ -349,9 +352,6 @@ public class Constants {
         listForTypeGlass.add("EYE");
         listForTypeGlass.add("Privacy");
 
-        //listForCharging.add("держателем");
-        //listForCharging.add("для");
-        //listForCharging.add("авто");
         listForCharging.add("микро");
         listForCharging.add("Micro");
         listForCharging.add("micro");
@@ -364,6 +364,23 @@ public class Constants {
         listForCharging.add("type-C");
         listForCharging.add("Type");
         listForCharging.add("type");
+
+        listForChargingMicro.add("микро");
+        listForChargingMicro.add("micro");
+        listForChargingMicro.add("Микро");
+        listForChargingMicro.add("Micro");
+
+        listForChargingApple.add("Apple 8 pin");
+        listForChargingApple.add("apple 8 pin");
+        listForChargingApple.add("Apple");
+        listForChargingApple.add("apple");
+        listForChargingApple.add("8 pin");
+        listForChargingApple.add("Lightning");
+        listForChargingApple.add("lightning");
+        listForChargingApple.add("iPhone");
+
+        listForChargingType.add("Type");
+        listForChargingType.add("type");
 
         listForBugs.add("(S)");
         listForBugs.add("(L)");
@@ -540,5 +557,6 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_162);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_163);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_164);
+        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_165);
     }
 }

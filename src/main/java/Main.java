@@ -32,7 +32,6 @@ public class Main extends Application implements Controller.ActionInController {
 
     private Object mon = new Object();
     private static WebClient webClient = null;
-    public static int countSwitchIP = 0;
     public static Lock lock = new ReentrantLock();
 
     private Controller controller;
@@ -238,13 +237,13 @@ public class Main extends Application implements Controller.ActionInController {
                 List<Future<Product>> futureList = new ArrayList<>();
 
                 int number = 1;
-
-                try {
-                    //смена IP в самом начале
-                    switchIpForProxy();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//
+//                try {
+//                    //смена IP в самом начале
+//                    switchIpForProxy();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
                 for (MyCall myCall : myCalls) {
                     futureList.add(executorCompletionService.submit(myCall));
                     String myVendorCode = "-";
@@ -392,15 +391,15 @@ public class Main extends Application implements Controller.ActionInController {
                         } else {
                             System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
                             Product product = executorCompletionService.take().get();
-                            if (number % 4 == 0){
-                            //переключение на новый IP после трёх удачных запросов
-                                System.out.println("прверка - lock свободен: " + lock.toString());
-                                lock.lock();
-                                System.out.println("В main number кратен 4, смена IP");
-                                switchIpForProxy();
-                                lock.unlock();
-                                System.out.println("прверка - lock свободен: " + lock.toString());
-                            }
+//                            if (number % 4 == 0){
+//                            //переключение на новый IP после трёх удачных запросов
+//                                System.out.println("прверка - lock свободен: " + lock.toString());
+//                                lock.lock();
+//                                System.out.println("В main number кратен 4, смена IP");
+//                                switchIpForProxy();
+//                                lock.unlock();
+//                                System.out.println("прверка - lock свободен: " + lock.toString());
+//                            }
                             //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                             myVendorCode = product.getMyVendorCodeFromRequest();
                             System.out.println(number + "/" + resultMap.size() + " - получили результат для задачи № " + myVendorCode);
@@ -510,40 +509,6 @@ public class Main extends Application implements Controller.ActionInController {
 //        }
 //    }
 
-    public static void switchIpForProxy() throws InterruptedException {
-        int count = 10;//попытки смены IP
-        HtmlPage page = null;
-        URL uri = null;
-        try {
-            uri = new URL(Constants.URL_FOR_SWITCH_IP);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        System.out.println("вход в цикл");
-        while (count > 0){
-            System.out.println("количество попыток смены IP - " + count);
-            try {
-                page = webClient.getPage(uri);
-                count = 0;
-                DomNodeList<DomElement> metas = page.getElementsByTagName("body");
-                //проверка ответа сервером (<body>ok</body>)
-                if (metas.get(0).asText().equals("ok")) {
-                    System.out.println("смена IP успешна");
-                    countSwitchIP++;
-                    Thread.sleep(2000);
-                }
-            } catch (IOException e) {
-                System.out.println("проблема при смене IP");
-                e.printStackTrace();
-                if (count == 0) {
-                    webClient.close();
-                    break;
-                }
-                count--;
-            }
-        }
-        webClient.close();
-    }
 
     //колобэл, который выполняет запросы на wildberries
     static class MyCall implements Callable<Product> {
