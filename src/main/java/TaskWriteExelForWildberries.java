@@ -226,7 +226,8 @@ public class TaskWriteExelForWildberries extends Task<File> {
 
             //Мой артикул по Wildberies
             cell = row.createCell(3);
-            cell.setCellValue(productArrayList.get(i).getMyVendorCodeForWildberiesOrOzon());
+            String vendorCodeWildberries = productArrayList.get(i).getMyVendorCodeForWildberiesOrOzon();
+            cell.setCellValue(vendorCodeWildberries);
             if (isMy && isMyAnalog){
                 cell.setCellStyle(styleMyProduct);
             } else if (!isMy && isMyAnalog){
@@ -467,13 +468,13 @@ public class TaskWriteExelForWildberries extends Task<File> {
             //установка картинки для моего товара
             String myImageUrl = productArrayList.get(i).getMyRefForImage();
             if (!myImageUrl.equals("-")){
-                setImageForCell(myImageUrl, 5, i, 0.125, 0.125);
+                setImageForCell(myImageUrl, 5, i, 0.125, 0.125, vendorCodeWildberries);
             }
 
             //установка картинки для конкурента
             String imageUrl = productArrayList.get(i).getCompetitorRefForImage();
             if (!imageUrl.equals("-")){
-                setImageForCell(imageUrl, 8, i, 0.25, 0.25);
+                setImageForCell(imageUrl, 8, i, 0.25, 0.25, vendorCodeWildberries);
             }
 
             this.updateProgress(i + 1, countRows);
@@ -497,8 +498,9 @@ public class TaskWriteExelForWildberries extends Task<File> {
         return currDir;
     }
 
-    private void setImageForCell(String url, int columnIndex, int rowIndex, double scaleX, double scaleY) {
+    private void setImageForCell(String url, int columnIndex, int rowIndex, double scaleX, double scaleY, String vendorCodeWildberries) {
         try {
+            System.out.println("Загрузка картинки для артикула WB = " + vendorCodeWildberries);
             byte[] bytes = Jsoup.connect(url).timeout(30000).ignoreContentType(true).execute().bodyAsBytes();
 
             int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);

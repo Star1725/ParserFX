@@ -232,7 +232,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                                 buffParams = myNomenclature.split("кабель");
                             }
                             for (String type: Constants.listForCharging){
-                                if (buffParams[1].contains(type)){
+                                if (buffParams[1].toLowerCase().contains(type)){
                                     paramsBuilder.append(" ").append(type);
                                 }
                             }
@@ -417,7 +417,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_129:
                         case Constants.PRODUCT_TYPE_1C_130:
                         case Constants.PRODUCT_TYPE_1C_131:
-                        case Constants.PRODUCT_TYPE_1C_132:
+
                         case Constants.PRODUCT_TYPE_1C_134:
                         case Constants.PRODUCT_TYPE_1C_135:
                         case Constants.PRODUCT_TYPE_1C_136:
@@ -465,6 +465,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_49:
                         case Constants.PRODUCT_TYPE_1C_50:
                         case Constants.PRODUCT_TYPE_1C_61:
+                        case Constants.PRODUCT_TYPE_1C_132:
 
                             querySearch = brand + " " + model + " " + params;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);

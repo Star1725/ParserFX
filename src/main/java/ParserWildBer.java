@@ -179,11 +179,19 @@ public class ParserWildBer {
         } else {
             switch (productType){
                 case Constants.PRODUCT_TYPE_1C_39:
+                case Constants.PRODUCT_TYPE_1C_40:
+                case Constants.PRODUCT_TYPE_1C_132:
                     String[] arrayQuerySearch = querySearch.split(" ");
+                    for (String s: arrayQuerySearch){
+
+                    }
                     productList = getCatalogProducts(arrayQuerySearch[0].toLowerCase() + " " + arrayQuerySearch[1].toLowerCase(), brand);
                     if (productList.size() != 0){
                         //проходимся по всему списку и находим продукт с наименьшей ценой
-                        product = getProductWithLowerPrice(productList, myVendorCodes, querySearch);
+                        Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, querySearch);
+                        if (buffProduct != null) {
+                            product = buffProduct;
+                        }
                     }
                     break;
 
@@ -246,52 +254,60 @@ public class ParserWildBer {
             Product product = null;
             productList.sort(comparing(Product::getCompetitorLowerPriceU));
 
-            if (querySearch != null){
-                String[] arraySearch = querySearch.split(" ", 3);
-                //если в запросе только бренд и модель, то из productList нужно исключить те продукты, в названии которых есть кабели
-                if (arraySearch.length == 2){
-                    for (Product p : productList) {
-                        for (String s: Constants.listForCharging){
-                            if (p.getMyProductName().contains(s)){
-                                productList.remove(p);
+            try {
+                if (querySearch != null){
+                    String[] arraySearch = querySearch.trim().split(" ", 3);
+                    //если в запросе только бренд и модель, то из productList нужно исключить те продукты, в названии которых есть кабели
+                    if (arraySearch.length == 2){
+                        for (Product p : productList) {
+                            for (String s: Constants.listForCharging){
+                                if (p.getMyProductName().contains(s)){
+                                    productList.remove(p);
+                                }
                             }
                         }
                     }
-                }
-                //если в запросе бренд, модель и кабель то из productList нужно исключить те продукты, в названии которых либо нет кабелей, либо нетот который исчем
-                else {
-                   // System.out.println(arraySearch.toString());
+                    //если в запросе бренд, модель и кабель то из productList нужно исключить те продукты, в названии которых либо нет кабелей, либо нетот который исчем
+                    else {
+                       // System.out.println(arraySearch.toString());
 
-                    List<String> listWithCable = new ArrayList();
-                    //определяем коллекцию с названием одного и того же кабеля
-                    String param = arraySearch[2];
-                    boolean b = Constants.listForChargingMicro.contains(param);
+                        List<String> listWithCable = new ArrayList();
+                        //определяем коллекцию с названием одного и того же кабеля
+                        String param = arraySearch[2];
+                        boolean b = Constants.listForChargingMicro.contains(param);
 
-                    if (b){
-                        listWithCable = Constants.listForChargingMicro;
-                    } else if (Constants.listForChargingApple.contains(arraySearch[2])){
-                        listWithCable = Constants.listForChargingApple;
-                    } else if (Constants.listForChargingType.contains(arraySearch[2])){
-                        listWithCable = Constants.listForChargingType;
-                    } else {
-                        System.out.println("Уточнить параметр кабеля для запроса \"" + querySearch + "\"");
-                    }
+                        if (b){
+                            listWithCable = Constants.listForChargingMicro;
+                        } else if (Constants.listForChargingApple.contains(arraySearch[2])){
+                            listWithCable = Constants.listForChargingApple;
+                        } else if (Constants.listForChargingType.contains(arraySearch[2])){
+                            listWithCable = Constants.listForChargingType;
+                        } else {
+                            System.out.println("Уточнить параметр кабеля для запроса \"" + querySearch + "\"");
+                        }
 
-                    for (int i = 0; i < productList.size();) {
-                        int numberOfCoincidences = 0;
-                        String productName = productList.get(i).getCompetitorProductName();
-                        for (String s: listWithCable){
-                            if (productName.contains(s)){
-                                numberOfCoincidences++;
+                        for (int i = 0; i < productList.size();) {
+                            int numberOfCoincidences = 0;
+                            String productName = productList.get(i).getCompetitorProductName();
+                            for (String s: listWithCable){
+                                if (productName.contains(s)){
+                                    numberOfCoincidences++;
+                                }
                             }
+                            if (numberOfCoincidences == 0){
+                                productList.remove(i);
+                                i--;
+                            }
+                            i++;
                         }
-                        if (numberOfCoincidences == 0){
-                            productList.remove(i);
-                            i--;
-                        }
-                        i++;
                     }
                 }
+            } catch (Exception e) {
+                System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
+            }
+
+            if (productList.size() == 0){
+                return null;
             }
 
             for (Product p : productList) {
@@ -630,11 +646,20 @@ public class ParserWildBer {
         //String url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&&sort=priceup");// для вер. 1
 
         Document page = null;
-        try {
-            page = Jsoup.parse(new URL(url), 30000);
-        } catch (IOException e) {
-            return page;
+        while (page == null){
+            try {
+                System.out.println("Получение страницы с аналогами");
+                page = Jsoup.parse(new URL(url), 30000);
+            } catch (IOException ignored) {
+                try {
+                    System.out.println("Получаем пустую страницу. Видимо проблемы с соединением");
+                    Thread.sleep(1000);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
+            }
         }
+
         return page;
     }
 

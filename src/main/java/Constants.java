@@ -355,13 +355,11 @@ public class Constants {
         listForCharging.add("микро");
         listForCharging.add("Micro");
         listForCharging.add("micro");
-        listForCharging.add("apple 8 pin");
+        //listForCharging.add("apple 8 pin");
         listForCharging.add("apple");
         listForCharging.add("8 pin");
         listForCharging.add("lightning");
         listForCharging.add("iphone");
-        listForCharging.add("Type-C");
-        listForCharging.add("type-C");
         listForCharging.add("Type");
         listForCharging.add("type");
 
