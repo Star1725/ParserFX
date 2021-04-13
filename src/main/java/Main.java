@@ -76,7 +76,7 @@ public class Main extends Application implements Controller.ActionInController {
         webClient.setCredentialsProvider(credentialsProvider);
 
         webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setUseInsecureSSL(true);
@@ -230,8 +230,10 @@ public class Main extends Application implements Controller.ActionInController {
                     String brand = entry.getValue().getMyBrand();
                     String productType = entry.getValue().getProductType();
                     String querySearchForOzon = entry.getValue().getQuerySearchForWildberiesOrOzon();
+                    String myProductModel = entry.getValue().getMyProductModel();
+                    List<String> arrayParams = entry.getValue().getArrayListParams();
 
-                    myCalls.add(new MyCall(key, category, brand, productType, setMyVendorCodes, querySearchForOzon, webClient, lock));
+                    myCalls.add(new MyCall(key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, querySearchForOzon, webClient, lock));
                 }
 
                 List<Future<Product>> futureList = new ArrayList<>();
@@ -516,16 +518,20 @@ public class Main extends Application implements Controller.ActionInController {
         String category;
         String brand;
         String productType;
+        String productModel;
+        List<String> arrayParams;
         String querySearchForOzon;
         Set myVendorCodes;
         WebClient webClient;
         Lock lock;
 
-        public MyCall(String key, String category, String brand, String productType, Set myVendorCodes, String querySearchForOzon, WebClient webClient, Lock lock) {
+        public MyCall(String key, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String querySearchForOzon, WebClient webClient, Lock lock) {
             this.key = key;
             this.category = category;
             this.brand = brand;
             this.productType = productType;
+            this.productModel = productModel;
+            this.arrayParams = arrayParams;
             this.querySearchForOzon = querySearchForOzon;
             this.myVendorCodes = myVendorCodes;
             this.webClient = webClient;
@@ -537,7 +543,7 @@ public class Main extends Application implements Controller.ActionInController {
         //2 - флаг для Wildberies
         public Product call() throws Exception {
             if (marketplaceFlag == 1){
-                return parserOzon.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient, lock);
+                return parserOzon.getProduct(key, category, brand, productType, productModel, arrayParams, myVendorCodes, querySearchForOzon, webClient, lock);
             } else if (marketplaceFlag == 2){
                 return parserWildBer.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient);
             } else return null;

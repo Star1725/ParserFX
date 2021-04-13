@@ -1,6 +1,8 @@
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+
 @Getter
 @Setter
 public class ResultProduct extends Product{
@@ -8,6 +10,9 @@ public class ResultProduct extends Product{
     private String myBrand;
     private String category;
     private String productType;
+    private String myProductModel;
+    private int countMyProductModel;
+    private ArrayList<String> arrayListParams;
     private String code_1C;
     private String myNomenclature_1C;
     private String myVendorCodeForWildberiesOrOzon;
@@ -65,6 +70,9 @@ public class ResultProduct extends Product{
             String myBrand,
             String category,
             String productType,
+            String myProductModel,
+            int countMyProductModel,
+            ArrayList<String> arrayListParams,
             String code_1C,
             String myNomenclature_1C,
             String myVendorCodeForWildberiesOrOzon,
@@ -117,6 +125,9 @@ public class ResultProduct extends Product{
         this.myBrand = myBrand;
         this.category = category;
         this.productType = productType;
+        this.myProductModel = myProductModel;
+        this.countMyProductModel = countMyProductModel;
+        this.arrayListParams = arrayListParams;
         this.code_1C = code_1C;
         this.myNomenclature_1C = myNomenclature_1C;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;
@@ -144,6 +155,9 @@ public class ResultProduct extends Product{
             String myBrand,
             String category,
             String productType,
+            String myProductModel,
+            int countMyProductModel,
+            ArrayList<String> arrayListParams,
             String code_1C,
             String myNomenclature_1C,
             String myVendorCodeForWildberiesOrOzon,
@@ -169,6 +183,9 @@ public class ResultProduct extends Product{
         this.myBrand = myBrand;
         this.category = category;
         this.productType = productType;
+        this.myProductModel = myProductModel;
+        this.countMyProductModel = countMyProductModel;
+        this.arrayListParams = arrayListParams;
         this.code_1C = code_1C;
         this.myNomenclature_1C = myNomenclature_1C;
         this.myVendorCodeForWildberiesOrOzon = myVendorCodeForWildberiesOrOzon;

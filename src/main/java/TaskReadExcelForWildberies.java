@@ -109,6 +109,9 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         brand,
                         category,
                         "-",
+                        "-",
+                        0,
+                        null,
                         code_1C,
                         "-",
                         myVendorCodeWildberies,
@@ -585,7 +588,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 }
 
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, querySearch, specPrice_1C, commission, delivery));
+                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, null, querySearch, specPrice_1C, commission, delivery));
                 //увеличиваем ProgressBar
                 this.updateProgress(i, countFull);
                 countReadsRows_1C++;
