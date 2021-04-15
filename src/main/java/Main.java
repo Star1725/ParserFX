@@ -281,6 +281,7 @@ public class Main extends Application implements Controller.ActionInController {
 
 ////////////////////////для wildberries//////////////////////////////////////////////////////////////////////////////////
                         if (marketplaceFlag == 2){
+                            System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
                             Product product = executorCompletionService.take().get();
                             //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                             myVendorCode = product.getMyVendorCodeFromRequest();
@@ -543,9 +544,11 @@ public class Main extends Application implements Controller.ActionInController {
         //2 - флаг для Wildberies
         public Product call() throws Exception {
             if (marketplaceFlag == 1){
+                System.out.println("Запуск задачи parserOzon.getProduct() для артикула Ozon = " + key + ", где brand = " + brand + ", productModel = " + productModel);
                 return parserOzon.getProduct(key, category, brand, productType, productModel, arrayParams, myVendorCodes, querySearchForOzon, webClient, lock);
             } else if (marketplaceFlag == 2){
-                return parserWildBer.getProduct(key, category, brand, productType, myVendorCodes, querySearchForOzon, webClient);
+                System.out.println("Запуск задачи parserWildBer.getProduct()для артикула WB = " + key + ", где brand = " + brand + ", productModel = " + productModel);
+                return parserWildBer.getProduct(key, category, brand, productType, productModel, arrayParams, myVendorCodes, querySearchForOzon, webClient);
             } else return null;
         }
     }

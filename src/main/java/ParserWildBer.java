@@ -10,18 +10,16 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Comparator.comparing;
 
 public class ParserWildBer {
 
     private Object mon = new Object();
+    private static Map<String, List<Product>> resultMapForQueries = new LinkedHashMap<>();
 
-    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, String productType, Set myVendorCodes, String querySearch, WebClient webClient){
+    public Product getProduct(String myVendorCodeFromRequest, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient){
         List<Product> productList;
         Product product = new Product(myVendorCodeFromRequest,
                 "-",
@@ -61,8 +59,9 @@ public class ParserWildBer {
             return product;
         }
 
+//////////////формирование поискового запроса на основании данных, полученных из анализа страницы моего продукта, для которого мы исчем аналоги
         //обработка html-страницы для формирования поискового запроса аналогов
-        if (querySearch.isEmpty()){
+        if (productModel.isEmpty() || productModel.equals("-")){
             paramsForRequest = getDataForRequestFromCategory(page, category, brand);
             if (paramsForRequest.size() == 0){
                 product.setQueryForSearch("Мало данных для формирования поискового запроса");
@@ -113,7 +112,7 @@ public class ParserWildBer {
                     productList = getCatalogProducts(query.toString().toLowerCase(), brand);
                     if (productList.size() != 0){
                         //проходимся по всему списку и находим продукт с наименьшей ценой
-                        product = getProductWithLowerPrice(productList, myVendorCodes, null);
+                        product = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
                     }
                     break;
 
@@ -157,7 +156,7 @@ public class ParserWildBer {
                     productList = getCatalogProducts(query.toString().toLowerCase(), brand);
                     if (productList.size() != 0){
                         //проходимся по всему списку и находим продукт с наименьшей ценой
-                        product = getProductWithLowerPrice(productList, myVendorCodes, null);
+                        product = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
                     }
                     break;
 
@@ -171,37 +170,78 @@ public class ParserWildBer {
                     productList = getCatalogProducts(query.toString().toLowerCase(), brand);
                     if (productList.size() != 0){
                         //проходимся по всему списку и находим продукт с наименьшей ценой
-                        product = getProductWithLowerPrice(productList, myVendorCodes, null);
+                        product = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
                     }
                     break;
             }
             //пользуемся поисковым запросом, полученным на основании анализа номенклатуры из базы 1С
         } else {
-            switch (productType){
-                case Constants.PRODUCT_TYPE_1C_39:
-                case Constants.PRODUCT_TYPE_1C_40:
-                case Constants.PRODUCT_TYPE_1C_132:
-                    String[] arrayQuerySearch = querySearch.split(" ");
-                    for (String s: arrayQuerySearch){
+////////////поисковый запрос мы получаем из аргументов метода: brand, productModel, specQuerySearch/////////////////////
+            //если наш кеш пустой, то заносим туда первый каталог
+            if (resultMapForQueries.size() == 0) {
+                System.out.println("Получение каталога аналогов для \"" + brand.toLowerCase() + " " + productModel.toLowerCase() + "\"");
+                System.out.println("дополнительный параметр поиска - " + arrayParams.toString());
+                productList = getCatalogProducts(brand.toLowerCase() + " " + productModel.toLowerCase(), brand);
 
-                    }
-                    productList = getCatalogProducts(arrayQuerySearch[0].toLowerCase() + " " + arrayQuerySearch[1].toLowerCase(), brand);
-                    if (productList.size() != 0){
-                        //проходимся по всему списку и находим продукт с наименьшей ценой
-                        Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, querySearch);
-                        if (buffProduct != null) {
-                            product = buffProduct;
-                        }
-                    }
-                    break;
+                resultMapForQueries.put(brand + " " + productModel, productList);
 
-                default:
-                    productList = getCatalogProducts(querySearch.toLowerCase(), brand);
-                    if (productList.size() != 0){
-                        //проходимся по всему списку и находим продукт с наименьшей ценой
-                        product = getProductWithLowerPrice(productList, myVendorCodes, null);
+                if (productList.size() != 0) {
+                    System.out.println("Размер каталога аналогов = " + productList.size());
+                    //проходимся по всему списку и находим продукт с наименьшей ценой
+                    System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
+                    Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
+                    if (buffProduct != null) {
+                        product = buffProduct;
                     }
+                } else {
+                    System.out.println("Для данного запроса ничего не найдено");
+                }
+                //проверяем наш кеш на наличие каталога для запроса brand, productModel
+            } else if (resultMapForQueries.containsKey(brand + " " + productModel)){
+                System.out.println("Для запроса \"" + brand + " " + productModel + " + arrayParams = " + arrayParams.toString() + "\" в кеше найден каталог аналогов, поэтому запрос на ozon не осуществляем");
+                productList = resultMapForQueries.get(brand + " " + productModel);
+                if (productList.size() != 0) {
+                    System.out.println("Размер каталога аналогов = " + productList.size());
+                    //проходимся по всему списку и находим продукт с наименьшей ценой
+                    System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
+                    Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
+                    if (buffProduct != null) {
+                        product = buffProduct;
+                    }
+                } else {
+                    System.out.println("Для данного запроса ничего не найдено");
+                }
+            } else {
+                System.out.println("Получение каталога аналогов для \"" + brand.toLowerCase() + " " + productModel.toLowerCase() + "\"");
+                productList = getCatalogProducts(brand.toLowerCase() + " " + productModel.toLowerCase(), brand);
+
+                resultMapForQueries.put(brand + " " + productModel, productList);
+
+                if (productList.size() != 0) {
+                    System.out.println("Размер каталога аналогов = " + productList.size());
+                    //проходимся по всему списку и находим продукт с наименьшей ценой
+                    System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
+                    Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
+                    if (buffProduct != null) {
+                        product = buffProduct;
+                    }
+                } else {
+                    System.out.println("Для данного запроса ничего не найдено");
+                }
             }
+//            System.out.println("Получение каталога аналогов для \"" + brand.toLowerCase() + " " + productModel.toLowerCase() + "\"");
+//            productList = getCatalogProducts(brand.toLowerCase() + " " + productModel.toLowerCase(), brand);
+//            if (productList.size() != 0) {
+//                System.out.println("Размер каталога аналогов = " + productList.size());
+//                //проходимся по всему списку и находим продукт с наименьшей ценой
+//                System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
+//                Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
+//                if (buffProduct != null) {
+//                    product = buffProduct;
+//                }
+//            } else {
+//                System.out.println("Для данного запроса ничего не найдено");
+//            }
         }
 
         assert product != null;
@@ -217,7 +257,7 @@ public class ParserWildBer {
         product.setMyRefForImage(getMyProductsPhoto(page));
 
         //устанавливаем поисковый запрос аналогов
-        product.setQueryForSearch(querySearch);
+        product.setQueryForSearch(specQuerySearch);
 
         //устанавливаем наименование моего товара
         product.setMyProductName(getMyProductsTitle(page));
@@ -247,77 +287,150 @@ public class ParserWildBer {
         return page;
     }
 
-    private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes, String querySearch) {
-        if (productList.size() == 1){
+    private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes, String myVendorCodeFromRequest, String productType, String brand, String productModel, List<String> arrayParams) {
+        if (productList.size() == 0) {
+            return null;
+        } else if (productList.size() == 1){
             return productList.get(0);
         } else {
             Product product = null;
             productList.sort(comparing(Product::getCompetitorLowerPriceU));
 
-            try {
-                if (querySearch != null){
-                    String[] arraySearch = querySearch.trim().split(" ", 3);
-                    //если в запросе только бренд и модель, то из productList нужно исключить те продукты, в названии которых есть кабели
-                    if (arraySearch.length == 2){
-                        for (Product p : productList) {
-                            for (String s: Constants.listForCharging){
-                                if (p.getMyProductName().contains(s)){
-                                    productList.remove(p);
+            switch (productType){
+                case Constants.PRODUCT_TYPE_1C_10:
+                case Constants.PRODUCT_TYPE_1C_39:
+                case Constants.PRODUCT_TYPE_1C_40:
+                case Constants.PRODUCT_TYPE_1C_132:
+                    try {
+                        if (productModel != null){
+                            //если в запросе только бренд и модель, то нам нужен первый product, в описании которого только модель
+                            if (arrayParams.size() == 0){
+                                for (Product p : productList) {
+                                    if (!myVendorCodes.contains(p.getCompetitorVendorCode())){
+                                        String nomenclature = p.getCompetitorProductName().toLowerCase();
+                                        if (nomenclature.contains(productModel)){
+                                            int check = 0;
+                                            for (String s: Constants.listForCharging){
+                                                if (nomenclature.contains(s.toLowerCase())){
+                                                    check++;
+                                                    break;
+                                                }
+                                            }
+                                            if (check == 0){
+                                                product = p;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            //если в запросе бренд, модель и кабель то нам нужен первый product, в описании которого наш param
+                            else {
+                                //определяем коллекцию с разными названиями нашего param
+                                List<String> listWithCable = getCollectionsParam(arrayParams, brand + productModel);
+                                for (Product p : productList) {
+                                    if (!myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                        String nomenclature = p.getCompetitorProductName().toLowerCase();
+                                        if (nomenclature.contains(productModel)){
+                                            int check = 0;
+                                            for (String s : listWithCable) {
+                                                if (nomenclature.contains(s)) {
+                                                    product = p;
+                                                    check++;
+                                                    break;
+                                                }
+                                            }
+                                            if (check != 0){
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
+                    } catch (Exception e) {
+                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
                     }
-                    //если в запросе бренд, модель и кабель то из productList нужно исключить те продукты, в названии которых либо нет кабелей, либо нетот который исчем
-                    else {
-                       // System.out.println(arraySearch.toString());
-
-                        List<String> listWithCable = new ArrayList();
-                        //определяем коллекцию с названием одного и того же кабеля
-                        String param = arraySearch[2];
-                        boolean b = Constants.listForChargingMicro.contains(param);
-
-                        if (b){
-                            listWithCable = Constants.listForChargingMicro;
-                        } else if (Constants.listForChargingApple.contains(arraySearch[2])){
-                            listWithCable = Constants.listForChargingApple;
-                        } else if (Constants.listForChargingType.contains(arraySearch[2])){
-                            listWithCable = Constants.listForChargingType;
-                        } else {
-                            System.out.println("Уточнить параметр кабеля для запроса \"" + querySearch + "\"");
-                        }
-
-                        for (int i = 0; i < productList.size();) {
-                            int numberOfCoincidences = 0;
-                            String productName = productList.get(i).getCompetitorProductName();
-                            for (String s: listWithCable){
-                                if (productName.contains(s)){
-                                    numberOfCoincidences++;
-                                }
-                            }
-                            if (numberOfCoincidences == 0){
-                                productList.remove(i);
-                                i--;
-                            }
-                            i++;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
-            }
-
-            if (productList.size() == 0){
-                return null;
-            }
-
-            for (Product p : productList) {
-                if (!myVendorCodes.contains(p.getCompetitorVendorCode())) {
-                    product = p;
                     break;
-                }
-            }
-            if (product == null){
-                product = productList.get(0);
+
+                case Constants.PRODUCT_TYPE_1C_48:
+                case Constants.PRODUCT_TYPE_1C_49:
+                case Constants.PRODUCT_TYPE_1C_50:
+                case Constants.PRODUCT_TYPE_1C_61:
+                    //case Constants.PRODUCT_TYPE_1C_62:
+                case Constants.PRODUCT_TYPE_1C_63:
+                case Constants.PRODUCT_TYPE_1C_64:
+                case Constants.PRODUCT_TYPE_1C_65:
+                case Constants.PRODUCT_TYPE_1C_66:
+                case Constants.PRODUCT_TYPE_1C_166:
+                case Constants.PRODUCT_TYPE_1C_67:
+                case Constants.PRODUCT_TYPE_1C_68:
+                case Constants.PRODUCT_TYPE_1C_69:
+                case Constants.PRODUCT_TYPE_1C_70:
+                    try {
+                        if (productModel != null & arrayParams.size() == 2){
+                            //определяем коллекцию с разными названиями нашего param
+                            List<String> listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(0), brand + productModel);
+                            List<String> listWithCableParam_2 = getCollectionsParamCable(arrayParams.get(1), brand + productModel);
+                            for (Product p : productList) {
+                                if (!myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                    String nomenclature = p.getCompetitorProductName().toLowerCase();
+                                    if (nomenclature.contains(productModel)){
+                                        int check = 0;
+                                        for (String s1 : listWithCableParam_1) {
+                                            if (nomenclature.contains(s1)) {
+                                                for (String s2 : listWithCableParam_2) {
+                                                    if(nomenclature.contains(s2)){
+                                                        product = p;
+                                                        check++;
+                                                        break;
+                                                    }
+                                                }
+                                                if (check != 0){
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (check != 0){
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
+                    }
+                    break;
+
+                case Constants.PRODUCT_TYPE_1C_139:
+                    try {
+                        if (productModel != null){
+                            if (arrayParams.size() == 1){
+                                for (Product p : productList) {
+                                    if (!myVendorCodes.contains(p.getCompetitorVendorCode())){
+                                        String nomenclature = p.getCompetitorProductName().replaceAll(",", "").toLowerCase();
+                                        if (nomenclature.contains(arrayParams.get(0))) {
+                                            product = p;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
+                    }
+                    break;
+
+                default:
+                    //исключаем мои продукты
+                    for (Product p : productList) {
+                        if (!myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                            product = p;
+                            break;
+                        }
+                    }
             }
             return product;
         }
@@ -391,7 +504,7 @@ public class ParserWildBer {
                     }
                 } catch (Exception e) {
                 }
-                for (String type : Constants.listForCabel) {
+                for (String type : Constants.listForCable) {
                     if (myType.replaceAll(",", "").contains(type)) {
                         paramsForRequest.add(type);
                     }
@@ -689,8 +802,8 @@ public class ParserWildBer {
             Elements goods = catalog.select(Constants.ELEMENT_WITH_PRODUCT);
             int countSearch = goods.size();
             for (Element good : goods) {
-                //артикул
-                String vendorCode = good.attr(Constants.ATTRIBUTE_WITH_VENDOR_CODE);
+//                //артикул
+//                String vendorCode = good.attr(Constants.ATTRIBUTE_WITH_VENDOR_CODE); артикул исчем по новому с 14.04.21
 
                 Element fullProductCard = good.select(Constants.ELEMENT_WITH_CARD_PRODUCT).first();
 
@@ -700,6 +813,16 @@ public class ParserWildBer {
 
                 //ссылка на товар
                 String refForPage = Constants.MARKETPLACE + fullProductCard.attr(Constants.ATTRIBUTE_WITH_REF_FOR_PAGE_PRODUCT);
+
+                //артикул
+                String vendorCode = "-";
+                String[] arrayStringsForRefForPage = refForPage.split("/");
+                for (int i = 0; i < arrayStringsForRefForPage.length; i++){
+                    if (arrayStringsForRefForPage[i].contains("catalog")){
+                        vendorCode = arrayStringsForRefForPage[i +1];
+                        break;
+                    }
+                }
 
                 //ссылка на картинку товара
                 Element img = fullProductCard.select(Constants.ELEMENT_WITH_REF_FOR_IMAGE).first();
@@ -764,5 +887,68 @@ public class ParserWildBer {
             }
         }
         return productList;
+    }
+
+    private static List<String> getCollectionsParam(List<String> arrayParams, String url) {
+        //определяем коллекцию с названием одного и того же кабеля
+        List<String> listWithCable = null;
+        if (arrayParams.size() == 1){
+            String param = arrayParams.get(0);
+            boolean b = Constants.listForChargingMicro.contains(param);
+
+            if (b){
+                listWithCable = Constants.listForChargingMicro;
+            } else if (Constants.listForChargingApple.contains(param)){
+                listWithCable = Constants.listForChargingApple;
+            } else if (Constants.listForChargingType.contains(param)){
+                listWithCable = Constants.listForChargingType;
+            } else {
+                System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
+            }
+            return listWithCable;
+        } else {
+            return  null;
+        }
+    }
+
+    private static List<String> getCollectionsParamCable(String param, String url) {
+        //определяем коллекцию с названием одного и того же кабеля
+        List<String> listWithCable = null;
+        boolean b = Constants.listForChargingMicro.contains(param);
+
+        if (b) {
+            listWithCable = Constants.listForChargingMicro;
+        } else if (Constants.listForChargingApple.contains(param)) {
+            listWithCable = Constants.listForChargingApple;
+        } else if (Constants.listForChargingType.contains(param)) {
+            listWithCable = Constants.listForChargingType;
+        } else if (Constants.listForCharging_2in1.contains(param)) {
+            listWithCable = Constants.listForCharging_2in1;
+        } else if (Constants.listForCharging_3in1.contains(param)) {
+            listWithCable = Constants.listForCharging_3in1;
+        } else if (Constants.listForCharging_4in1.contains(param)) {
+            listWithCable = Constants.listForCharging_4in1;
+        } else if (Constants.listForCable_0_2m.contains(param)) {
+            listWithCable = Constants.listForCable_0_2m;
+        } else if (Constants.listForCable_0_25m.contains(param)) {
+            listWithCable = Constants.listForCable_0_25m;
+        } else if (Constants.listForCable_1m.contains(param)) {
+            listWithCable = Constants.listForCable_1m;
+        } else if (Constants.listForCable_1_2m.contains(param)) {
+            listWithCable = Constants.listForCable_1_2m;
+        } else if (Constants.listForCable_1_4m.contains(param)) {
+            listWithCable = Constants.listForCable_1_4m;
+        } else if (Constants.listForCable_1_6m.contains(param)) {
+            listWithCable = Constants.listForCable_1_6m;
+        } else if (Constants.listForCable_1_8m.contains(param)) {
+            listWithCable = Constants.listForCable_1_8m;
+        } else if (Constants.listForCable_2m.contains(param)) {
+            listWithCable = Constants.listForCable_2m;
+        } else if (Constants.listForCable_3m.contains(param)) {
+            listWithCable = Constants.listForCable_3m;
+        } else {
+            System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
+        }
+        return listWithCable;
     }
 }

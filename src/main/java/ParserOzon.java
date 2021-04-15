@@ -26,7 +26,7 @@ public class ParserOzon {
 
     private static Map<String, List<Product>> resultMapForQueries = new LinkedHashMap<>();
 
-    public Product getProduct(String vendorCodeFromRequest, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String querySearchForOzon, WebClient webClient, Lock lock){
+    public Product getProduct(String vendorCodeFromRequest, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock){
         List<Product> productList = new ArrayList<>();
         String params = "";
         if (arrayParams != null){
@@ -64,7 +64,7 @@ public class ParserOzon {
 
                 "-");
 
-        if (querySearchForOzon.equals("-")){
+        if (specQuerySearch.equals("-")){
             product.setQueryForSearch("отсутствует поисковый запрос");
             productList.add(product);
             resultMapForQueries.put(brand + " " + productModel, productList);
@@ -73,14 +73,13 @@ public class ParserOzon {
 
         if (resultMapForQueries.size() == 0) {
 
-
             webClientForOzon = webClient;
             lockOzon = lock;
-            myQuery = querySearchForOzon;
+            myQuery = specQuerySearch;
             myVendorCodeFromRequest = vendorCodeFromRequest;
 
             System.out.println("Получение каталога аналогов для \"" + brand + " " + productModel + "\" + param = " + params);
-            productList = getCatalogProducts(querySearchForOzon.toLowerCase(), productType, productModel, arrayParams);
+            productList = getCatalogProducts(specQuerySearch.toLowerCase(), productType, productModel, arrayParams);
 
             resultMapForQueries.put(brand + " " + productModel, productList);
 
@@ -98,7 +97,7 @@ public class ParserOzon {
                 switch (productType) {
                     case Constants.PRODUCT_TYPE_1C_78:
                         if (productList.size() != 0) {
-                            product = productList.stream().filter(p -> p.getCompetitorProductName().contains("" + getIntegerFromString(querySearchForOzon))).findAny().orElse(null);
+                            product = productList.stream().filter(p -> p.getCompetitorProductName().contains("" + getIntegerFromString(specQuerySearch))).findAny().orElse(null);
                         }
                         break;
                 }
@@ -129,7 +128,7 @@ public class ParserOzon {
                 switch (productType){
                     case Constants.PRODUCT_TYPE_1C_78:
                         if (productList.size() != 0){
-                            product = productList.stream().filter(p -> p.getCompetitorProductName().contains("" + getIntegerFromString(querySearchForOzon))).findAny().orElse(null);
+                            product = productList.stream().filter(p -> p.getCompetitorProductName().contains("" + getIntegerFromString(specQuerySearch))).findAny().orElse(null);
                         }
                         break;
                     default:
@@ -154,11 +153,11 @@ public class ParserOzon {
             } else {
                 webClientForOzon = webClient;
                 lockOzon = lock;
-                myQuery = querySearchForOzon;
+                myQuery = specQuerySearch;
                 myVendorCodeFromRequest = vendorCodeFromRequest;
 
                 System.out.println("Получение каталога аналогов для \"" + brand + " " + productModel + "\" + param = " + params);
-                productList = getCatalogProducts(querySearchForOzon.toLowerCase(), productType, productModel, arrayParams);
+                productList = getCatalogProducts(specQuerySearch.toLowerCase(), productType, productModel, arrayParams);
 
                 resultMapForQueries.put(brand + " " + productModel, productList);
 
@@ -176,7 +175,7 @@ public class ParserOzon {
                     switch (productType){
                         case Constants.PRODUCT_TYPE_1C_78:
                             if (productList.size() != 0){
-                                product = productList.stream().filter(p -> p.getCompetitorProductName().contains("" + getIntegerFromString(querySearchForOzon))).findAny().orElse(null);
+                                product = productList.stream().filter(p -> p.getCompetitorProductName().contains("" + getIntegerFromString(specQuerySearch))).findAny().orElse(null);
                             }
                             break;
 
@@ -753,7 +752,7 @@ public class ParserOzon {
         return Integer.parseInt(resultPrice.toString());
     }
 
-    private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes, String myVendorCodeFromRequest,String brand, String model, List<String> arrayParams) {
+    private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes, String myVendorCodeFromRequest, String brand, String model, List<String> arrayParams) {
         if (productList.size() == 1){
             return productList.get(0);
         } else {
@@ -778,7 +777,7 @@ public class ParserOzon {
                     //если в запросе бренд, модель и кабель то нам нужен первый product, в описании которого наш param
                     else {
                     //определяем коллекцию с разными названиями нашего param
-                        List<String> listWithCable = getCollectionsParam(arrayParams, brand + model);
+                        List<String> listWithCable = getCollectionsParam(arrayParams, brand + " " + model);
 
                         for (Product p : productList) {
                             for (String s: listWithCable){
@@ -789,21 +788,6 @@ public class ParserOzon {
                             }
                             break;
                         }
-
-//                        for (int i = 0; i < productList.size();) {
-//                            int numberOfCoincidences = 0;
-//                            String productName = productList.get(i).getCompetitorProductName();
-//                            for (String s: listWithCable){
-//                                if (productName.contains(s)){
-//                                    numberOfCoincidences++;
-//                                }
-//                            }
-//                            if (numberOfCoincidences == 0){
-//                                productList.remove(i);
-//                                i--;
-//                            }
-//                            i++;
-//                        }
                     }
                 }
             } catch (Exception e) {

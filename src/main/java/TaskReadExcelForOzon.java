@@ -202,26 +202,17 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 }
                 String code_1C = cell.getRichStringCellValue().getString();
 
-                //получаем код товара по 1С
+                //получаем brand
                 cell = row.getCell(2);
-                String brand = cell.getRichStringCellValue().getString().trim();
-
+                String brand = cell.getRichStringCellValue().getString().toLowerCase().trim();
 
                 //получаем бренд и наименование продукта и сразу пытаемся получить поисковый запрос
                 cell = row.getCell(3);
-                String myNomenclature = cell.getRichStringCellValue().getString().trim();
+                String myNomenclature = cell.getRichStringCellValue().getString().toLowerCase().trim();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Анализ номенклатуры и формирование поискового запроса ////////////////////////////////////
                 //FM-трансмиттер Borofone, BC16, пластик, цвет: чёрный
 
-                //определяем какой бренд
-//                String myBrand = "-";
-//                for (String s: Constants.listForBrands){
-//                    if (myNomenclature.contains(s)){
-//                        myBrand = s;
-//                        break;
-//                    }
-//                }
                 //делим брендом myNomenclature на тип продукта и модель продукта с характеристиками
                 String[] buff1 = myNomenclature.toLowerCase().split(brand.toLowerCase());
                 //определяем тип продукта
@@ -236,7 +227,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     productType = "Новая категория ";
                 }
 
-                //для некоторых типов продуктов необходимы дополнительные параметры для запроса(кабели, )
+                //для некоторых типов продуктов необходимы дополнительные параметры при поиске аналогов в каталоге запроса(кабели, )
                 StringBuilder paramsBuilder = new StringBuilder(" ");
                 String params = "";
                 switch (productType){
@@ -261,12 +252,29 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     //case Constants.PRODUCT_TYPE_1C_133:
                     case Constants.PRODUCT_TYPE_1C_153:
                     case Constants.PRODUCT_TYPE_1C_154:
+//                        if (myNomenclature.contains("с кабелем") || myNomenclature.contains("кабель")){
+//                            for (String type: Constants.listForCharging){
+//                                if (myNomenclature.contains(type)){
+//                                    arrayParams.add(type);
+//                                    break;
+//                                }
+//                            }
+//                        }
                         if (myNomenclature.contains("с кабелем") || myNomenclature.contains("кабель")){
+                            String[] buffParams = myNomenclature.split("кабелем");
+                            if (buffParams.length == 1){
+                                buffParams = myNomenclature.split("кабель");
+                            }
                             for (String type: Constants.listForCharging){
-                                if (myNomenclature.contains(type)){
+                                if (buffParams[1].toLowerCase().contains(type)){
                                     arrayParams.add(type);
-                                    break;
                                 }
+                            }
+                            if (arrayParams.size() == 2){
+                                arrayParams.add("2-in-1");
+                            }
+                            if (arrayParams.size() == 3){
+                                arrayParams.add("3-in-1");
                             }
                         }
                         params = paramsBuilder.toString().trim();
@@ -282,11 +290,12 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     case Constants.PRODUCT_TYPE_1C_64:
                     case Constants.PRODUCT_TYPE_1C_65:
                     case Constants.PRODUCT_TYPE_1C_66:
+                    case Constants.PRODUCT_TYPE_1C_166:
                     case Constants.PRODUCT_TYPE_1C_67:
                     case Constants.PRODUCT_TYPE_1C_68:
                     case Constants.PRODUCT_TYPE_1C_69:
                     case Constants.PRODUCT_TYPE_1C_70:
-                        for (String type : Constants.listForCabel){
+                        for (String type : Constants.listForCable){
                             if (myNomenclature.replaceAll(",", "").contains(type)) {
                                 if (type.contains("1.0")){
                                     arrayParams.add("1 м");
@@ -507,6 +516,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_64:
                         case Constants.PRODUCT_TYPE_1C_65:
                         case Constants.PRODUCT_TYPE_1C_66:
+                        case Constants.PRODUCT_TYPE_1C_166:
                             String connect = "-";
                             if (productType.equals(Constants.PRODUCT_TYPE_1C_63) || productType.equals(Constants.PRODUCT_TYPE_1C_64)){
                                 connect = "apple";
@@ -514,7 +524,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                             if (productType.equals(Constants.PRODUCT_TYPE_1C_65)){
                                 connect = "type-c";
                             }
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_66)){
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_66) || productType.equals(Constants.PRODUCT_TYPE_1C_166)){
                                 connect = "micro USB";
                             }
                             querySearch = brand + " " + model + " " + connect + " " + params;
@@ -627,6 +637,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 entry.getValue().setMyProductModel(supplier1.getMyProductModel());
                 entry.getValue().setArrayListParams((ArrayList<String>) supplier1.getArrayListParams());
                 entry.getValue().setQuerySearchForWildberiesOrOzon(supplier1.getQuerySearch());
+
                 String brand = entry.getValue().getMyBrand();
                 String productModel = entry.getValue().getMyProductModel();
                 int countProducts = mapCountForMyProductName.get(brand + " " + productModel);

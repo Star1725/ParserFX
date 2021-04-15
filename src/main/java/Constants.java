@@ -247,6 +247,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_163="Электрическая мухобойка";
     public static final String PRODUCT_TYPE_1C_164="Автомойка";
     public static final String PRODUCT_TYPE_1C_165="Велосипедный держатель";
+    public static final String PRODUCT_TYPE_1C_166 ="Кабель USB - micro USB";
 
     public static final String MARKETPLACE = "https://www.wildberries.ru";
 
@@ -290,7 +291,8 @@ public class Constants {
     public static final String ELEMENT_WITH_DESCRIPTION_MY_PRODUCT = "div[class=j-description collapsable-content description-text]";
     //Html элементы страницы поискового запроса аналогов
     public static final String ELEMENT_WITH_CATALOG = "div[class=catalog_main_table j-products-container]";
-    public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList i-dtList j-card-item]";
+    //public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList i-dtList j-card-item]"; элементы перестали находиться 14.04.21
+    public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList-inner]";
     public static final String ATTRIBUTE_WITH_VENDOR_CODE = "data-popup-nm-id";
     public static final String ELEMENT_WITH_CARD_PRODUCT = "a[class=ref_goods_n_p j-open-full-product-card]";
     public static final String ELEMENT_WITH_NAME_PRODUCT = "div[class=dtlist-inner-brand-name]";
@@ -308,13 +310,25 @@ public class Constants {
             "couponsGeo=2,12,6,9&pricemarginCoeff=1.0&reg=0&appType=1&offlineBonus=0&onlineBonus=0&emp=0&locale=ru&lang=ru&nm=";
 
 
-    public static final ArrayList<String> listForCabel = new ArrayList<>();
+    public static final ArrayList<String> listForCable = new ArrayList<>();
+    public static final ArrayList<String> listForCable_0_2m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_0_25m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1_2m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1_4m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1_6m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1_8m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_2m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_3m = new ArrayList<>();
     //public static final ArrayList<String> listForLength = new ArrayList<>();
     public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
     public static final ArrayList<String> listForCharging = new ArrayList<>();
     public static final ArrayList<String> listForChargingApple = new ArrayList<>();
     public static final ArrayList<String> listForChargingMicro = new ArrayList<>();
     public static final ArrayList<String> listForChargingType = new ArrayList<>();
+    public static final ArrayList<String> listForCharging_2in1 = new ArrayList<>();
+    public static final ArrayList<String> listForCharging_3in1 = new ArrayList<>();
+    public static final ArrayList<String> listForCharging_4in1 = new ArrayList<>();
     public static final ArrayList<String> listForBugs = new ArrayList<>();
     public static final ArrayList<String> listForHeadset = new ArrayList<>();
     public static final ArrayList<String> listForBrands = new ArrayList<>();
@@ -331,54 +345,123 @@ public class Constants {
         listForHeadset.add("3,5");
         listForHeadset.add("3.5");
 
-        listForCabel.add("0.2м");
-        listForCabel.add("0.25м");
-        listForCabel.add("1.0м");
-        listForCabel.add("1м");
-        listForCabel.add("1.2м");
-        listForCabel.add("1.4м");
-        listForCabel.add("1.6м");
-        listForCabel.add("1.8м");
-        listForCabel.add("2.0м");
-        listForCabel.add("3.0м");
+        listForCable.add("0.2м");
+        listForCable.add("0.25м");
+        listForCable.add("1.0м");
+        listForCable.add("1м");
+        listForCable.add("1.2м");
+        listForCable.add("1.4м");
+        listForCable.add("1.6м");
+        listForCable.add("1.8м");
+        listForCable.add("2.0м");
+        listForCable.add("3.0м");
 
-        listForTypeGlass.add("EYE PROTECTION");
-        listForTypeGlass.add("5D");
-        listForTypeGlass.add("11D");
-        listForTypeGlass.add("2.5D");
-        listForTypeGlass.add("SuperD");
-        listForTypeGlass.add("Super D");
-        listForTypeGlass.add("Super-D");
-        listForTypeGlass.add("EYE");
-        listForTypeGlass.add("Privacy");
+        listForCable_0_2m.add("0.2м");
+        listForCable_0_2m.add("0.2 м");
+        listForCable_0_2m.add("0.2m");
+        listForCable_0_2m.add("0.2 m");
+
+        listForCable_0_25m.add("0.25м");
+        listForCable_0_25m.add("0.25 м");
+        listForCable_0_25m.add("0.25m");
+        listForCable_0_25m.add("0.25 m");
+
+        listForCable_1m.add("1м");
+        listForCable_1m.add("1 м");
+        listForCable_1m.add("1m");
+        listForCable_1m.add("1 m");
+        listForCable_1m.add("1.0м");
+        listForCable_1m.add("1.0 м");
+        listForCable_1m.add("1.0m");
+        listForCable_1m.add("1.0 m");
+
+        listForCable_1_2m.add("1.2м");
+        listForCable_1_2m.add("1.2 м");
+        listForCable_1_2m.add("1.2m");
+        listForCable_1_2m.add("1.2 m");
+
+        listForCable_1_4m.add("1.4м");
+        listForCable_1_4m.add("1.4 м");
+        listForCable_1_4m.add("1.4m");
+        listForCable_1_4m.add("1.4 m");
+
+        listForCable_1_6m.add("1.6м");
+        listForCable_1_6m.add("1.6 м");
+        listForCable_1_6m.add("1.6m");
+        listForCable_1_6m.add("1.6 m");
+
+        listForCable_1_8m.add("1.8м");
+        listForCable_1_8m.add("1.8 м");
+        listForCable_1_8m.add("1.8m");
+        listForCable_1_8m.add("1.8 m");
+
+        listForCable_2m.add("2м");
+        listForCable_2m.add("2 м");
+        listForCable_2m.add("2m");
+        listForCable_2m.add("2 m");
+        listForCable_2m.add("2.0м");
+        listForCable_2m.add("2.0 м");
+        listForCable_2m.add("2.0m");
+        listForCable_2m.add("2.0 m");
+
+        listForCable_3m.add("3м");
+        listForCable_3m.add("3 м");
+        listForCable_3m.add("3m");
+        listForCable_3m.add("3 m");
+        listForCable_3m.add("3.0м");
+        listForCable_3m.add("3.0 м");
+        listForCable_3m.add("3.0m");
+        listForCable_3m.add("3.0 m");
+
+        listForTypeGlass.add("eye protection");
+        listForTypeGlass.add("5d");
+        listForTypeGlass.add("11d");
+        listForTypeGlass.add("2.5d");
+        listForTypeGlass.add("superd");
+        listForTypeGlass.add("super d");
+        listForTypeGlass.add("super-d");
+        listForTypeGlass.add("eye");
+        listForTypeGlass.add("privacy");
 
         listForCharging.add("микро");
-        listForCharging.add("Micro");
         listForCharging.add("micro");
         //listForCharging.add("apple 8 pin");
         listForCharging.add("apple");
         listForCharging.add("8 pin");
         listForCharging.add("lightning");
+        listForCharging.add("lighting");
         listForCharging.add("iphone");
-        listForCharging.add("Type");
         listForCharging.add("type");
 
         listForChargingMicro.add("микро");
         listForChargingMicro.add("micro");
-        listForChargingMicro.add("Микро");
-        listForChargingMicro.add("Micro");
 
-        listForChargingApple.add("Apple 8 pin");
         listForChargingApple.add("apple 8 pin");
-        listForChargingApple.add("Apple");
         listForChargingApple.add("apple");
         listForChargingApple.add("8 pin");
-        listForChargingApple.add("Lightning");
         listForChargingApple.add("lightning");
-        listForChargingApple.add("iPhone");
+        listForChargingApple.add("iphone");
 
-        listForChargingType.add("Type");
         listForChargingType.add("type");
+
+        listForCharging_2in1.add("2 в 1");
+        listForCharging_2in1.add("2в1");
+        listForCharging_2in1.add("2 in 1");
+        listForCharging_2in1.add("2-in-1");
+        listForCharging_2in1.add("2in1");
+
+        listForCharging_3in1.add("3 в 1");
+        listForCharging_3in1.add("3в1");
+        listForCharging_3in1.add("3 in 1");
+        listForCharging_3in1.add("3-in-1");
+        listForCharging_3in1.add("3-in-");
+        listForCharging_3in1.add("3in1");
+
+        listForCharging_4in1.add("4 в 1");
+        listForCharging_4in1.add("4в1");
+        listForCharging_4in1.add("4 in 1");
+        listForCharging_4in1.add("4-in-1");
+        listForCharging_4in1.add("4in1");
 
         listForBugs.add("(S)");
         listForBugs.add("(L)");
@@ -387,15 +470,15 @@ public class Constants {
         listForBugs.add("5,5");
         listForBugs.add("дюймов");
 
-        listForBrands.add("HOCO");
-        listForBrands.add("Usams");
-        listForBrands.add("Baseus");
-        listForBrands.add("Borofone");
-        listForBrands.add("Celebrat");
-        listForBrands.add("Dasimei");
-        listForBrands.add("Mietubl");
-        listForBrands.add("Xivi");
-        listForBrands.add("AIQURA");
+        listForBrands.add("hoco");
+        listForBrands.add("usams");
+        listForBrands.add("baseus");
+        listForBrands.add("borofone");
+        listForBrands.add("celebrat");
+        listForBrands.add("dasimei");
+        listForBrands.add("mietubl");
+        listForBrands.add("xivi");
+        listForBrands.add("aiqura");
 
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_1);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_2);
@@ -556,5 +639,6 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_163);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_164);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_165);
+        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_166);
     }
 }

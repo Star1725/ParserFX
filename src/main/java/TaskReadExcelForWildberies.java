@@ -19,6 +19,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
         try {
             Map<String, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
             Map<String, Supplier> supplierSpecPriceHashMapWithKeyCode_1C = new HashMap<>();
+            Map<String, Integer> mapCountForMyProductName = new HashMap<>();
 
             //читаем файл отчёта Wildberies и файл 1С
             Workbook workbookWildberies = new XSSFWorkbook(files.get(0));
@@ -139,6 +140,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 i++;
             }
             System.out.println("Кол-во строк - " + countReadsRows);
+            System.out.println();
 
 //считываем информацию с отчёта 1C
             System.out.println("считываем информацию с отчёта 1C");
@@ -148,22 +150,26 @@ public class TaskReadExcelForWildberies extends Task<Map> {
 
             rowIterator = sheet_1C.rowIterator();
             while (rowIterator.hasNext()){
+                List<String> arrayParams = new ArrayList<>();
                 //получаем строку
                 Row row = (Row) rowIterator.next();
                 if (row.getRowNum() == 0 ){
                     continue;
                 }
 
+                countReadsRows_1C++;
+
                 //получаем код товара по 1С
                 Cell cell = row.getCell(1);
-                if (cell == null){
-                    continue;
+                if (cell.getRichStringCellValue().getString().equals("") || cell == null) {
+                    System.out.println("Пустая ячейка в базе 1С для строки " + row.getRowNum());
+                    break;
                 }
                 String code_1C = cell.getRichStringCellValue().getString();
 
                 //получаем бренд
                 cell = row.getCell(2);
-                String brand = cell.getRichStringCellValue().getString();
+                String brand = cell.getRichStringCellValue().getString().toLowerCase().trim();
 
                 //получаем комиссию
                 double commission = 0;
@@ -176,26 +182,20 @@ public class TaskReadExcelForWildberies extends Task<Map> {
 
                 //получаем наименование продукта и сразу пытаемся получить поисковый запрос
                 cell = row.getCell(3);
-                String myNomenclature = cell.getRichStringCellValue().getString();
+                String myNomenclature = cell.getRichStringCellValue().getString().toLowerCase().trim();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Анализ номенклатуры и формирование поискового запроса ////////////////////////////////////
                 //FM-трансмиттер Borofone, BC16, пластик, цвет: чёрный
-
-//                //определяем какой бренд
-//                String brand = "-";
-//                for (String s: Constants.listForBrands){
-//                    if (myNomenclature.contains(s)){
-//                        brand = s;
-//                        break;
-//                    }
-//                }
 
                 //делим брендом myNomenclature на тип продукта и модель продукта с характеристиками
                 String[] buff1 = myNomenclature.toLowerCase().split(brand.toLowerCase());
                 //определяем тип продукта
                 String productType = "-";
                 for (String s: Constants.listForCategoryBy_1C){
-                    if (buff1[0].startsWith(s.toLowerCase())){
+                    if (buff1[0]
+                            .toLowerCase()
+                            .trim()
+                            .startsWith(s.toLowerCase())){
                         productType = s;
                         break;
                     }
@@ -204,18 +204,17 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                     productType = "Новая категория";
                 }
 
-                //для некоторых типов продуктов необходимы дополнительные параметры для запроса(кабели, )
-                StringBuilder paramsBuilder = new StringBuilder(" ");
-                String params = "";
+                //для некоторых типов продуктов необходимы дополнительные параметры при поиске аналогов в каталоге запроса(кабели, блоки питания зарядные устройства и т.п.)
+                //StringBuilder paramsBuilder = new StringBuilder(" ");
                 switch (productType){
                     //для масок кол-во штук в упаковке
                     case Constants.PRODUCT_TYPE_1C_78:
                         int start = myNomenclature.indexOf('(');
                         int stop = myNomenclature.indexOf(')');
                         if (start == -1 || stop == -1){
-                            params = "одноразовая трехслойная не медицинская";
+                            arrayParams.add("одноразовая трехслойная не медицинская");
                         } else {
-                            params = myNomenclature.substring(start + 1, stop) + " шт";
+                            arrayParams.add(myNomenclature.substring(start + 1, stop) + " шт");
                         }
                         break;
 
@@ -236,11 +235,10 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                             }
                             for (String type: Constants.listForCharging){
                                 if (buffParams[1].toLowerCase().contains(type)){
-                                    paramsBuilder.append(" ").append(type);
+                                    arrayParams.add(type);
                                 }
                             }
                         }
-                        params = paramsBuilder.toString().trim();
                         break;
 
                     //для кабелей - длина
@@ -253,37 +251,36 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                     case Constants.PRODUCT_TYPE_1C_64:
                     case Constants.PRODUCT_TYPE_1C_65:
                     case Constants.PRODUCT_TYPE_1C_66:
+                    case Constants.PRODUCT_TYPE_1C_166:
                     case Constants.PRODUCT_TYPE_1C_67:
                     case Constants.PRODUCT_TYPE_1C_68:
                     case Constants.PRODUCT_TYPE_1C_69:
                     case Constants.PRODUCT_TYPE_1C_70:
-                        for (String type : Constants.listForCabel){
+                        for (String type : Constants.listForCable){
                             if (myNomenclature.replaceAll(",", "").contains(type)) {
                                 if (type.contains("1.0")){
-                                    paramsBuilder.append("1 м").append(" ");
+                                    arrayParams.add("1 м");
                                 } else if (type.contains("2.0")){
-                                    paramsBuilder.append("2 м").append(" ");
+                                    arrayParams.add("2 м");
                                 } else if (type.contains("3.0")){
-                                    paramsBuilder.append("3 м").append(" ");
+                                    arrayParams.add("3 м");
                                 } else {
-                                    paramsBuilder.append(type).append(" ");
+                                    arrayParams.add(type);
                                 }
                             }
                         }
-                        params = paramsBuilder.toString().trim();
                         break;
 
                     //для защитных стекол -  его тип
                     case Constants.PRODUCT_TYPE_1C_139:
                         for (String type : Constants.listForTypeGlass){
-                            if (myNomenclature.replaceAll(",", "").contains(type)) {
-                                paramsBuilder.append(type).append(" ");
+                            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(type.toLowerCase())) {
+                                arrayParams.add(type.toLowerCase());
                             }
                         }
-                        params = paramsBuilder.toString().trim();
                         break;
                 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //если модель сразу за брендом после запятой
                 String model ="-";
                 if (buff1[1].startsWith(",")){
@@ -301,13 +298,16 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                     switch (productType){
                         //для маски - маска одноразовая 50 шт
                         case Constants.PRODUCT_TYPE_1C_78:
-                            querySearch = productType + " " + model + " " + params;
+                            querySearch = productType + " " + model + " " + arrayParams.get(0);
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
                             if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + " для " + wb + " и " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
                                 System.out.println();
                             } else {
-                                System.out.println("querySearch = " + querySearch + " для " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + ozon);
                                 System.out.println();
                             }
                             break;
@@ -451,18 +451,6 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_162:
                         case Constants.PRODUCT_TYPE_1C_163:
                         case Constants.PRODUCT_TYPE_1C_164:
-                            querySearch = brand + " " + model;
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
-                            if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + " для " + wb + " и " + ozon);
-                                System.out.println();
-                            } else {
-                                System.out.println("querySearch = " + querySearch + " для " + ozon);
-                                System.out.println();
-                            }
-                            break;
-                        //для этих типов в поисковом запросе указываем бренд, модель и некоторыу параметры
-                        //case Constants.PRODUCT_TYPE_1C_38:
                         case Constants.PRODUCT_TYPE_1C_39:
                         case Constants.PRODUCT_TYPE_1C_40:
                         case Constants.PRODUCT_TYPE_1C_49:
@@ -470,13 +458,16 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_61:
                         case Constants.PRODUCT_TYPE_1C_132:
 
-                            querySearch = brand + " " + model + " " + params;
+                            querySearch = brand + " " + model;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
                             if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + " для " + wb + " и " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
                                 System.out.println();
                             } else {
-                                System.out.println("querySearch = " + querySearch + " для " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + ozon);
                                 System.out.println();
                             }
                             break;
@@ -486,23 +477,30 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_64:
                         case Constants.PRODUCT_TYPE_1C_65:
                         case Constants.PRODUCT_TYPE_1C_66:
+                        case Constants.PRODUCT_TYPE_1C_166:
                             String connect = "-";
                             if (productType.equals(Constants.PRODUCT_TYPE_1C_63) || productType.equals(Constants.PRODUCT_TYPE_1C_64)){
                                 connect = "apple";
+                                arrayParams.add(connect);
                             }
                             if (productType.equals(Constants.PRODUCT_TYPE_1C_65)){
                                 connect = "type-c";
+                                arrayParams.add(connect);
                             }
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_66)){
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_66) || productType.equals(Constants.PRODUCT_TYPE_1C_166)){
                                 connect = "micro";
+                                arrayParams.add(connect);
                             }
-                            querySearch = brand + " " + model + " " + connect + " " + params;
+                            querySearch = brand + " " + model + " " + connect;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
                             if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + " для " + wb + " и " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
                                 System.out.println();
                             } else {
-                                System.out.println("querySearch = " + querySearch + " для " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + ozon);
                                 System.out.println();
                             }
                             break;
@@ -516,13 +514,17 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         //для этих типов в поисковом запросе тип немного видоизменяем
                         case Constants.PRODUCT_TYPE_1C_68:
                             //productType = "Кабель USB 2 в 1";
+                            arrayParams.add("2 в 1");
                             querySearch = brand + " " + model + " 2 в 1";
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
                             if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + " для " + wb + " и " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
                                 System.out.println();
                             } else {
-                                System.out.println("querySearch = " + querySearch + " для " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + ozon);
                                 System.out.println();
                             }
                             break;
@@ -530,25 +532,33 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_69:
                         case Constants.PRODUCT_TYPE_1C_85:
                             //productType = "Кабель USB 3 в 1";
-                            querySearch = brand + " " + model + " 3 в 1 " + params;
+                            arrayParams.add("3 в 1");
+                            querySearch = brand + " " + model + " 3 в 1";
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
                             if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + " для " + wb + " и " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
                                 System.out.println();
                             } else {
-                                System.out.println("querySearch = " + querySearch + " для " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + ozon);
                                 System.out.println();
                             }
                             break;
                         case Constants.PRODUCT_TYPE_1C_70:
                             //productType = "Кабель USB 4 в 1";
+                            arrayParams.add("4 в 1");
                             querySearch = brand + " " + model + " 4 в 1";
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
                             if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + " для " + wb + " и " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
                                 System.out.println();
                             } else {
-                                System.out.println("querySearch = " + querySearch + " для " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + ozon);
                                 System.out.println();
                             }
                             break;
@@ -556,27 +566,42 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                             querySearch = "-";
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature + " - новая категория");
                             if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + " для " + wb + " и " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
                                 System.out.println();
                             } else {
-                                System.out.println("querySearch = " + querySearch + " для " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + ozon);
                                 System.out.println();
                             }
                             break;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         default:
-                            querySearch = brand + " " + model + " " + params;
+                            querySearch = brand + " " + model;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
                             if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + " для " + wb + " и " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
                                 System.out.println();
                             } else {
-                                System.out.println("querySearch = " + querySearch + " для " + ozon);
+                                System.out.println("querySearch = " + querySearch + "     " + ozon);
                                 System.out.println();
                             }
                     }
                 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                if (mapCountForMyProductName.size() != 0){
+                    if (!mapCountForMyProductName.containsKey(brand + " " + model)){
+                        mapCountForMyProductName.put(brand + " " + model, 1);
+                    } else {
+                        int count = mapCountForMyProductName.get(brand + " " + model);
+                        count++;
+                        mapCountForMyProductName.put(brand + " " + model, count);
+                    }
+                } else {
+                    mapCountForMyProductName.put(brand + " " + model, 1);
+                }
+
 
                 //получаем спец-цену
                 cell = row.getCell(5);
@@ -588,13 +613,12 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 }
 
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, null, querySearch, specPrice_1C, commission, delivery));
+                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, querySearch, specPrice_1C, commission, delivery));
                 //увеличиваем ProgressBar
                 this.updateProgress(i, countFull);
-                countReadsRows_1C++;
                 i++;
             }
-            System.out.println("Кол-во строк - " + countReadsRows);
+            System.out.println("Кол-во строк - " + countReadsRows_1C);
 
             //пытаемся привязать specPrice_1C и productName к ResultProduct
             for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
@@ -605,10 +629,19 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                     entry.getValue().setIsFind(1);
                     entry.getValue().setSpecPrice(supplier.getSpecPrice());
                     entry.getValue().setProductType(supplier.getProductType());
+                    entry.getValue().setMyBrand(supplier.getMyBrand());
+                    entry.getValue().setMyProductModel(supplier.getMyProductModel());
+                    entry.getValue().setArrayListParams((ArrayList<String>) supplier.getArrayListParams());
                     entry.getValue().setMyNomenclature_1C(supplier.getNomenclature());
                     entry.getValue().setQuerySearchForWildberiesOrOzon(supplier.getQuerySearch());
                     entry.getValue().setMyCommissionForOzonOrWildberries(supplier.getCommission());
                     entry.getValue().setMyLastMileForOzonOrWildberries(supplier.getDelivery());
+
+                    String brand = entry.getValue().getMyBrand();
+                    String productModel = entry.getValue().getMyProductModel();
+                    int countProducts = mapCountForMyProductName.get(brand + " " + productModel);
+                    entry.getValue().setCountMyProductModel(countProducts);
+                    System.out.println("Для " + brand + " " + productModel + " кол-во совпадений - " + countProducts);
                 } else entry.getValue().setSpecPrice(0);
             }
             return resultProductHashMap;
