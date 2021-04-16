@@ -481,7 +481,7 @@ public class ParserOzon {
                 System.out.println("//////////////////////////////////////Попытка получения новой валидной страницы//////////////////////////////////////");
                 System.out.println("isNotGetValidPage = " + isNotGetValidPage);
             }
-//*TO-DO
+/*TO-DO
             switch (productType){
                 case Constants.PRODUCT_TYPE_1C_39:
                 case Constants.PRODUCT_TYPE_1C_40:
