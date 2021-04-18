@@ -16,6 +16,8 @@ import static java.util.Comparator.comparing;
 
 public class ParserWildBer {
 
+    private static String refUrlForResult = "-";
+
     private Object mon = new Object();
     private static Map<String, List<Product>> resultMapForQueries = new LinkedHashMap<>();
 
@@ -28,7 +30,7 @@ public class ParserWildBer {
                 "-",
 
                 "-",
-                0,
+                refUrlForResult,
 
                 "-",
                 "-",
@@ -257,7 +259,7 @@ public class ParserWildBer {
         product.setMyRefForImage(getMyProductsPhoto(page));
 
         //устанавливаем поисковый запрос аналогов
-        product.setQueryForSearch(specQuerySearch);
+        //product.setQueryForSearch(specQuerySearch);
 
         //устанавливаем наименование моего товара
         product.setMyProductName(getMyProductsTitle(page));
@@ -288,6 +290,9 @@ public class ParserWildBer {
     }
 
     private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes, String myVendorCodeFromRequest, String productType, String brand, String productModel, List<String> arrayParams) {
+
+        boolean myProductIsLower = true;
+
         if (productList.size() == 0) {
             return null;
         } else if (productList.size() == 1){
@@ -306,17 +311,22 @@ public class ParserWildBer {
                             //если в запросе только бренд и модель, то нам нужен первый product, в описании которого только модель
                             if (arrayParams.size() == 0){
                                 for (Product p : productList) {
-                                    if (!myVendorCodes.contains(p.getCompetitorVendorCode())){
-                                        String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                        if (nomenclature.contains(productModel)){
-                                            int check = 0;
-                                            for (String s: Constants.listForCharging){
-                                                if (nomenclature.contains(s.toLowerCase())){
-                                                    check++;
-                                                    break;
-                                                }
+                                    String nomenclature = p.getCompetitorProductName().toLowerCase();
+                                    if (nomenclature.contains(productModel)) {
+                                        int check = 0;
+                                        for (String s : Constants.listForCharging) {
+                                            if (nomenclature.contains(s.toLowerCase())) {
+                                                check++;
+                                                break;
                                             }
-                                            if (check == 0){
+                                        }
+                                        if (check == 0) {
+                                            if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                                if (myProductIsLower) {
+                                                    product = p;
+                                                    myProductIsLower = false;
+                                                }
+                                            } else {
                                                 product = p;
                                                 break;
                                             }
@@ -329,20 +339,25 @@ public class ParserWildBer {
                                 //определяем коллекцию с разными названиями нашего param
                                 List<String> listWithCable = getCollectionsParam(arrayParams, brand + productModel);
                                 for (Product p : productList) {
-                                    if (!myVendorCodes.contains(p.getCompetitorVendorCode())) {
-                                        String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                        if (nomenclature.contains(productModel)){
-                                            int check = 0;
-                                            for (String s : listWithCable) {
-                                                if (nomenclature.contains(s)) {
+                                    String nomenclature = p.getCompetitorProductName().toLowerCase();
+                                    if (nomenclature.contains(productModel)) {
+                                        int check = 0;
+                                        for (String s : listWithCable) {
+                                            if (nomenclature.contains(s)) {
+                                                if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                                    if (myProductIsLower) {
+                                                        product = p;
+                                                        myProductIsLower = false;
+                                                    }
+                                                } else {
                                                     product = p;
                                                     check++;
                                                     break;
                                                 }
                                             }
-                                            if (check != 0){
-                                                break;
-                                            }
+                                        }
+                                        if (check != 0) {
+                                            break;
                                         }
                                     }
                                 }
@@ -373,27 +388,32 @@ public class ParserWildBer {
                             List<String> listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(0), brand + productModel);
                             List<String> listWithCableParam_2 = getCollectionsParamCable(arrayParams.get(1), brand + productModel);
                             for (Product p : productList) {
-                                if (!myVendorCodes.contains(p.getCompetitorVendorCode())) {
-                                    String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                    if (nomenclature.contains(productModel)){
-                                        int check = 0;
-                                        for (String s1 : listWithCableParam_1) {
-                                            if (nomenclature.contains(s1)) {
-                                                for (String s2 : listWithCableParam_2) {
-                                                    if(nomenclature.contains(s2)){
+                                String nomenclature = p.getCompetitorProductName().toLowerCase();
+                                if (nomenclature.contains(productModel)) {
+                                    int check = 0;
+                                    for (String s1 : listWithCableParam_1) {
+                                        if (nomenclature.contains(s1)) {
+                                            for (String s2 : listWithCableParam_2) {
+                                                if (nomenclature.contains(s2)) {
+                                                    if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                                        if (myProductIsLower) {
+                                                            product = p;
+                                                            myProductIsLower = false;
+                                                        }
+                                                    } else {
                                                         product = p;
                                                         check++;
                                                         break;
                                                     }
                                                 }
-                                                if (check != 0){
-                                                    break;
-                                                }
+                                            }
+                                            if (check != 0) {
+                                                break;
                                             }
                                         }
-                                        if (check != 0){
-                                            break;
-                                        }
+                                    }
+                                    if (check != 0) {
+                                        break;
                                     }
                                 }
                             }
@@ -408,9 +428,14 @@ public class ParserWildBer {
                         if (productModel != null){
                             if (arrayParams.size() == 1){
                                 for (Product p : productList) {
-                                    if (!myVendorCodes.contains(p.getCompetitorVendorCode())){
-                                        String nomenclature = p.getCompetitorProductName().replaceAll(",", "").toLowerCase();
-                                        if (nomenclature.contains(arrayParams.get(0))) {
+                                    String nomenclature = p.getCompetitorProductName().replaceAll(",", "").toLowerCase();
+                                    if (nomenclature.contains(arrayParams.get(0))) {
+                                        if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                            if (myProductIsLower) {
+                                                product = p;
+                                                myProductIsLower = false;
+                                            }
+                                        } else {
                                             product = p;
                                             break;
                                         }
@@ -426,7 +451,12 @@ public class ParserWildBer {
                 default:
                     //исключаем мои продукты
                     for (Product p : productList) {
-                        if (!myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                        if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                            if (myProductIsLower) {
+                                product = p;
+                                myProductIsLower = false;
+                            }
+                        } else {
                             product = p;
                             break;
                         }
@@ -758,6 +788,8 @@ public class ParserWildBer {
         String url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&xsearch=true&sort=priceup");// для вер. 2
         //String url = getString("https://www.wildberries.ru/catalog/0/search.aspx?search=", getQueryUTF8(query), "&&sort=priceup");// для вер. 1
 
+        refUrlForResult = url;
+
         Document page = null;
         while (page == null){
             try {
@@ -795,12 +827,17 @@ public class ParserWildBer {
     private static List<Product> getCatalogProductsForRequestPage(Document page, String myBrand){
         List<Product> productList = new ArrayList<>();
         if (page != null){
+
+            //результат запроса
+            Element result = page.select(Constants.ELEMENT_WITH_RESULT_SEARCH).first();
+            String resultSearch = result.text();
+
             Element catalog = page.select(Constants.ELEMENT_WITH_CATALOG).first();
             if (catalog == null){
                 return productList;
             }
             Elements goods = catalog.select(Constants.ELEMENT_WITH_PRODUCT);
-            int countSearch = goods.size();
+            //int countSearch = goods.size();
             for (Element good : goods) {
 //                //артикул
 //                String vendorCode = good.attr(Constants.ATTRIBUTE_WITH_VENDOR_CODE); артикул исчем по новому с 14.04.21
@@ -865,8 +902,8 @@ public class ParserWildBer {
                         "-",
                         "-",
 
-                        "-",
-                        countSearch,
+                        resultSearch,
+                        refUrlForResult,
 
                         brandName,
                         vendorCode,

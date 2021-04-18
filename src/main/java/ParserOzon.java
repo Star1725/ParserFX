@@ -15,6 +15,8 @@ import static java.util.Comparator.comparing;
 
 public class ParserOzon {
 
+    private static String refUrlForResult;
+
     private static final Object mon = new Object();
     private static WebClient webClientForOzon;
     private static Lock lockOzon;
@@ -45,7 +47,7 @@ public class ParserOzon {
                 "-",
 
                 "-",
-                0,
+                "-",
 
                 "-",
                 "-",
@@ -90,7 +92,7 @@ public class ParserOzon {
                 product.setCompetitorRefForPage(Constants.BLOCKING);
                 product.setCompetitorName(Constants.BLOCKING);
                 product.setCompetitorSpecAction(Constants.BLOCKING);
-            } else if (productList.get(0).getCountSearch() == -1) {
+            } else if (productList.get(0).getRefUrlForResultSearch().equals("1-")) {
                 product.setQueryForSearch(productList.get(0).getQueryForSearch());
             } else {
 
@@ -139,7 +141,6 @@ public class ParserOzon {
                         }
                 }
 
-
                 //устанавливаем ссылку на картинку моего товара
                 product.setMyRefForImage("-");
 
@@ -168,7 +169,7 @@ public class ParserOzon {
                     product.setCompetitorRefForPage(Constants.BLOCKING);
                     product.setCompetitorName(Constants.BLOCKING);
                     product.setCompetitorSpecAction(Constants.BLOCKING);
-                } else if (productList.get(0).getCountSearch() == -1) {
+                } else if (productList.get(0).getRefUrlForResultSearch().equals("-1")) {
                     product.setQueryForSearch(productList.get(0).getQueryForSearch());
                 } else {
 
@@ -262,7 +263,7 @@ public class ParserOzon {
             }
 
             if (querySearchAndCount.contains("товаров сейчас нет")){
-                productList.add(new Product("Запрос - " + myQuery + ". " + querySearchAndCount, -1));
+                productList.add(new Product("Запрос - " + myQuery + ". " + querySearchAndCount, "-1"));
                 return productList;
             }
 
@@ -456,7 +457,7 @@ public class ParserOzon {
                             "-",
 
                             querySearchAndCount,
-                            0,
+                            refUrlForResult,
 
                             competitorBrand,
                             vendorCode,
@@ -481,7 +482,7 @@ public class ParserOzon {
                 System.out.println("//////////////////////////////////////Попытка получения новой валидной страницы//////////////////////////////////////");
                 System.out.println("isNotGetValidPage = " + isNotGetValidPage);
             }
-/*TO-DO
+//*TO-DO
             switch (productType){
                 case Constants.PRODUCT_TYPE_1C_39:
                 case Constants.PRODUCT_TYPE_1C_40:
@@ -530,7 +531,9 @@ public class ParserOzon {
                                     while (tries > 0 && div_class_c2h3_c2h9_c2e7 == null) {
                                         tries--;
                                         try {
+                                            System.out.println("Попытка № " + tries + " получить элемент \"c2h3 c2h9 c2e7\"");
                                             div_class_c2h3_c2h9_c2e7 = (HtmlDivision) page.getByXPath("//div[@class='c2h3 c2h9 c2e7']").get(0);
+                                            System.out.println("Попытка № " + tries + " получить элементы \"span\", которые содержат текущую цену и цену до скидки");
                                             spansFor_c2h3_c2h9_c2e7 = div_class_c2h3_c2h9_c2e7.getElementsByTagName("span");
                                         } catch (Exception ignored) {
                                         }
@@ -570,7 +573,7 @@ public class ParserOzon {
                                             "-",
 
                                             querySearchAndCount,
-                                            0,
+                                            refUrlForResult,
 
                                             "-",
                                             vendorCode,

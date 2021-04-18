@@ -291,6 +291,7 @@ public class Constants {
     public static final String ELEMENT_WITH_DESCRIPTION_MY_PRODUCT = "div[class=j-description collapsable-content description-text]";
     //Html элементы страницы поискового запроса аналогов
     public static final String ELEMENT_WITH_CATALOG = "div[class=catalog_main_table j-products-container]";
+    public static final String ELEMENT_WITH_RESULT_SEARCH = "div[class=searching-results-inner]";
     //public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList i-dtList j-card-item]"; элементы перестали находиться 14.04.21
     public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList-inner]";
     public static final String ATTRIBUTE_WITH_VENDOR_CODE = "data-popup-nm-id";
@@ -425,7 +426,7 @@ public class Constants {
 
         listForCharging.add("микро");
         listForCharging.add("micro");
-        //listForCharging.add("apple 8 pin");
+        listForCharging.add("apple 8 pin");
         listForCharging.add("apple");
         listForCharging.add("8 pin");
         listForCharging.add("lightning");
@@ -441,6 +442,7 @@ public class Constants {
         listForChargingApple.add("8 pin");
         listForChargingApple.add("lightning");
         listForChargingApple.add("iphone");
+        listForChargingApple.add("для айфона");
 
         listForChargingType.add("type");
 

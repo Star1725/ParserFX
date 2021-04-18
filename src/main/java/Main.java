@@ -67,7 +67,7 @@ public class Main extends Application implements Controller.ActionInController {
         Controller.subscribe(this);
         controller = mainWindowLoader.getController();
 
-        webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
+        webClient = new WebClient(BrowserVersion.CHROME);
 
         ProxyConfig proxyConfig = new ProxyConfig(Constants.PROXY_HOST, Constants.PROXY_PORT);
         DefaultCredentialsProvider credentialsProvider = new DefaultCredentialsProvider();
@@ -76,7 +76,7 @@ public class Main extends Application implements Controller.ActionInController {
         webClient.setCredentialsProvider(credentialsProvider);
 
         webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setUseInsecureSSL(true);
@@ -260,7 +260,7 @@ public class Main extends Application implements Controller.ActionInController {
                     String competitorName = "-";
                     String queryForSearch = "-";
                     String competitorSpecAction = "-";
-                    int countSearch = 0;
+                    String refUrlForResult = "-";
                     int competitorPriceU = 0;
                     int competitorBasicSale = 0;
                     int competitorBasicPriceU = 0;
@@ -296,7 +296,7 @@ public class Main extends Application implements Controller.ActionInController {
                             competitorRefForImage = product.getCompetitorRefForImage();
                             competitorName = product.getCompetitorName();
                             queryForSearch = product.getQueryForSearch();
-                            countSearch = product.getCountSearch();
+                            refUrlForResult = product.getRefUrlForResultSearch();
                             competitorPriceU = product.getCompetitorPriceU();
                             competitorBasicSale = product.getCompetitorBasicSale();
                             competitorBasicPriceU = product.getCompetitorBasicPriceU();
@@ -317,7 +317,7 @@ public class Main extends Application implements Controller.ActionInController {
                             resultProduct.setCompetitorRefForImage(competitorRefForImage);
                             resultProduct.setCompetitorName(competitorName);
                             resultProduct.setQueryForSearch(queryForSearch);
-                            resultProduct.setCountSearch(countSearch);
+                            resultProduct.setRefUrlForResultSearch(refUrlForResult);
                             resultProduct.setCompetitorPriceU(competitorPriceU);
                             resultProduct.setCompetitorBasicSale(competitorBasicSale);
                             resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);

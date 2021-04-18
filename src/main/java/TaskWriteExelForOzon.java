@@ -81,7 +81,7 @@ public class TaskWriteExelForOzon extends Task<File> {
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(6);
-        headerCell.setCellValue("поисковый запрос и результат");
+        headerCell.setCellValue("результат запроса и ссылка на его");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(7);
@@ -268,8 +268,9 @@ public class TaskWriteExelForOzon extends Task<File> {
                 //поисковый запрос
                 cell = row.createCell(6);
                 String querySearchAndResult = productArrayList.get(i).getQueryForSearch();
+                String refUrlForResult = productArrayList.get(i).getRefUrlForResultSearch();
                 System.out.println(querySearchAndResult);
-                cell.setCellValue(querySearchAndResult);
+                cell.setCellValue(querySearchAndResult + ".        Ссылка на страницу поиска - " + refUrlForResult);
                 if (querySearchAndResult.equals(Constants.BLOCKING)) {
                     cell.setCellStyle(styleRedCell);
                 } else {

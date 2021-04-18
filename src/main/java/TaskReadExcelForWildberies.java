@@ -235,7 +235,20 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                             }
                             for (String type: Constants.listForCharging){
                                 if (buffParams[1].toLowerCase().contains(type)){
-                                    arrayParams.add(type);
+                                    if (arrayParams.size() == 0){
+                                        arrayParams.add(type);
+                                    } else {
+                                        for (int q = 0; q < arrayParams.size(); q++){
+                                            if (!arrayParams.get(q).contains(type)){
+                                                arrayParams.add(type);
+                                            }
+                                        }
+//                                        for (String param: arrayParams){
+//                                            if (!param.contains(type)){
+//                                                arrayParams.add(type);
+//                                            }
+//                                        }
+                                    }
                                 }
                             }
                         }
@@ -648,7 +661,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
         }
         catch (Exception e) {
             System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countReadsRows);
-            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countReadsRows_1C);
+            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + (countReadsRows_1C + 1));
             return null;
         }
     }

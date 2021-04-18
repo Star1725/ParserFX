@@ -218,18 +218,20 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 //определяем тип продукта
                 String productType = "-";
                 for (String s: Constants.listForCategoryBy_1C){
-                    if (buff1[0].startsWith(s.toLowerCase())){
+                    if (buff1[0]
+                            .toLowerCase()
+                            .trim()
+                            .startsWith(s.toLowerCase())){
                         productType = s;
                         break;
                     }
                 }
                 if (productType.equals("-")){
-                    productType = "Новая категория ";
+                    productType = "Новая категория";
                 }
 
-                //для некоторых типов продуктов необходимы дополнительные параметры при поиске аналогов в каталоге запроса(кабели, )
-                StringBuilder paramsBuilder = new StringBuilder(" ");
-                String params = "";
+                //для некоторых типов продуктов необходимы дополнительные параметры при поиске аналогов в каталоге запроса(кабели, блоки питания зарядные устройства и т.п.)
+                //StringBuilder paramsBuilder = new StringBuilder(" ");
                 switch (productType){
                     //для масок кол-во штук в упаковке
                     case Constants.PRODUCT_TYPE_1C_78:
@@ -245,21 +247,13 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     //для зарядок - с каким кабелем
                     case Constants.PRODUCT_TYPE_1C_10:
                     case Constants.PRODUCT_TYPE_1C_37:
-                    //case Constants.PRODUCT_TYPE_1C_38:
+                        //case Constants.PRODUCT_TYPE_1C_38:
                     case Constants.PRODUCT_TYPE_1C_39:
                     case Constants.PRODUCT_TYPE_1C_40:
                     case Constants.PRODUCT_TYPE_1C_132:
-                    //case Constants.PRODUCT_TYPE_1C_133:
+                        //case Constants.PRODUCT_TYPE_1C_133:
                     case Constants.PRODUCT_TYPE_1C_153:
                     case Constants.PRODUCT_TYPE_1C_154:
-//                        if (myNomenclature.contains("с кабелем") || myNomenclature.contains("кабель")){
-//                            for (String type: Constants.listForCharging){
-//                                if (myNomenclature.contains(type)){
-//                                    arrayParams.add(type);
-//                                    break;
-//                                }
-//                            }
-//                        }
                         if (myNomenclature.contains("с кабелем") || myNomenclature.contains("кабель")){
                             String[] buffParams = myNomenclature.split("кабелем");
                             if (buffParams.length == 1){
@@ -270,14 +264,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                                     arrayParams.add(type);
                                 }
                             }
-                            if (arrayParams.size() == 2){
-                                arrayParams.add("2-in-1");
-                            }
-                            if (arrayParams.size() == 3){
-                                arrayParams.add("3-in-1");
-                            }
                         }
-                        params = paramsBuilder.toString().trim();
                         break;
 
                     //для кабелей - длина
@@ -285,7 +272,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     case Constants.PRODUCT_TYPE_1C_49:
                     case Constants.PRODUCT_TYPE_1C_50:
                     case Constants.PRODUCT_TYPE_1C_61:
-                    //case Constants.PRODUCT_TYPE_1C_62:
+                        //case Constants.PRODUCT_TYPE_1C_62:
                     case Constants.PRODUCT_TYPE_1C_63:
                     case Constants.PRODUCT_TYPE_1C_64:
                     case Constants.PRODUCT_TYPE_1C_65:
@@ -313,13 +300,13 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     //для защитных стекол -  его тип
                     case Constants.PRODUCT_TYPE_1C_139:
                         for (String type : Constants.listForTypeGlass){
-                            if (myNomenclature.replaceAll(",", "").contains(type)) {
-                                arrayParams.add(type);
+                            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(type.toLowerCase())) {
+                                arrayParams.add(type.toLowerCase());
                             }
                         }
                         break;
                 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //если модель сразу за брендом после запятой
                 String model ="-";
                 if (buff1[1].startsWith(",")){
@@ -328,102 +315,101 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 } else {
                     //если запятой нет
                     String[] buff2 = buff1[1].trim().split(",", 2);
-                    model = buff2[0].trim();
+                    model = buff2[0];
                 }
 
                 //получаем поисковый запрос
                 String querySearch = "-";
                 if (!brand.isEmpty() || !model.isEmpty()) {
-                    switch (productType){
+                    switch (productType) {
                         //для маски - маска одноразовая 50 шт
                         case Constants.PRODUCT_TYPE_1C_78:
-                            querySearch = productType + " " + model + " " + params;
+                            querySearch = productType + " " + model + " " + arrayParams.get(0);
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
                             System.out.println("arrayParams = " + arrayParams.toString());
-                            System.out.println();
+
+                            System.out.println("querySearch = " + querySearch);
+
                             break;
                         //для этих типов в поисковом запросе указываем только бренд и модель
-                        case Constants.PRODUCT_TYPE_1C_1  :
-                        case Constants.PRODUCT_TYPE_1C_2  :
-                        case Constants.PRODUCT_TYPE_1C_3  :
-                        case Constants.PRODUCT_TYPE_1C_5  :
-                        case Constants.PRODUCT_TYPE_1C_6  :
-                        case Constants.PRODUCT_TYPE_1C_7  :
-                        case Constants.PRODUCT_TYPE_1C_8  :
-                        case Constants.PRODUCT_TYPE_1C_9  :
+                        case Constants.PRODUCT_TYPE_1C_1:
+                        case Constants.PRODUCT_TYPE_1C_2:
+                        case Constants.PRODUCT_TYPE_1C_3:
+                        case Constants.PRODUCT_TYPE_1C_5:
+                        case Constants.PRODUCT_TYPE_1C_6:
+                        case Constants.PRODUCT_TYPE_1C_7:
+                        case Constants.PRODUCT_TYPE_1C_8:
+                        case Constants.PRODUCT_TYPE_1C_9:
+                        case Constants.PRODUCT_TYPE_1C_10:
+                        case Constants.PRODUCT_TYPE_1C_11:
+                        case Constants.PRODUCT_TYPE_1C_12:
+                        case Constants.PRODUCT_TYPE_1C_13:
+                        case Constants.PRODUCT_TYPE_1C_15:
+                        case Constants.PRODUCT_TYPE_1C_16:
+                        case Constants.PRODUCT_TYPE_1C_17:
+                        case Constants.PRODUCT_TYPE_1C_18:
+                        case Constants.PRODUCT_TYPE_1C_19:
+                        case Constants.PRODUCT_TYPE_1C_20:
+                        case Constants.PRODUCT_TYPE_1C_21:
+                        case Constants.PRODUCT_TYPE_1C_22:
+                        case Constants.PRODUCT_TYPE_1C_23:
+                        case Constants.PRODUCT_TYPE_1C_24:
+                        case Constants.PRODUCT_TYPE_1C_25:
+                        case Constants.PRODUCT_TYPE_1C_26:
+                        case Constants.PRODUCT_TYPE_1C_27:
+                        case Constants.PRODUCT_TYPE_1C_28:
+                        case Constants.PRODUCT_TYPE_1C_29:
+                        case Constants.PRODUCT_TYPE_1C_30:
+                        case Constants.PRODUCT_TYPE_1C_31:
+                        case Constants.PRODUCT_TYPE_1C_32:
+                        case Constants.PRODUCT_TYPE_1C_33:
+                        case Constants.PRODUCT_TYPE_1C_34:
+                        case Constants.PRODUCT_TYPE_1C_35:
+                        case Constants.PRODUCT_TYPE_1C_36:
+                        case Constants.PRODUCT_TYPE_1C_37:
 
-                        case Constants.PRODUCT_TYPE_1C_11 :
-                        case Constants.PRODUCT_TYPE_1C_12 :
-                        case Constants.PRODUCT_TYPE_1C_13 :
-                        case Constants.PRODUCT_TYPE_1C_15 :
-                        case Constants.PRODUCT_TYPE_1C_16 :
-                        case Constants.PRODUCT_TYPE_1C_17 :
-                        case Constants.PRODUCT_TYPE_1C_18 :
-                        case Constants.PRODUCT_TYPE_1C_19 :
-                        case Constants.PRODUCT_TYPE_1C_20 :
-                        case Constants.PRODUCT_TYPE_1C_21 :
-                        case Constants.PRODUCT_TYPE_1C_22 :
-                        case Constants.PRODUCT_TYPE_1C_23 :
-                        case Constants.PRODUCT_TYPE_1C_24 :
-                        case Constants.PRODUCT_TYPE_1C_25 :
-                        case Constants.PRODUCT_TYPE_1C_26 :
-                        case Constants.PRODUCT_TYPE_1C_27 :
-                        case Constants.PRODUCT_TYPE_1C_28 :
-                        case Constants.PRODUCT_TYPE_1C_29 :
-                        case Constants.PRODUCT_TYPE_1C_30 :
-                        case Constants.PRODUCT_TYPE_1C_31 :
-                        case Constants.PRODUCT_TYPE_1C_32 :
-                        case Constants.PRODUCT_TYPE_1C_33 :
-                        case Constants.PRODUCT_TYPE_1C_34 :
-                        case Constants.PRODUCT_TYPE_1C_35 :
-                        case Constants.PRODUCT_TYPE_1C_36 :
+                            //case Constants.PRODUCT_TYPE_1C_39:
 
-
-                        case Constants.PRODUCT_TYPE_1C_41 :
-                        case Constants.PRODUCT_TYPE_1C_42 :
-                        case Constants.PRODUCT_TYPE_1C_43 :
-                        case Constants.PRODUCT_TYPE_1C_46 :
-
-                        case Constants.PRODUCT_TYPE_1C_51 :
-                        case Constants.PRODUCT_TYPE_1C_52 :
-                        case Constants.PRODUCT_TYPE_1C_53 :
-                        case Constants.PRODUCT_TYPE_1C_54 :
-                        case Constants.PRODUCT_TYPE_1C_55 :
-                        case Constants.PRODUCT_TYPE_1C_56 :
-                        case Constants.PRODUCT_TYPE_1C_57 :
-                        case Constants.PRODUCT_TYPE_1C_58 :
-                        case Constants.PRODUCT_TYPE_1C_59 :
-                        case Constants.PRODUCT_TYPE_1C_60 :
-
-                        case Constants.PRODUCT_TYPE_1C_62 :
-
-
-                        case Constants.PRODUCT_TYPE_1C_72 :
-                        case Constants.PRODUCT_TYPE_1C_73 :
-                        case Constants.PRODUCT_TYPE_1C_74 :
-                        case Constants.PRODUCT_TYPE_1C_75 :
-                        case Constants.PRODUCT_TYPE_1C_76 :
-                        case Constants.PRODUCT_TYPE_1C_77 :
-
-                        case Constants.PRODUCT_TYPE_1C_79 :
-                        case Constants.PRODUCT_TYPE_1C_83 :
-                        case Constants.PRODUCT_TYPE_1C_84 :
-
-                        case Constants.PRODUCT_TYPE_1C_86 :
-                        case Constants.PRODUCT_TYPE_1C_87 :
-                        case Constants.PRODUCT_TYPE_1C_88 :
-                        case Constants.PRODUCT_TYPE_1C_89 :
-                        case Constants.PRODUCT_TYPE_1C_90 :
-                        case Constants.PRODUCT_TYPE_1C_91 :
-                        case Constants.PRODUCT_TYPE_1C_92 :
-                        case Constants.PRODUCT_TYPE_1C_93 :
-                        case Constants.PRODUCT_TYPE_1C_94 :
-                        case Constants.PRODUCT_TYPE_1C_96 :
-                        case Constants.PRODUCT_TYPE_1C_97 :
-                        case Constants.PRODUCT_TYPE_1C_98 :
-                        case Constants.PRODUCT_TYPE_1C_99 :
+                        case Constants.PRODUCT_TYPE_1C_41:
+                        case Constants.PRODUCT_TYPE_1C_42:
+                        case Constants.PRODUCT_TYPE_1C_43:
+                        case Constants.PRODUCT_TYPE_1C_46:
+                        case Constants.PRODUCT_TYPE_1C_51:
+                        case Constants.PRODUCT_TYPE_1C_52:
+                        case Constants.PRODUCT_TYPE_1C_53:
+                        case Constants.PRODUCT_TYPE_1C_54:
+                        case Constants.PRODUCT_TYPE_1C_55:
+                        case Constants.PRODUCT_TYPE_1C_56:
+                        case Constants.PRODUCT_TYPE_1C_57:
+                        case Constants.PRODUCT_TYPE_1C_58:
+                        case Constants.PRODUCT_TYPE_1C_59:
+                        case Constants.PRODUCT_TYPE_1C_60:
+                        case Constants.PRODUCT_TYPE_1C_62:
+                        case Constants.PRODUCT_TYPE_1C_67:
+                        case Constants.PRODUCT_TYPE_1C_72:
+                        case Constants.PRODUCT_TYPE_1C_73:
+                        case Constants.PRODUCT_TYPE_1C_74:
+                        case Constants.PRODUCT_TYPE_1C_75:
+                        case Constants.PRODUCT_TYPE_1C_76:
+                        case Constants.PRODUCT_TYPE_1C_77:
+                        case Constants.PRODUCT_TYPE_1C_79:
+                        case Constants.PRODUCT_TYPE_1C_83:
+                        case Constants.PRODUCT_TYPE_1C_84:
+                        case Constants.PRODUCT_TYPE_1C_86:
+                        case Constants.PRODUCT_TYPE_1C_87:
+                        case Constants.PRODUCT_TYPE_1C_88:
+                        case Constants.PRODUCT_TYPE_1C_89:
+                        case Constants.PRODUCT_TYPE_1C_90:
+                        case Constants.PRODUCT_TYPE_1C_91:
+                        case Constants.PRODUCT_TYPE_1C_92:
+                        case Constants.PRODUCT_TYPE_1C_93:
+                        case Constants.PRODUCT_TYPE_1C_94:
+                        case Constants.PRODUCT_TYPE_1C_96:
+                        case Constants.PRODUCT_TYPE_1C_97:
+                        case Constants.PRODUCT_TYPE_1C_98:
+                        case Constants.PRODUCT_TYPE_1C_99:
                         case Constants.PRODUCT_TYPE_1C_100:
                         case Constants.PRODUCT_TYPE_1C_101:
                         case Constants.PRODUCT_TYPE_1C_102:
@@ -475,7 +461,8 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_150:
                         case Constants.PRODUCT_TYPE_1C_151:
                         case Constants.PRODUCT_TYPE_1C_152:
-
+                        case Constants.PRODUCT_TYPE_1C_153:
+                        case Constants.PRODUCT_TYPE_1C_154:
                         case Constants.PRODUCT_TYPE_1C_155:
                         case Constants.PRODUCT_TYPE_1C_156:
                         case Constants.PRODUCT_TYPE_1C_157:
@@ -486,29 +473,21 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_162:
                         case Constants.PRODUCT_TYPE_1C_163:
                         case Constants.PRODUCT_TYPE_1C_164:
-
-                            querySearch = brand + " " + model;
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
-                            System.out.println("querySearch = " + querySearch);
-                            System.out.println();
-                            break;
-                        //для этих типов в поисковом запросе указываем бренд, модель и некоторыу параметры
-                        //case Constants.PRODUCT_TYPE_1C_38:
-                        case Constants.PRODUCT_TYPE_1C_10 :
-                        case Constants.PRODUCT_TYPE_1C_37 :
-                        case Constants.PRODUCT_TYPE_1C_39 :
-                        case Constants.PRODUCT_TYPE_1C_40 :
+                        case Constants.PRODUCT_TYPE_1C_39:
+                        case Constants.PRODUCT_TYPE_1C_40:
                         case Constants.PRODUCT_TYPE_1C_49:
                         case Constants.PRODUCT_TYPE_1C_50:
                         case Constants.PRODUCT_TYPE_1C_61:
-                        case Constants.PRODUCT_TYPE_1C_67 :
                         case Constants.PRODUCT_TYPE_1C_132:
-                        case Constants.PRODUCT_TYPE_1C_153:
-                        case Constants.PRODUCT_TYPE_1C_154:
-                            querySearch = brand + " " + model + " " + params;
+
+                            querySearch = brand + " " + model;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+
                             System.out.println("querySearch = " + querySearch);
-                            System.out.println();
+
                             break;
 
                         //для этих кабелей в поисковом запросе указываем бренд, модель тип коннектора и длину
@@ -518,19 +497,26 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_66:
                         case Constants.PRODUCT_TYPE_1C_166:
                             String connect = "-";
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_63) || productType.equals(Constants.PRODUCT_TYPE_1C_64)){
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_63) || productType.equals(Constants.PRODUCT_TYPE_1C_64)) {
                                 connect = "apple";
+                                arrayParams.add(connect);
                             }
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_65)){
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_65)) {
                                 connect = "type-c";
+                                arrayParams.add(connect);
                             }
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_66) || productType.equals(Constants.PRODUCT_TYPE_1C_166)){
-                                connect = "micro USB";
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_66) || productType.equals(Constants.PRODUCT_TYPE_1C_166)) {
+                                connect = "micro";
+                                arrayParams.add(connect);
                             }
-                            querySearch = brand + " " + model + " " + connect + " " + params;
+                            querySearch = brand + " " + model + " " + connect;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+
                             System.out.println("querySearch = " + querySearch);
-                            System.out.println();
+
                             break;
 //                        case Constants.PRODUCT_TYPE_1C_48:
 //                            querySearch = myBrand + " " + model + " 3 в 1 " + params;
@@ -542,40 +528,61 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         //для этих типов в поисковом запросе тип немного видоизменяем
                         case Constants.PRODUCT_TYPE_1C_68:
                             //productType = "Кабель USB 2 в 1";
+                            arrayParams.add("2 в 1");
                             querySearch = brand + " " + model + " 2 в 1";
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+
                             System.out.println("querySearch = " + querySearch);
-                            System.out.println();
+
                             break;
                         case Constants.PRODUCT_TYPE_1C_48:
                         case Constants.PRODUCT_TYPE_1C_69:
                         case Constants.PRODUCT_TYPE_1C_85:
                             //productType = "Кабель USB 3 в 1";
-                            querySearch = brand + " " + model + " 3 в 1 " + params;
+                            arrayParams.add("3 в 1");
+                            querySearch = brand + " " + model + " 3 в 1";
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+
                             System.out.println("querySearch = " + querySearch);
-                            System.out.println();
+
                             break;
                         case Constants.PRODUCT_TYPE_1C_70:
                             //productType = "Кабель USB 4 в 1";
+                            arrayParams.add("4 в 1");
                             querySearch = brand + " " + model + " 4 в 1";
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+
                             System.out.println("querySearch = " + querySearch);
-                            System.out.println();
+
                             break;
                         case "Новая категория":
                             querySearch = "-";
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature + " - новая категория");
-                            System.out.println("querySearch = " + querySearch);
-                            System.out.println();
-                            break;
 
-                        default:
-                            querySearch = productType + " " + brand + " " + model + " " + params;
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("querySearch = " + querySearch);
-                            System.out.println();
-                    }
+
+                            break;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        default:
+                            querySearch = brand + " " + model;
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+
+                            System.out.println("querySearch = " + querySearch);
+
+                }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 }
                 if (mapCountForMyProductName.size() != 0){
                     if (!mapCountForMyProductName.containsKey(brand + " " + model)){

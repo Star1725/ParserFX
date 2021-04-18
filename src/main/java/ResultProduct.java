@@ -42,7 +42,7 @@ public class ResultProduct extends Product{
                          String mySpecAction,
 
                          String queryForSearch,
-                         int countSearch,
+                         String refUrlForResult,
 
                          String competitorBrand,
                          String competitorVendorCode,
@@ -61,7 +61,7 @@ public class ResultProduct extends Product{
 
                          String competitorName
                          ) {
-        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorPremiumPriceForOzon, competitorName);
+        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, refUrlForResult, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorPremiumPriceForOzon, competitorName);
     }
 
 
@@ -101,7 +101,7 @@ public class ResultProduct extends Product{
             String mySpecAction,
 
             String queryForSearch,
-            int countSearch,
+            String refUrlForResult,
 
             String competitorBrand,
             String competitorVendorCode,
@@ -120,7 +120,7 @@ public class ResultProduct extends Product{
 
             String competitorName
             ) {
-        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, countSearch, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorPremiumPriceForOzon, competitorName);
+        super(myVendorCodeFromRequest, myRefForPage, myRefForImage, myProductName, mySpecAction,  queryForSearch, refUrlForResult, competitorBrand, competitorVendorCode, competitorProductName, competitorRefForPage, competitorRefForImage, competitorSpecAction, rating, priceU, basicSale, basicPriceU, promoSale, promoPriceU, competitorPremiumPriceForOzon, competitorName);
         this.isFind = isFind;
         this.myBrand = myBrand;
         this.category = category;
