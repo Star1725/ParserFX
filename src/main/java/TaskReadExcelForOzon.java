@@ -261,7 +261,15 @@ public class TaskReadExcelForOzon extends Task<Map> {
                             }
                             for (String type: Constants.listForCharging){
                                 if (buffParams[1].toLowerCase().contains(type)){
-                                    arrayParams.add(type);
+                                    if (arrayParams.size() == 0){
+                                        arrayParams.add(type);
+                                    } else {
+                                        for (int q = 0; q < arrayParams.size(); q++){
+                                            if (!arrayParams.get(q).contains(type)){
+                                                arrayParams.add(type);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

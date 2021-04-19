@@ -243,11 +243,6 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                                                 arrayParams.add(type);
                                             }
                                         }
-//                                        for (String param: arrayParams){
-//                                            if (!param.contains(type)){
-//                                                arrayParams.add(type);
-//                                            }
-//                                        }
                                     }
                                 }
                             }

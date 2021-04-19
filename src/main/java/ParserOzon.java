@@ -214,6 +214,8 @@ public class ParserOzon {
         String url = "-";
         url = getUrlForSearchQuery(query);
 
+        refUrlForResult = url;
+
         //получение бренда, артикула, имени товара, ссылки на страницу товара, ссылки на картинкау товара, спец-акции, рейтинга
         productList = getCatalogFromFPageForHtmlUnit(url, productType, model, arrayParams);
 
@@ -504,9 +506,9 @@ public class ParserOzon {
                             }
                             System.out.println("Получение " + countForAnalise + " товаров-аналогов для \"" + model + "\" через загрузку и обработку их ссылок");
                             for (int i = 0; i < countForAnalise; i++){
-                                System.out.println(i + 1);
                                 String description = itemsCountSearchJavascript.get(i).asText();
                                 //проходимся только по тем товарам, в названии которых есть наша модель
+                                System.out.println((i + 1) + " - " + description);
                                 if (description.toLowerCase().contains(model)){
                                     String vendorCode = "-";
                                     int competitorPriceU = 0;
@@ -515,7 +517,7 @@ public class ParserOzon {
                                     String hRefProduct = "https://www.ozon.ru" + itemsCountSearchJavascript.get(i).getFirstChild().getAttributes().getNamedItem("href").getNodeValue();
                                     page = getHtmlPage(hRefProduct);
 
-                                    //String sHRef = page.asXml();
+                                    String sHRef = page.asXml();
                                     if (page == null) {
                                         System.out.println("Запрашиваемая страница = null");
                                         return null;
@@ -524,38 +526,68 @@ public class ParserOzon {
                                     final HtmlDivision div_class_b1c6 = (HtmlDivision) page.getByXPath("//div[@class='b1c6']").get(0);
                                     String seller = div_class_b1c6.asText();
 
-                                    HtmlDivision div_class_c2h3_c2h9_c2e7 = null;
-                                    DomNodeList<HtmlElement> spansFor_c2h3_c2h9_c2e7 = null;
+                                    HtmlDivision divClassForPrices = null;
+                                    DomNodeList<HtmlElement> spansForPrices = null;
 
                                     int tries = 5;  // Amount of tries to avoid infinite loop
-                                    while (tries > 0 && div_class_c2h3_c2h9_c2e7 == null) {
+                                    boolean notFindRub = true;
+                                    while (tries > 0 && notFindRub) {
                                         tries--;
                                         try {
-                                            System.out.println("Попытка № " + tries + " получить элемент \"c2h3 c2h9 c2e7\"");
-                                            div_class_c2h3_c2h9_c2e7 = (HtmlDivision) page.getByXPath("//div[@class='c2h3 c2h9 c2e7']").get(0);
+                                            System.out.println("Попытка № " + tries + " получить элемент \"c8q5 c8r0 b1k2\"");//1 - c2h3 c2h9 c2e7, 2 - c8q5 c8r0 b1k2, 3 - c2h3 c2h9 c2e7
+                                            divClassForPrices = (HtmlDivision) page.getByXPath("//div[@class='c8q5 c8r0 b1k2']").get(0);
                                             System.out.println("Попытка № " + tries + " получить элементы \"span\", которые содержат текущую цену и цену до скидки");
-                                            spansFor_c2h3_c2h9_c2e7 = div_class_c2h3_c2h9_c2e7.getElementsByTagName("span");
+                                            spansForPrices = divClassForPrices.getElementsByTagName("span");
+
+                                            if (spansForPrices.size() == 2){
+                                                String competitorPriceUString = spansForPrices.get(1).asText();
+                                                if (competitorPriceUString.contains("₽")){
+                                                    competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
+                                                    notFindRub = false;
+                                                }
+                                            } else {
+                                                String competitorBasicPriceUString = spansForPrices.get(1).asText();
+                                                if (competitorBasicPriceUString.contains("₽")){
+                                                    competitorPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
+                                                    notFindRub = false;
+                                                }
+                                                competitorBasicPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
+                                                String competitorPriceUString = spansForPrices.get(2).asText();
+                                                competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
+                                            }
+
                                         } catch (Exception ignored) {
+                                            System.out.println("Попытка № " + tries + " получить элемент \"c2h3 c2h9 c2e7\"");//1 - c2h3 c2h9 c2e7, 2 - c8q5 c8r0 b1k2, 3 - c2h3 c2h9 c2e7
+                                            divClassForPrices = (HtmlDivision) page.getByXPath("//div[@class='c2h3 c2h9 c2e7']").get(0);
+                                            System.out.println("Попытка № " + tries + " получить элементы \"span\", которые содержат текущую цену и цену до скидки");
+                                            spansForPrices = divClassForPrices.getElementsByTagName("span");
+
+                                            if (spansForPrices.size() == 2){
+                                                String competitorPriceUString = spansForPrices.get(1).asText();
+                                                if (competitorPriceUString.contains("₽")){
+                                                    competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
+                                                    notFindRub = false;
+                                                }
+                                            } else {
+                                                String competitorBasicPriceUString = spansForPrices.get(1).asText();
+                                                if (competitorBasicPriceUString.contains("₽")){
+                                                    competitorPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
+                                                    notFindRub = false;
+                                                }
+                                                competitorBasicPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
+                                                String competitorPriceUString = spansForPrices.get(2).asText();
+                                                competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
+                                            }
                                         }
                                         synchronized(page) {
                                             page.wait(1000);  // How often to check
                                         }
                                     }
 
-                                    if (spansFor_c2h3_c2h9_c2e7.size() == 2){
-                                        String competitorPriceUString = spansFor_c2h3_c2h9_c2e7.get(1).asText();
-                                        competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
-                                    } else {
-                                        String competitorBasicPriceUString = spansFor_c2h3_c2h9_c2e7.get(1).asText();
-                                        competitorBasicPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
-                                        String competitorPriceUString = spansFor_c2h3_c2h9_c2e7.get(2).asText();
-                                        competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
-                                    }
-
                                     String[] arrayBuff1 = hRefProduct.split("/");
                                     for (int j = 0; j < arrayBuff1.length; j++) {
-                                        if (arrayBuff1[i].equals("id")){
-                                            vendorCode = arrayBuff1[i + 1];
+                                        if (arrayBuff1[j].equals("id")){
+                                            vendorCode = arrayBuff1[j + 1];
                                             break;
                                         }
                                     }
