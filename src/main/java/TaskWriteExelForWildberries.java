@@ -489,7 +489,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             try {
                 String myImageUrl = productArrayList.get(i).getMyRefForImage();
                 if (!myImageUrl.equals("-")){
-                    setImageForCell(myImageUrl, 5, i, 0.125, 0.125, vendorCodeWildberries);
+                    setImageForCell(myImageUrl, 5, i, 0.0625, 0.0625, vendorCodeWildberries);
                 }
             } catch (Exception ignored) {
             }

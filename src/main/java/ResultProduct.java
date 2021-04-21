@@ -22,7 +22,7 @@ public class ResultProduct extends Product{
     private double myTrunkForOzon;
     private double myLastMileForOzonOrWildberries;
 
-    private String querySearchForWildberiesOrOzon;
+    private String specQuerySearchForWildberiesOrOzon;
     private int specPrice;
     private int myPriceU;
     private int myBasicSale;
@@ -82,7 +82,7 @@ public class ResultProduct extends Product{
             double myTrunkForOzon,
             double myLastMileForOzonOrWildberries,
 
-            String querySearchForWildberiesOrOzon,
+            String specQuerySearchForWildberiesOrOzon,
             int specPrice,
             int myPriceU,
             int myBasicSale,
@@ -137,7 +137,7 @@ public class ResultProduct extends Product{
         this.myTrunkForOzon = myTrunkForOzon;
         this.myLastMileForOzonOrWildberries = myLastMileForOzonOrWildberries;
 
-        this.querySearchForWildberiesOrOzon = querySearchForWildberiesOrOzon;
+        this.specQuerySearchForWildberiesOrOzon = specQuerySearchForWildberiesOrOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;
         this.myBasicSale = myBasicSale;
@@ -167,7 +167,7 @@ public class ResultProduct extends Product{
             double myTrunkForOzon,
             double myLastMileForOzonOrWildberries,
 
-            String querySearchForWildberiesOrOzon,
+            String specQuerySearchForWildberiesOrOzon,
             int specPrice,
             int myPriceU,
             int myBasicSale,
@@ -195,7 +195,7 @@ public class ResultProduct extends Product{
         this.myTrunkForOzon = myTrunkForOzon;
         this.myLastMileForOzonOrWildberries = myLastMileForOzonOrWildberries;
 
-        this.querySearchForWildberiesOrOzon = querySearchForWildberiesOrOzon;
+        this.specQuerySearchForWildberiesOrOzon = specQuerySearchForWildberiesOrOzon;
         this.specPrice = specPrice;
         this.myPriceU = myPriceU;
         this.myBasicSale = myBasicSale;

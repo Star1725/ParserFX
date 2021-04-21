@@ -641,7 +641,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                     entry.getValue().setMyProductModel(supplier.getMyProductModel());
                     entry.getValue().setArrayListParams((ArrayList<String>) supplier.getArrayListParams());
                     entry.getValue().setMyNomenclature_1C(supplier.getNomenclature());
-                    entry.getValue().setQuerySearchForWildberiesOrOzon(supplier.getQuerySearch());
+                    entry.getValue().setSpecQuerySearchForWildberiesOrOzon(supplier.getSpecQuerySearch());
                     entry.getValue().setMyCommissionForOzonOrWildberries(supplier.getCommission());
                     entry.getValue().setMyLastMileForOzonOrWildberries(supplier.getDelivery());
 

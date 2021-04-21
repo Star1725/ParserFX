@@ -30,6 +30,7 @@ public class Constants {
 
     //заказчик
     public static final String MY_SELLER = "Продавец ООО «АКСЕСС»";
+    public static final String MY_SELLER_2 = "ООО «АКСЕСС»";
 
     public static final String BLOCKING = "блокировка сервером";
 

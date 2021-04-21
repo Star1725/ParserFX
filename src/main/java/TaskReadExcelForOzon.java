@@ -619,13 +619,13 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 try {
                     cell = row.getCell(8);
                     specQuery = cell.getRichStringCellValue().getString();
-                    System.out.println("для кода 1С = " + code_1C + " query заменяется на спец QUERY = " + specQuery);
-                    querySearch = specQuery;
+                    System.out.println("для кода 1С = " + code_1C + " запрос по-умолчанию заменяется на спец QUERY = " + specQuery);
+                    System.out.println();
                 } catch (Exception ignored) {
                     System.out.println();
                 }
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,querySearch, specPrice_1C));
+                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,  specQuery, specPrice_1C));
                 //увеличиваем ProgressBar
                 this.updateProgress(i, countFull);
                 countReadsRows_1C++;
@@ -651,7 +651,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 entry.getValue().setMyNomenclature_1C(supplier1.getNomenclature());
                 entry.getValue().setMyProductModel(supplier1.getMyProductModel());
                 entry.getValue().setArrayListParams((ArrayList<String>) supplier1.getArrayListParams());
-                entry.getValue().setQuerySearchForWildberiesOrOzon(supplier1.getQuerySearch());
+                entry.getValue().setSpecQuerySearchForWildberiesOrOzon(supplier1.getSpecQuerySearch());
 
                 String brand = entry.getValue().getMyBrand();
                 String productModel = entry.getValue().getMyProductModel();

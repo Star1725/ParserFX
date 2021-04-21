@@ -231,19 +231,6 @@ public class ParserWildBer {
                     System.out.println("Для данного запроса ничего не найдено");
                 }
             }
-//            System.out.println("Получение каталога аналогов для \"" + brand.toLowerCase() + " " + productModel.toLowerCase() + "\"");
-//            productList = getCatalogProducts(brand.toLowerCase() + " " + productModel.toLowerCase(), brand);
-//            if (productList.size() != 0) {
-//                System.out.println("Размер каталога аналогов = " + productList.size());
-//                //проходимся по всему списку и находим продукт с наименьшей ценой
-//                System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
-//                Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
-//                if (buffProduct != null) {
-//                    product = buffProduct;
-//                }
-//            } else {
-//                System.out.println("Для данного запроса ничего не найдено");
-//            }
         }
 
         assert product != null;

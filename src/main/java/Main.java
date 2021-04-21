@@ -1,7 +1,4 @@
 import com.gargoylesoftware.htmlunit.*;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import controllers.Controller;
 import javafx.application.Application;
 import javafx.concurrent.WorkerStateEvent;
@@ -11,12 +8,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -229,11 +223,11 @@ public class Main extends Application implements Controller.ActionInController {
                     String category = entry.getValue().getCategory();
                     String brand = entry.getValue().getMyBrand();
                     String productType = entry.getValue().getProductType();
-                    String querySearchForOzon = entry.getValue().getQuerySearchForWildberiesOrOzon();
+                    String specQuerySearchForWildberiesOrOzon = entry.getValue().getSpecQuerySearchForWildberiesOrOzon();
                     String myProductModel = entry.getValue().getMyProductModel();
                     List<String> arrayParams = entry.getValue().getArrayListParams();
 
-                    myCalls.add(new MyCall(key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, querySearchForOzon, webClient, lock));
+                    myCalls.add(new MyCall(key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, specQuerySearchForWildberiesOrOzon, webClient, lock));
                 }
 
                 List<Future<Product>> futureList = new ArrayList<>();
@@ -414,6 +408,7 @@ public class Main extends Application implements Controller.ActionInController {
                             competitorName = product.getCompetitorName();
                             competitorSpecAction = product.getCompetitorSpecAction();
                             queryForSearch = product.getQueryForSearch();
+                            refUrlForResult = product.getRefUrlForResultSearch();
                             competitorBasicPriceU = product.getCompetitorBasicPriceU();
                             competitorPremiumPriceForOzon = product.getCompetitorPremiumPriceForOzon();
 
@@ -426,6 +421,7 @@ public class Main extends Application implements Controller.ActionInController {
                             resultProduct.setCompetitorRefForImage(competitorRefForImage);
                             resultProduct.setCompetitorName(competitorName);
                             resultProduct.setQueryForSearch(queryForSearch);
+                            resultProduct.setRefUrlForResultSearch(refUrlForResult);
                             resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
                             resultProduct.setCompetitorPremiumPriceForOzon(competitorPremiumPriceForOzon);
 
@@ -521,19 +517,19 @@ public class Main extends Application implements Controller.ActionInController {
         String productType;
         String productModel;
         List<String> arrayParams;
-        String querySearchForOzon;
+        String specQuerySearch;
         Set myVendorCodes;
         WebClient webClient;
         Lock lock;
 
-        public MyCall(String key, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String querySearchForOzon, WebClient webClient, Lock lock) {
+        public MyCall(String key, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
             this.key = key;
             this.category = category;
             this.brand = brand;
             this.productType = productType;
             this.productModel = productModel;
             this.arrayParams = arrayParams;
-            this.querySearchForOzon = querySearchForOzon;
+            this.specQuerySearch = specQuerySearch;
             this.myVendorCodes = myVendorCodes;
             this.webClient = webClient;
             this.lock = lock;
@@ -545,10 +541,10 @@ public class Main extends Application implements Controller.ActionInController {
         public Product call() throws Exception {
             if (marketplaceFlag == 1){
                 System.out.println("Запуск задачи parserOzon.getProduct() для артикула Ozon = " + key + ", где brand = " + brand + ", productModel = " + productModel);
-                return parserOzon.getProduct(key, category, brand, productType, productModel, arrayParams, myVendorCodes, querySearchForOzon, webClient, lock);
+                return parserOzon.getProduct(key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient, lock);
             } else if (marketplaceFlag == 2){
                 System.out.println("Запуск задачи parserWildBer.getProduct()для артикула WB = " + key + ", где brand = " + brand + ", productModel = " + productModel);
-                return parserWildBer.getProduct(key, category, brand, productType, productModel, arrayParams, myVendorCodes, querySearchForOzon, webClient);
+                return parserWildBer.getProduct(key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient);
             } else return null;
         }
     }
