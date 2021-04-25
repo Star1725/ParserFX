@@ -1,4 +1,5 @@
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.sun.image.codec.jpeg.JPEGCodec;
 import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -7,14 +8,8 @@ import org.jsoup.Jsoup;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 public class TaskWriteExelForOzon extends Task<File> {
 
@@ -88,58 +83,62 @@ public class TaskWriteExelForOzon extends Task<File> {
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(7);
-        headerCell.setCellValue("ссылка на страницу поискового запроса");
+        headerCell.setCellValue("дополнит. парам. поиска");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(8);
-        headerCell.setCellValue("Наименование товара конкур.");
+        headerCell.setCellValue("ссылка на страницу поискового запроса");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(9);
-        headerCell.setCellValue("Ссылка на конкурента");
+        headerCell.setCellValue("Наименование товара конкур.");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(10);
-        headerCell.setCellValue("Имя продавца");
+        headerCell.setCellValue("Ссылка на конкурента");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(11);
-        headerCell.setCellValue("Тек. роз. цена конкур.");
+        headerCell.setCellValue("Имя продавца");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(12);
-        headerCell.setCellValue("Спец-цена");
+        headerCell.setCellValue("Тек. роз. цена конкур.");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(13);
-        headerCell.setCellValue("Комиссия (%)");
+        headerCell.setCellValue("Спец-цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(14);
-        headerCell.setCellValue("Логистика");
+        headerCell.setCellValue("Комиссия (%)");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(15);
-        headerCell.setCellValue("Наша пороговая цена");
+        headerCell.setCellValue("Логистика");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(16);
-        headerCell.setCellValue("Зарабаток");
+        headerCell.setCellValue("Наша пороговая цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(17);
-        headerCell.setCellValue("Реком. роз. цена");
+        headerCell.setCellValue("Зарабаток");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(18);
-        headerCell.setCellValue("Участие в акции");
+        headerCell.setCellValue("Реком. роз. цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(19);
-        headerCell.setCellValue("Мои базовая цена(до скидки)");
+        headerCell.setCellValue("Участие в акции");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(20);
+        headerCell.setCellValue("Мои базовая цена(до скидки)");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(21);
         headerCell.setCellValue("Моя тек. роз. цена");
         headerCell.setCellStyle(headerStyle);
 
@@ -156,7 +155,7 @@ public class TaskWriteExelForOzon extends Task<File> {
 //        headerCell.setCellStyle(headerStyle);
 
         //настройка автоширины ячейки по содержимому
-        for (int columnIndex = 0; columnIndex < 21; columnIndex++) {
+        for (int columnIndex = 0; columnIndex < 22; columnIndex++) {
             sheet.autoSizeColumn(columnIndex);
         }
 
@@ -279,14 +278,29 @@ public class TaskWriteExelForOzon extends Task<File> {
                 cell.setCellValue(querySearchAndResult);
                 cell.setCellStyle(style);
 
-                //ссылка на страницу поискового запроса
+                //дополнительные параметры поиска
                 cell = row.createCell(7);
+                if (productArrayList.get(i).getArrayListParams() != null){
+                    if (productArrayList.get(i).getArrayListParams().size() == 0){
+                        cell.setCellValue("Дополнит. парам. поиска \n\r не найдены");
+                    } else {
+                        String result = "";
+                        for (String s: productArrayList.get(i).getArrayListParams()){
+                            result = result + s + " ";
+                        }
+                        cell.setCellValue(result);
+                    }
+                    cell.setCellStyle(style);
+                }
+
+                //ссылка на страницу поискового запроса
+                cell = row.createCell(8);
                 String refUrlForResult = productArrayList.get(i).getRefUrlForResultSearch();
                 cell.setCellValue(refUrlForResult);
                 cell.setCellStyle(style);
 
                 //наименование продукта конкурента(если нашли)
-                cell = row.createCell(8);
+                cell = row.createCell(9);
                 if (querySearchAndResult.equals(Constants.BLOCKING)) {
                     System.out.println(Constants.BLOCKING);
                     cell.setCellValue(Constants.BLOCKING);
@@ -309,7 +323,7 @@ public class TaskWriteExelForOzon extends Task<File> {
 
 
                 //ссылка на конкурента, или самого себя, или мой аналогичный товар
-                cell = row.createCell(9);
+                cell = row.createCell(10);
                 if (querySearchAndResult.equals(Constants.BLOCKING)) {
                     System.out.println(Constants.BLOCKING);
                     cell.setCellValue(Constants.BLOCKING);
@@ -325,7 +339,7 @@ public class TaskWriteExelForOzon extends Task<File> {
                 }
 
                 //Имя продавца
-                cell = row.createCell(10);
+                cell = row.createCell(11);
                 if (querySearchAndResult.equals(Constants.BLOCKING)) {
                     System.out.println(Constants.BLOCKING);
                     cell.setCellValue(Constants.BLOCKING);
@@ -343,7 +357,7 @@ public class TaskWriteExelForOzon extends Task<File> {
                 double recommendLowerPrice = Math.round(productArrayList.get(i).getRecommendedMyLowerPrice() / 100);
 
                 //Тек. роз. цена конкурента
-                cell = row.createCell(11);
+                cell = row.createCell(12);
                 System.out.println(competitorLowerPrice);
                 cell.setCellValue(competitorLowerPrice);
                 if (competitorLowerPrice == myLowerPrice) {
@@ -355,7 +369,7 @@ public class TaskWriteExelForOzon extends Task<File> {
                 }
 
                 //Спец-цена
-                cell = row.createCell(12);
+                cell = row.createCell(13);
                 if (specPrice == 0) {
                     System.out.println("н/д");
                     cell.setCellValue("н/д");
@@ -367,14 +381,14 @@ public class TaskWriteExelForOzon extends Task<File> {
                 }
 
                 //Коммисия
-                cell = row.createCell(13);
+                cell = row.createCell(14);
                 double commissionPercentage = productArrayList.get(i).getMyCommissionForOzonOrWildberries();
                 System.out.println(1 - (commissionPercentage / 100));
                 cell.setCellValue(1 - (commissionPercentage / 100));
                 cell.setCellStyle(style);
 
                 //Логистика
-                cell = row.createCell(14);
+                cell = row.createCell(15);
                 double myOrderAssemblyForOzon = productArrayList.get(i).getMyOrderAssemblyForOzon();
                 double myTrunkForOzon = productArrayList.get(i).getMyTrunkForOzon();
                 double myLastMileForOzon = productArrayList.get(i).getMyLastMileForOzonOrWildberries();
@@ -384,7 +398,7 @@ public class TaskWriteExelForOzon extends Task<File> {
                 cell.setCellStyle(style);
 
                 //Наша пороговая цена
-                cell = row.createCell(15);
+                cell = row.createCell(16);
                 int criticPrice = (int) Math.round(myLowerPrice * (1 - (commissionPercentage / 100)) - logistic);
                 System.out.println("criticPrice - " + criticPrice);
                 cell.setCellValue(criticPrice);
@@ -395,7 +409,7 @@ public class TaskWriteExelForOzon extends Task<File> {
                 }
 
                 //Заработок
-                cell = row.createCell(16);
+                cell = row.createCell(17);
                 double earnings = Math.round((specPrice / criticPrice - 1) * 100);
                 System.out.println(earnings);
                 cell.setCellValue(earnings);
@@ -408,7 +422,7 @@ public class TaskWriteExelForOzon extends Task<File> {
                 }
 
                 //Рекомендуемая роз. цена
-                cell = row.createCell(17);
+                cell = row.createCell(18);
                 System.out.println(recommendLowerPrice);
                 cell.setCellValue(recommendLowerPrice);
                 if (competitorLowerPrice == myLowerPrice) {
@@ -431,7 +445,7 @@ public class TaskWriteExelForOzon extends Task<File> {
                 //            }
 
                 //Моя базовая цена
-                cell = row.createCell(19);
+                cell = row.createCell(20);
                 int myPriceU = Math.round(productArrayList.get(i).getMyPriceU() / 100);
                 System.out.println(myPriceU);
                 cell.setCellValue(myPriceU);
@@ -439,7 +453,7 @@ public class TaskWriteExelForOzon extends Task<File> {
 
 
                 //Моя тек. роз. цена
-                cell = row.createCell(20);
+                cell = row.createCell(21);
                 System.out.println(myLowerPrice);
                 cell.setCellValue(myLowerPrice);
                 if (competitorLowerPrice == myLowerPrice) {
@@ -450,21 +464,21 @@ public class TaskWriteExelForOzon extends Task<File> {
                     cell.setCellStyle(styleGreenCell);
                 }
 
-                            //установка картинки для моего товара
-//                            String myImageUrl = productArrayList.get(i).getMyRefForImage();
-//                            if (myImageUrl != null){
-//                                if (!myImageUrl.equals("-")){
-//                                    setImageForCell(myImageUrl, 5, i, 0.125, 0.125);
-//                                }
-//                            }
+                //установка картинки для моего товара
+                String myImageUrl = productArrayList.get(i).getMyRefForImage();
+                if (myImageUrl != null) {
+                    if (!myImageUrl.equals("-")) {
+                        setImageForCell(myImageUrl, 5, i, 0.3, 0.3, myVendorCode);
+                    }
+                }
 
-                //            //установка картинки для конкурента
-                            String imageUrl = productArrayList.get(i).getCompetitorRefForImage();
-                            if (imageUrl != null){
-                                if (!imageUrl.equals("-")){
-                                    setImageForCell(imageUrl, 9, i, 1, 1, myVendorCode);
-                                }
-                            }
+                //установка картинки для конкурента
+                String imageUrl = productArrayList.get(i).getCompetitorRefForImage();
+                if (imageUrl != null) {
+                    if (!imageUrl.equals("-")) {
+                        setImageForCell(imageUrl, 9, i, 0.3, 0.3, myVendorCode);
+                    }
+                }
 
                 this.updateProgress(i + 1, countRows);
                 System.out.println("Запись строки " + countRows++);
@@ -494,6 +508,7 @@ public class TaskWriteExelForOzon extends Task<File> {
     private void setImageForCell(String url, int columnIndex, int rowIndex, double scaleX, double scaleY, String myVendorCode) {
         System.out.println("Загрузка картинки для артикула WB = " + myVendorCode);
         try {
+            System.out.println("Загрузка картинки для url=" + url);
             byte[] bytes = Jsoup.connect(url)
                     .userAgent("Chrome")
                     .timeout(30000)
@@ -502,40 +517,54 @@ public class TaskWriteExelForOzon extends Task<File> {
 
             int size = bytes.length;
 
-            FileOutputStream file = new FileOutputStream("C:\\Users\\User\\Desktop\\test.jpg");
+            FileOutputStream file = new FileOutputStream("test.webp");
             file.write(bytes);
             file.close();
-//            System.out.println(file.getFD().)
 
-//            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-//            BufferedImage image = ImageIO.read(bais);
-//
-//            try {
-//                // retrieve image
-//                File outputfile = new File("saved.jpg");
-//                ImageIO.write(image, "jpg", outputfile);
-//            } catch (IOException e) {
-//                System.out.println("ошибка изображения");
-//            }
+            //the "dwebp.exe" path
+            String str1 = "C:/Users/User/IdeaProjects/ParserFX/libwebp-0.4.2-windows-x64/bin/dwebp.exe";
+            //the webp picture path
+            String str2 = "C:/Users/User/IdeaProjects/ParserFX/test.webp";
+            //the converted picture path
+            String str3 = "C:/Users/User/IdeaProjects/ParserFX/converted.png";
+            String[] args = new String[]{str1, str2, "-o", str3};
 
+            try {
+                Runtime.getRuntime().exec(args);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            Thread.sleep(500);
 
-//            URL urlForImage = new URL(url);
-//            BufferedImage img = ImageIO.read(urlForImage);
-//
-//            webClient.getOptions().setCssEnabled(false);
-//            webClient.getOptions().setJavaScriptEnabled(false);
-//            HtmlPage pageImage = webClient.getPage(url);
-//            assert pageImage != null;
-//            String html = pageImage.asText();
-//            String contentType = pageImage.getWebResponse().getContentType();
-//            byte[] bytes = pageImage.getWebResponse().
+            File convertedFile = new File("converted.png");
 
-            int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PICT);
+            BufferedImage image = ImageIO.read(convertedFile);
+            int h = image.getHeight();
+            //int w = image.getWidth();
+
+            double relatively = (double) 250/h;
+            System.out.println("Отношение высоты картинки к 250 pix = " + relatively);
+            if (h > 250) {
+                scaleX = relatively * scaleX;
+                scaleY = relatively * scaleY;
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(1000);
+            ImageIO.write(image, "png", baos);
+            baos.flush();
+
+            String base64String = Base64.getEncoder().encodeToString(baos.toByteArray());
+            baos.close();
+
+            byte[] resByteArray = Base64.getDecoder().decode(base64String);
+
+            int size2 = resByteArray.length;
+
+            int pictureIdx = workbook.addPicture(resByteArray, Workbook.PICTURE_TYPE_PNG);
 
             helper = workbook.getCreationHelper();
-
             drawing = sheet.createDrawingPatriarch();
-
             anchor = helper.createClientAnchor();
 
             anchor.setCol1(columnIndex);
@@ -545,7 +574,7 @@ public class TaskWriteExelForOzon extends Task<File> {
 
             pict.resize(scaleX, scaleY);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

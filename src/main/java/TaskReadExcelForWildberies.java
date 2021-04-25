@@ -174,11 +174,18 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 //получаем комиссию
                 double commission = 0;
                 cell = row.getCell(6);
-                commission = cell.getNumericCellValue();
+                try {
+                    commission = cell.getNumericCellValue();
+                } catch (Exception ignored) {
+                }
 
                 //получаем доставку
                 cell = row.getCell(7);
-                int delivery = (int) cell.getNumericCellValue();
+                int delivery = 0;
+                try {
+                    delivery = (int) cell.getNumericCellValue();
+                } catch (Exception ignored) {
+                }
 
                 //получаем наименование продукта и сразу пытаемся получить поисковый запрос
                 cell = row.getCell(3);
@@ -620,8 +627,19 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                     //e.printStackTrace();
                 }
 
+                String specQuery = "-";
+                try {
+                    cell = row.getCell(9);
+                    specQuery = cell.getRichStringCellValue().getString();
+                    System.out.println("для кода 1С = " + code_1C + " запрос по-умолчанию заменяется на спец QUERY = " + specQuery);
+                    System.out.println();
+                } catch (Exception ignored) {
+                    System.out.println();
+                }
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, querySearch, specPrice_1C, commission, delivery));
+
+
+                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, specQuery, specPrice_1C, commission, delivery));
                 //увеличиваем ProgressBar
                 this.updateProgress(i, countFull);
                 i++;

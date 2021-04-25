@@ -253,6 +253,7 @@ public class Main extends Application implements Controller.ActionInController {
                     String competitorRefForImage = "-";
                     String competitorName = "-";
                     String queryForSearch = "-";
+                    List<String> arrayListParams = new ArrayList<>();
                     String competitorSpecAction = "-";
                     String refUrlForResult = "-";
                     int competitorPriceU = 0;
@@ -401,6 +402,7 @@ public class Main extends Application implements Controller.ActionInController {
                             myVendorCode = product.getMyVendorCodeFromRequest();
                             System.out.println(number + "/" + resultMap.size() + " - получили результат для задачи № " + myVendorCode);
                             myRefForPage = product.getMyRefForPage();
+                            myRefForImage = product.getMyRefForImage();
                             competitorVendorCode = product.getCompetitorVendorCode();
                             competitorProductName = product.getCompetitorProductName();
                             competitorRefForPage = product.getCompetitorRefForPage();
@@ -415,6 +417,7 @@ public class Main extends Application implements Controller.ActionInController {
                             ResultProduct resultProduct = resultMap.get(myVendorCode);
 
                             resultProduct.setMyRefForPage(myRefForPage);
+                            resultProduct.setMyRefForImage(myRefForImage);
                             resultProduct.setCompetitorVendorCode(competitorVendorCode);
                             resultProduct.setCompetitorProductName(competitorProductName);
                             resultProduct.setCompetitorRefForPage(competitorRefForPage);
@@ -489,6 +492,15 @@ public class Main extends Application implements Controller.ActionInController {
                 if (marketplaceFlag == 1){
                     taskWriteExelForOzon.run();
                 } else {
+                    System.out.println("/////////");
+                    System.out.println("/   ||  /");
+                    System.out.println("/   ||  /");
+                    System.out.println("/   ||  /");
+                    System.out.println("/   ||  /");
+                    System.out.println("/   ||  /");
+                    System.out.println("/       /");
+                    System.out.println("/   //  /");
+                    System.out.println("/////////");
                     taskWriteExelForWildberries.run();
                 }
             }

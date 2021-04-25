@@ -1,12 +1,14 @@
+import com.sun.image.codec.jpeg.JPEGCodec;
 import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.Jsoup;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 public class TaskWriteExelForWildberries extends Task<File> {
@@ -485,7 +487,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
                 cell.setCellValue("-");
             }
 
-            //установка картинки для моего товара
+            //установка картинки для моего товара 0.0625
             try {
                 String myImageUrl = productArrayList.get(i).getMyRefForImage();
                 if (!myImageUrl.equals("-")){
@@ -494,7 +496,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             } catch (Exception ignored) {
             }
 
-            //установка картинки для конкурента
+            //установка картинки для конкурента imageUrl 0.25
             try {
                 String imageUrl = productArrayList.get(i).getCompetitorRefForImage();
                 if (!imageUrl.equals("-")){
@@ -502,6 +504,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
                 }
             } catch (Exception ignored) {
             }
+
 
             this.updateProgress(i + 1, countRows);
         }
@@ -527,24 +530,52 @@ public class TaskWriteExelForWildberries extends Task<File> {
     private void setImageForCell(String url, int columnIndex, int rowIndex, double scaleX, double scaleY, String vendorCodeWildberries) {
         try {
             System.out.println("Загрузка картинки для артикула WB = " + vendorCodeWildberries);
+
             byte[] bytes = Jsoup.connect(url).timeout(30000).ignoreContentType(true).execute().bodyAsBytes();
+
+
+////////Чтение из файла на диске////////////////////////////////////////////////////////////////////////////////////////
+
+//            com.sun.image.codec.jpeg.JPEGImageDecoder jpegDecoder =  JPEGCodec.createJPEGDecoder (new FileInputStream("test1.jpg"));
+//
+//            BufferedImage image5 = jpegDecoder.decodeAsBufferedImage();
+//
+//            URL url3 = new URL("https://images.wbstatic.net/big/new/15110000/15119113-1.jpg");
+////            URL url3 = new URL("https://cdn1.ozone.ru/s3/multimedia-5/wc250/6015239165.jpg");
+//            BufferedImage img = ImageIO.read(url3);
+//            File file3 = new File("downloaded.jpg");
+//            ImageIO.write(img, "jpg", file3);
+//
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream(1000);
+//            BufferedImage image = ImageIO.read(new File("downloaded.jpg"));
+//
+//            // явно указываем расширение файла для простоты реализации
+//            ImageIO.write(image, "jpg", baos);
+//            baos.flush();
+//
+////            String base64String = Base64.encode(baos.toByteArray());
+//            String base64String = Base64.getEncoder().encodeToString(baos.toByteArray());
+//            baos.close();
+//
+//            // декодируем полученную строку в массив байт
+////            byte[] resByteArray = Base64.decode(base64String);
+//            byte[] resByteArray = Base64.getDecoder().decode(base64String);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
 
             helper = workbook.getCreationHelper();
-
-            drawing = sheet.createDrawingPatriarch();
-
             anchor = helper.createClientAnchor();
+            drawing = sheet.createDrawingPatriarch();
 
             anchor.setCol1(columnIndex);
             anchor.setRow1(rowIndex + 1);
-
             Picture pict = drawing.createPicture(anchor, pictureIdx);
 
             pict.resize(scaleX, scaleY);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

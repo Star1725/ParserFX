@@ -17,6 +17,7 @@ import static java.util.Comparator.comparing;
 public class ParserWildBer {
 
     private static String refUrlForResult = "-";
+    private static String myQuery;
 
     private Object mon = new Object();
     private static Map<String, List<Product>> resultMapForQueries = new LinkedHashMap<>();
@@ -59,6 +60,12 @@ public class ParserWildBer {
         //если ничего не вернулось(страница не существует) то возвращаем нулевой продукт
         if (page == null){
             return product;
+        }
+
+        if (specQuerySearch.equals("-") || specQuerySearch.equals("")) {
+            myQuery = brand.toLowerCase() + " " + productModel.toLowerCase();
+        } else {
+            myQuery = specQuerySearch;
         }
 
 //////////////формирование поискового запроса на основании данных, полученных из анализа страницы моего продукта, для которого мы исчем аналоги
@@ -169,7 +176,7 @@ public class ParserWildBer {
                     query = new StringBuilder(brand + " " + buffArray2[0].trim());
 
                     query = new StringBuilder(query.toString().toLowerCase());
-                    productList = getCatalogProducts(query.toString().toLowerCase(), brand);
+                    productList = getCatalogProducts(myQuery, brand);
                     if (productList.size() != 0){
                         //проходимся по всему списку и находим продукт с наименьшей ценой
                         product = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
@@ -181,9 +188,9 @@ public class ParserWildBer {
 ////////////поисковый запрос мы получаем из аргументов метода: brand, productModel, specQuerySearch/////////////////////
             //если наш кеш пустой, то заносим туда первый каталог
             if (resultMapForQueries.size() == 0) {
-                System.out.println("Получение каталога аналогов для \"" + brand.toLowerCase() + " " + productModel.toLowerCase() + "\"");
+                System.out.println("Получение каталога аналогов для \"" + myQuery + "\"");
                 System.out.println("дополнительный параметр поиска - " + arrayParams.toString());
-                productList = getCatalogProducts(brand.toLowerCase() + " " + productModel.toLowerCase(), brand);
+                productList = getCatalogProducts(myQuery, brand);
 
                 resultMapForQueries.put(brand + " " + productModel, productList);
 
@@ -200,7 +207,7 @@ public class ParserWildBer {
                 }
                 //проверяем наш кеш на наличие каталога для запроса brand, productModel
             } else if (resultMapForQueries.containsKey(brand + " " + productModel)){
-                System.out.println("Для запроса \"" + brand + " " + productModel + " + arrayParams = " + arrayParams.toString() + "\" в кеше найден каталог аналогов, поэтому запрос на ozon не осуществляем");
+                System.out.println("Для запроса \"" + myQuery + " + arrayParams = " + arrayParams.toString() + "\" в кеше найден каталог аналогов, поэтому запрос на ozon не осуществляем");
                 productList = resultMapForQueries.get(brand + " " + productModel);
                 if (productList.size() != 0) {
                     System.out.println("Размер каталога аналогов = " + productList.size());
@@ -214,8 +221,8 @@ public class ParserWildBer {
                     System.out.println("Для данного запроса ничего не найдено");
                 }
             } else {
-                System.out.println("Получение каталога аналогов для \"" + brand.toLowerCase() + " " + productModel.toLowerCase() + "\"");
-                productList = getCatalogProducts(brand.toLowerCase() + " " + productModel.toLowerCase(), brand);
+                System.out.println("Получение каталога аналогов для \"" + myQuery + "\"");
+                productList = getCatalogProducts(myQuery, brand);
 
                 resultMapForQueries.put(brand + " " + productModel, productList);
 
