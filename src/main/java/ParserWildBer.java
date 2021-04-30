@@ -17,6 +17,7 @@ import static java.util.Comparator.comparing;
 public class ParserWildBer {
 
     private static String refUrlForResult = "-";
+    private static String resultSearch = "-";
     private static String myQuery;
 
     private Object mon = new Object();
@@ -252,8 +253,11 @@ public class ParserWildBer {
         //устанавливаем ссылку на картинку моего товара
         product.setMyRefForImage(getMyProductsPhoto(page));
 
-        //устанавливаем поисковый запрос аналогов
-        //product.setQueryForSearch(specQuerySearch);
+        //устанавливаем результат поискоого запроса аналогов
+        product.setQueryForSearch(resultSearch);
+
+        //устанавливаем ссылку на страницу поискового запроса аналогов
+        product.setRefUrlForResultSearch(refUrlForResult);
 
         //устанавливаем наименование моего товара
         product.setMyProductName(getMyProductsTitle(page));
@@ -306,7 +310,8 @@ public class ParserWildBer {
                             if (arrayParams.size() == 0){
                                 for (Product p : productList) {
                                     String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                    if (nomenclature.contains(productModel)) {
+                                    if (nomenclature.toLowerCase().contains(productModel + ",") || nomenclature.toLowerCase().contains(productModel + " ") || nomenclature.toLowerCase().contains("(" + productModel + ")") || nomenclature.toLowerCase().contains(", " + productModel + "")) {
+//                                    if (nomenclature.contains(productModel)) {
                                         int check = 0;
                                         for (String s : Constants.listForCharging) {
                                             if (nomenclature.contains(s.toLowerCase())) {
@@ -334,7 +339,8 @@ public class ParserWildBer {
                                 List<String> listWithCable = getCollectionsParam(arrayParams, brand + productModel);
                                 for (Product p : productList) {
                                     String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                    if (nomenclature.contains(productModel)) {
+//                                    if (nomenclature.contains(productModel)) {
+                                    if (nomenclature.toLowerCase().contains(productModel + ",") || nomenclature.toLowerCase().contains(productModel + " ") || nomenclature.toLowerCase().contains("(" + productModel + ")") || nomenclature.toLowerCase().contains(", " + productModel + "")) {
                                         int check = 0;
                                         for (String s : listWithCable) {
                                             if (nomenclature.contains(s)) {
@@ -377,32 +383,53 @@ public class ParserWildBer {
                 case Constants.PRODUCT_TYPE_1C_69:
                 case Constants.PRODUCT_TYPE_1C_70:
                     try {
-                        if (productModel != null & arrayParams.size() == 2){
+                        if (productModel != null){
                             //определяем коллекцию с разными названиями нашего param
-                            List<String> listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(0), brand + productModel);
-                            List<String> listWithCableParam_2 = getCollectionsParamCable(arrayParams.get(1), brand + productModel);
+                            List<String> listWithCableParam_1;
+                            List<String> listWithCableParam_2 = null;
+                            if (arrayParams.size() == 1){
+                                listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(0), brand + productModel);
+                            } else {
+                                listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(0), brand + productModel);
+                                listWithCableParam_2 = getCollectionsParamCable(arrayParams.get(1), brand + productModel);
+                            }
+
                             for (Product p : productList) {
                                 String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                if (nomenclature.contains(productModel)) {
+//                                if (nomenclature.contains(productModel)) {
+                                if (nomenclature.toLowerCase().contains(productModel + ",") || nomenclature.toLowerCase().contains(productModel + " ") || nomenclature.toLowerCase().contains("(" + productModel + ")") || nomenclature.toLowerCase().contains(", " + productModel + "")) {
                                     int check = 0;
                                     for (String s1 : listWithCableParam_1) {
                                         if (nomenclature.contains(s1)) {
-                                            for (String s2 : listWithCableParam_2) {
-                                                if (nomenclature.contains(s2)) {
-                                                    if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
-                                                        if (myProductIsLower) {
+                                            if (listWithCableParam_2 != null){
+                                                for (String s2 : listWithCableParam_2) {
+                                                    if (nomenclature.contains(s2)) {
+                                                        if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                                            if (myProductIsLower) {
+                                                                product = p;
+                                                                myProductIsLower = false;
+                                                            }
+                                                        } else {
                                                             product = p;
-                                                            myProductIsLower = false;
+                                                            check++;
+                                                            break;
                                                         }
-                                                    } else {
-                                                        product = p;
-                                                        check++;
-                                                        break;
                                                     }
                                                 }
-                                            }
-                                            if (check != 0) {
-                                                break;
+                                                if (check != 0) {
+                                                    break;
+                                                }
+                                            } else {
+                                                if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                                    if (myProductIsLower) {
+                                                        product = p;
+                                                        myProductIsLower = false;
+                                                    }
+                                                } else {
+                                                    product = p;
+                                                    check++;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -823,8 +850,17 @@ public class ParserWildBer {
         if (page != null){
 
             //результат запроса
-            Element result = page.select(Constants.ELEMENT_WITH_RESULT_SEARCH).first();
-            String resultSearch = result.text();
+            try {
+                Element result = page.select(Constants.ELEMENT_WITH_RESULT_SEARCH).first();
+                resultSearch = result.text();
+                System.out.println(resultSearch);
+            } catch (Exception e) {
+                Element result1 = page.select(Constants.ELEMENT_WITH_EMPTY_RESULT_SEARCH_1).first();
+                Element result2 = page.select(Constants.ELEMENT_WITH_EMPTY_RESULT_SEARCH_2).first();
+                resultSearch = result1.text() + "\n\r" + result2.text();
+                System.out.println(resultSearch);
+                return productList;
+            }
 
             Element catalog = page.select(Constants.ELEMENT_WITH_CATALOG).first();
             if (catalog == null){
@@ -897,7 +933,7 @@ public class ParserWildBer {
                         "-",
 
                         resultSearch,
-                        refUrlForResult,
+                        "-",
 
                         brandName,
                         vendorCode,

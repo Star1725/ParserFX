@@ -183,8 +183,8 @@ public class Main extends Application implements Controller.ActionInController {
             taskWriteExelForOzon.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
-                    openFile(taskWriteExelForOzon.writeWorkbook(resultMap));
-
+//                    openFile(taskWriteExelForOzon.writeWorkbook(resultMap));
+                    openFile(taskWriteExelForOzon.getValue());
                     stop = System.currentTimeMillis();
                     Date dateStart = new Date(stop);
                     long timeWorkCode = stop - start;
@@ -208,31 +208,29 @@ public class Main extends Application implements Controller.ActionInController {
             });
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
 
-                executorService = Executors.newFixedThreadPool(1);
-                CompletionService<Product> executorCompletionService= new ExecutorCompletionService<>(executorService);
+            executorService = Executors.newFixedThreadPool(1);
+            CompletionService<Product> executorCompletionService= new ExecutorCompletionService<>(executorService);
 
-                List<MyCall> myCalls = new ArrayList<>();
-                setMyVendorCodes = resultMap.keySet();
+            List<MyCall> myCalls = new ArrayList<>();
+            setMyVendorCodes = resultMap.keySet();
 
-                for (Map.Entry<String, ResultProduct> entry : resultMap.entrySet()) {
-                    String key = entry.getKey();
-                    String category = entry.getValue().getCategory();
-                    String brand = entry.getValue().getMyBrand();
-                    String productType = entry.getValue().getProductType();
-                    String specQuerySearchForWildberiesOrOzon = entry.getValue().getSpecQuerySearchForWildberiesOrOzon();
-                    String myProductModel = entry.getValue().getMyProductModel();
-                    List<String> arrayParams = entry.getValue().getArrayListParams();
+            for (Map.Entry<String, ResultProduct> entry : resultMap.entrySet()) {
+                String key = entry.getKey();
+                String category = entry.getValue().getCategory();
+                String brand = entry.getValue().getMyBrand();
+                String productType = entry.getValue().getProductType();
+                String specQuerySearchForWildberiesOrOzon = entry.getValue().getSpecQuerySearchForWildberiesOrOzon();
+                String myProductModel = entry.getValue().getMyProductModel();
+                List<String> arrayParams = entry.getValue().getArrayListParams();
 
-                    myCalls.add(new MyCall(key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, specQuerySearchForWildberiesOrOzon, webClient, lock));
-                }
+                myCalls.add(new MyCall(key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, specQuerySearchForWildberiesOrOzon, webClient, lock));
+            }
 
-                List<Future<Product>> futureList = new ArrayList<>();
+            List<Future<Product>> futureList = new ArrayList<>();
 
-                int number = 1;
+            int number = 1;
 //
 //                try {
 //                    //смена IP в самом начале
@@ -240,155 +238,155 @@ public class Main extends Application implements Controller.ActionInController {
 //                } catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
-                for (MyCall myCall : myCalls) {
-                    futureList.add(executorCompletionService.submit(myCall));
-                    String myVendorCode = "-";
-                    String myRefForPage = "-";
-                    String myRefForImage = "-";
-                    String myProductName = "-";
-                    String mySpecAction = "-";
-                    String competitorVendorCode = "-";
-                    String competitorProductName = "-";
-                    String competitorRefForPage = "-";
-                    String competitorRefForImage = "-";
-                    String competitorName = "-";
-                    String queryForSearch = "-";
-                    List<String> arrayListParams = new ArrayList<>();
-                    String competitorSpecAction = "-";
-                    String refUrlForResult = "-";
-                    int competitorPriceU = 0;
-                    int competitorBasicSale = 0;
-                    int competitorBasicPriceU = 0;
-                    int competitorPromoSale = 0;
-                    int competitorPromoPriceU = 0;
-                    int competitorPremiumPriceForOzon = 0;
-                    int competitorRating = 0;
+            for (MyCall myCall : myCalls) {
+                futureList.add(executorCompletionService.submit(myCall));
+                String myVendorCode = "-";
+                String myRefForPage = "-";
+                String myRefForImage = "-";
+                String myProductName = "-";
+                String mySpecAction = "-";
+                String competitorVendorCode = "-";
+                String competitorProductName = "-";
+                String competitorRefForPage = "-";
+                String competitorRefForImage = "-";
+                String competitorName = "-";
+                String queryForSearch = "-";
+                List<String> arrayListParams = new ArrayList<>();
+                String competitorSpecAction = "-";
+                String refUrlForResult = "-";
+                int competitorPriceU = 0;
+                int competitorBasicSale = 0;
+                int competitorBasicPriceU = 0;
+                int competitorPromoSale = 0;
+                int competitorPromoPriceU = 0;
+                int competitorPremiumPriceForOzon = 0;
+                int competitorRating = 0;
 
-                    try {
-                        //установка рекомендуемой скидки и розничной цены на основании величины скидки(рубли или проценты)
-                        double rub = 0;
-                        double present = 0;
-                        if (stepFlag == 1){
-                            rub = preFld * 100;
-                        } else {
-                            present = 1 - preFld / 100;
-                        }
+                try {
+                    //установка рекомендуемой скидки и розничной цены на основании величины скидки(рубли или проценты)
+                    double rub = 0;
+                    double present = 0;
+                    if (stepFlag == 1){
+                        rub = preFld * 100;
+                    } else {
+                        present = 1 - preFld / 100;
+                    }
 
 ////////////////////////для wildberries//////////////////////////////////////////////////////////////////////////////////
-                        if (marketplaceFlag == 2){
-                            System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
-                            Product product = executorCompletionService.take().get();
-                            //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
-                            myVendorCode = product.getMyVendorCodeFromRequest();
+                    if (marketplaceFlag == 2){
+                        System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
+                        Product product = executorCompletionService.take().get();
+                        //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
+                        myVendorCode = product.getMyVendorCodeFromRequest();
 
-                            myRefForPage = product.getMyRefForPage();
-                            myRefForImage = product.getMyRefForImage();
-                            myProductName = product.getMyProductName();
-                            mySpecAction = product.getMySpecAction();
-                            competitorVendorCode = product.getCompetitorVendorCode();
-                            competitorProductName = product.getCompetitorProductName();
-                            competitorRefForPage = product.getCompetitorRefForPage();
-                            competitorRefForImage = product.getCompetitorRefForImage();
-                            competitorName = product.getCompetitorName();
-                            queryForSearch = product.getQueryForSearch();
-                            refUrlForResult = product.getRefUrlForResultSearch();
-                            competitorPriceU = product.getCompetitorPriceU();
-                            competitorBasicSale = product.getCompetitorBasicSale();
-                            competitorBasicPriceU = product.getCompetitorBasicPriceU();
-                            competitorPromoSale = product.getCompetitorPromoSale();
-                            competitorPromoPriceU = product.getCompetitorPromoPriceU();
-                            competitorSpecAction = product.getCompetitorSpecAction();
-                            competitorRating = product.getCompetitorRating();
+                        myRefForPage = product.getMyRefForPage();
+                        myRefForImage = product.getMyRefForImage();
+                        myProductName = product.getMyProductName();
+                        mySpecAction = product.getMySpecAction();
+                        competitorVendorCode = product.getCompetitorVendorCode();
+                        competitorProductName = product.getCompetitorProductName();
+                        competitorRefForPage = product.getCompetitorRefForPage();
+                        competitorRefForImage = product.getCompetitorRefForImage();
+                        competitorName = product.getCompetitorName();
+                        queryForSearch = product.getQueryForSearch();
+                        refUrlForResult = product.getRefUrlForResultSearch();
+                        competitorPriceU = product.getCompetitorPriceU();
+                        competitorBasicSale = product.getCompetitorBasicSale();
+                        competitorBasicPriceU = product.getCompetitorBasicPriceU();
+                        competitorPromoSale = product.getCompetitorPromoSale();
+                        competitorPromoPriceU = product.getCompetitorPromoPriceU();
+                        competitorSpecAction = product.getCompetitorSpecAction();
+                        competitorRating = product.getCompetitorRating();
 
-                            ResultProduct resultProduct = resultMap.get(myVendorCode);
+                        ResultProduct resultProduct = resultMap.get(myVendorCode);
 
-                            resultProduct.setMyRefForPage(myRefForPage);
-                            resultProduct.setMyRefForImage(myRefForImage);
-                            resultProduct.setMyProductName(myProductName);
-                            resultProduct.setMySpecAction(mySpecAction);
-                            resultProduct.setCompetitorVendorCode(competitorVendorCode);
-                            resultProduct.setCompetitorProductName(competitorProductName);
-                            resultProduct.setCompetitorRefForPage(competitorRefForPage);
-                            resultProduct.setCompetitorRefForImage(competitorRefForImage);
-                            resultProduct.setCompetitorName(competitorName);
-                            resultProduct.setQueryForSearch(queryForSearch);
-                            resultProduct.setRefUrlForResultSearch(refUrlForResult);
-                            resultProduct.setCompetitorPriceU(competitorPriceU);
-                            resultProduct.setCompetitorBasicSale(competitorBasicSale);
-                            resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
-                            resultProduct.setCompetitorPromoSale(competitorPromoSale);
-                            resultProduct.setCompetitorPromoPriceU(competitorPromoPriceU);
-                            resultProduct.setCompetitorSpecAction(competitorSpecAction);
-                            resultProduct.setCompetitorRating(competitorRating);
+                        resultProduct.setMyRefForPage(myRefForPage);
+                        resultProduct.setMyRefForImage(myRefForImage);
+                        resultProduct.setMyProductName(myProductName);
+                        resultProduct.setMySpecAction(mySpecAction);
+                        resultProduct.setCompetitorVendorCode(competitorVendorCode);
+                        resultProduct.setCompetitorProductName(competitorProductName);
+                        resultProduct.setCompetitorRefForPage(competitorRefForPage);
+                        resultProduct.setCompetitorRefForImage(competitorRefForImage);
+                        resultProduct.setCompetitorName(competitorName);
+                        resultProduct.setQueryForSearch(queryForSearch);
+                        resultProduct.setRefUrlForResultSearch(refUrlForResult);
+                        resultProduct.setCompetitorPriceU(competitorPriceU);
+                        resultProduct.setCompetitorBasicSale(competitorBasicSale);
+                        resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
+                        resultProduct.setCompetitorPromoSale(competitorPromoSale);
+                        resultProduct.setCompetitorPromoPriceU(competitorPromoPriceU);
+                        resultProduct.setCompetitorSpecAction(competitorSpecAction);
+                        resultProduct.setCompetitorRating(competitorRating);
 
-                            int currentPriceU = resultProduct.getMyPriceU();
-                            int myCurrentLowerPriceU = resultProduct.getMyLowerPriceU();
-                            int myCurrentBasicSale = resultProduct.getMyBasicSale();
+                        int currentPriceU = resultProduct.getMyPriceU();
+                        int myCurrentLowerPriceU = resultProduct.getMyLowerPriceU();
+                        int myCurrentBasicSale = resultProduct.getMyBasicSale();
 
-                            int competitorLowerPriceU = resultProduct.getCompetitorLowerPriceU();
+                        int competitorLowerPriceU = resultProduct.getCompetitorLowerPriceU();
 
-                            int dumpingPresent = (int) (Math.round(100 - 100 * ((double) myCurrentLowerPriceU/competitorLowerPriceU)));
+                        int dumpingPresent = (int) (Math.round(100 - 100 * ((double) myCurrentLowerPriceU/competitorLowerPriceU)));
 
-                            //если аналог это мой товар, то всё оставляю без изменений
-                            if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-") || setMyVendorCodes.contains(competitorVendorCode) || (dumpingPresent == 1)){
-                                resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
-                                resultProduct.setRecommendedBasicSale(myCurrentBasicSale);
-                                resultProduct.setRecommendedPromoSale(resultProduct.getMyPromoSale());
+                        //если аналог это мой товар, то всё оставляю без изменений
+                        if (myVendorCode.equals(competitorVendorCode) || competitorVendorCode.equals("-") || setMyVendorCodes.contains(competitorVendorCode) || (dumpingPresent == 1)){
+                            resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
+                            resultProduct.setRecommendedBasicSale(myCurrentBasicSale);
+                            resultProduct.setRecommendedPromoSale(resultProduct.getMyPromoSale());
 
-                            } else {
-                                //расчитываем рекомендованню розничную цену с учётом уровня демпинга
-                                double count1 = 0;
-                                if (stepFlag == 1){
-                                    count1 = (double) competitorLowerPriceU - rub;
-                                } else {
-                                    count1 = (double) competitorLowerPriceU * present;
-                                }
-                                long count2 = Math.round(count1);
-                                int count3 = (int) count2;
-                                int recommendedMyLowerPrice = count3;
-                                //и на основании этой рекомендованной цены расчитываем базоваю скидку
-                                double count4 = (double) recommendedMyLowerPrice / currentPriceU * 100;
-                                long count5 = Math.round(count4);
-                                int newMyBasicSale = 100 - (int) count5 ;
-                                //проверка базовой скидки:
-                                int checkPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
-                                if (recommendedMyLowerPrice < checkPrice){
-                                    newMyBasicSale = newMyBasicSale + 1;
-                                }
-                                recommendedMyLowerPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
-                                resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
-
-                                //если новая базовая скидка меньше 3%
-                                if (newMyBasicSale < 3){
-                                    newMyBasicSale = 3;
-                                    resultProduct.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 3%
-                                    int newRecomendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.97);//расчитываем новую розничную цену до скидки
-                                    resultProduct.setRecommendedPriceU(newRecomendPriceU);//устанавливаем её
-                                } else
-                                    //если новая базовая скидка больше 90%
-                                    if (newMyBasicSale > 90){
-                                        newMyBasicSale = 90;
-                                        resultProduct.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 90%
-                                        int newRecommendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.1);//расчитываем новую розничную цену до скидки
-                                        resultProduct.setRecommendedPriceU(newRecommendPriceU);//устанавливаем её
-                                    } else {
-                                        resultProduct.setRecommendedBasicSale(newMyBasicSale);
-                                    }
-                            }
-                            //дублирование кода
-                            resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
-
-                            synchronized (mon) {
-                                if (competitorVendorCode.equals("-")) {
-                                    controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ошибка\n");
-                                } else {
-                                    controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ok\n");
-                                }
-                            }
-///////////////////Ozon//////////////////////////////////////////////////////////////////////
                         } else {
-                            System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
-                            Product product = executorCompletionService.take().get();
+                            //расчитываем рекомендованню розничную цену с учётом уровня демпинга
+                            double count1 = 0;
+                            if (stepFlag == 1){
+                                count1 = (double) competitorLowerPriceU - rub;
+                            } else {
+                                count1 = (double) competitorLowerPriceU * present;
+                            }
+                            long count2 = Math.round(count1);
+                            int count3 = (int) count2;
+                            int recommendedMyLowerPrice = count3;
+                            //и на основании этой рекомендованной цены расчитываем базоваю скидку
+                            double count4 = (double) recommendedMyLowerPrice / currentPriceU * 100;
+                            long count5 = Math.round(count4);
+                            int newMyBasicSale = 100 - (int) count5 ;
+                            //проверка базовой скидки:
+                            int checkPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
+                            if (recommendedMyLowerPrice < checkPrice){
+                                newMyBasicSale = newMyBasicSale + 1;
+                            }
+                            recommendedMyLowerPrice = (int )Math.round(((1 - (double)newMyBasicSale/100)) * currentPriceU);
+                            resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
+
+                            //если новая базовая скидка меньше 3%
+                            if (newMyBasicSale < 3){
+                                newMyBasicSale = 3;
+                                resultProduct.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 3%
+                                int newRecomendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.97);//расчитываем новую розничную цену до скидки
+                                resultProduct.setRecommendedPriceU(newRecomendPriceU);//устанавливаем её
+                            } else
+                                //если новая базовая скидка больше 90%
+                                if (newMyBasicSale > 90){
+                                    newMyBasicSale = 90;
+                                    resultProduct.setRecommendedBasicSale(newMyBasicSale);//устанавливаем скидку в 90%
+                                    int newRecommendPriceU = (int)Math.round((double) recommendedMyLowerPrice/0.1);//расчитываем новую розничную цену до скидки
+                                    resultProduct.setRecommendedPriceU(newRecommendPriceU);//устанавливаем её
+                                } else {
+                                    resultProduct.setRecommendedBasicSale(newMyBasicSale);
+                                }
+                        }
+                        //дублирование кода
+                        resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
+
+                        synchronized (mon) {
+                            if (competitorVendorCode.equals("-")) {
+                                controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ошибка\n");
+                            } else {
+                                controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ok\n");
+                            }
+                        }
+///////////////////Ozon//////////////////////////////////////////////////////////////////////
+                    } else {
+                        System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
+                        Product product = executorCompletionService.take().get();
 //                            if (number % 4 == 0){
 //                            //переключение на новый IP после трёх удачных запросов
 //                                System.out.println("прверка - lock свободен: " + lock.toString());
@@ -398,69 +396,69 @@ public class Main extends Application implements Controller.ActionInController {
 //                                lock.unlock();
 //                                System.out.println("прверка - lock свободен: " + lock.toString());
 //                            }
-                            //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
-                            myVendorCode = product.getMyVendorCodeFromRequest();
-                            System.out.println(number + "/" + resultMap.size() + " - получили результат для задачи № " + myVendorCode);
-                            myRefForPage = product.getMyRefForPage();
-                            myRefForImage = product.getMyRefForImage();
-                            competitorVendorCode = product.getCompetitorVendorCode();
-                            competitorProductName = product.getCompetitorProductName();
-                            competitorRefForPage = product.getCompetitorRefForPage();
-                            competitorRefForImage = product.getCompetitorRefForImage();
-                            competitorName = product.getCompetitorName();
-                            competitorSpecAction = product.getCompetitorSpecAction();
-                            queryForSearch = product.getQueryForSearch();
-                            refUrlForResult = product.getRefUrlForResultSearch();
-                            competitorBasicPriceU = product.getCompetitorBasicPriceU();
-                            competitorPremiumPriceForOzon = product.getCompetitorPremiumPriceForOzon();
+                        //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
+                        myVendorCode = product.getMyVendorCodeFromRequest();
+                        System.out.println(number + "/" + resultMap.size() + " - получили результат для задачи № " + myVendorCode);
+                        myRefForPage = product.getMyRefForPage();
+                        myRefForImage = product.getMyRefForImage();
+                        competitorVendorCode = product.getCompetitorVendorCode();
+                        competitorProductName = product.getCompetitorProductName();
+                        competitorRefForPage = product.getCompetitorRefForPage();
+                        competitorRefForImage = product.getCompetitorRefForImage();
+                        competitorName = product.getCompetitorName();
+                        competitorSpecAction = product.getCompetitorSpecAction();
+                        queryForSearch = product.getQueryForSearch();
+                        refUrlForResult = product.getRefUrlForResultSearch();
+                        competitorBasicPriceU = product.getCompetitorBasicPriceU();
+                        competitorPremiumPriceForOzon = product.getCompetitorPremiumPriceForOzon();
 
-                            ResultProduct resultProduct = resultMap.get(myVendorCode);
+                        ResultProduct resultProduct = resultMap.get(myVendorCode);
 
-                            resultProduct.setMyRefForPage(myRefForPage);
-                            resultProduct.setMyRefForImage(myRefForImage);
-                            resultProduct.setCompetitorVendorCode(competitorVendorCode);
-                            resultProduct.setCompetitorProductName(competitorProductName);
-                            resultProduct.setCompetitorRefForPage(competitorRefForPage);
-                            resultProduct.setCompetitorRefForImage(competitorRefForImage);
-                            resultProduct.setCompetitorName(competitorName);
-                            resultProduct.setQueryForSearch(queryForSearch);
-                            resultProduct.setRefUrlForResultSearch(refUrlForResult);
-                            resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
-                            resultProduct.setCompetitorPremiumPriceForOzon(competitorPremiumPriceForOzon);
+                        resultProduct.setMyRefForPage(myRefForPage);
+                        resultProduct.setMyRefForImage(myRefForImage);
+                        resultProduct.setCompetitorVendorCode(competitorVendorCode);
+                        resultProduct.setCompetitorProductName(competitorProductName);
+                        resultProduct.setCompetitorRefForPage(competitorRefForPage);
+                        resultProduct.setCompetitorRefForImage(competitorRefForImage);
+                        resultProduct.setCompetitorName(competitorName);
+                        resultProduct.setQueryForSearch(queryForSearch);
+                        resultProduct.setRefUrlForResultSearch(refUrlForResult);
+                        resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
+                        resultProduct.setCompetitorPremiumPriceForOzon(competitorPremiumPriceForOzon);
 
-                            int myCurrentPriceU = resultProduct.getMyPriceU();
-                            int myCurrentLowerPriceU = resultProduct.getMyLowerPriceU();
-                            int competitorLowerPriceU = resultProduct.getCompetitorLowerPriceU();
+                        int myCurrentPriceU = resultProduct.getMyPriceU();
+                        int myCurrentLowerPriceU = resultProduct.getMyLowerPriceU();
+                        int competitorLowerPriceU = resultProduct.getCompetitorLowerPriceU();
 
-                            int dumpingPresent = (int) (Math.round(100 - 100 * ((double) myCurrentLowerPriceU/competitorLowerPriceU)));
-                            double count1 = 0;
-                            int recommendedMyLowerPrice = 0;
-                            if (competitorName.equals(Constants.MY_SELLER)) {
-                                resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
+                        int dumpingPresent = (int) (Math.round(100 - 100 * ((double) myCurrentLowerPriceU/competitorLowerPriceU)));
+                        double count1 = 0;
+                        int recommendedMyLowerPrice = 0;
+                        if (competitorName.equals(Constants.MY_SELLER)) {
+                            resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
+                        } else {
+                            if (stepFlag == 1){
+                                count1 = (double) competitorLowerPriceU - rub;
+                                //расчитываем рекомендованню розничную цену с учётом величины демпинга
+                                long count2 = Math.round(count1);
+                                int count3 = (int) count2;
+                                recommendedMyLowerPrice = count3;
+                                resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
                             } else {
-                                if (stepFlag == 1){
-                                    count1 = (double) competitorLowerPriceU - rub;
+                                if ((dumpingPresent == 1)){
+                                    resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
+                                } else {
+                                    count1 = (double) competitorLowerPriceU * present;
                                     //расчитываем рекомендованню розничную цену с учётом величины демпинга
                                     long count2 = Math.round(count1);
                                     int count3 = (int) count2;
                                     recommendedMyLowerPrice = count3;
                                     resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
-                                } else {
-                                    if ((dumpingPresent == 1)){
-                                        resultProduct.setRecommendedMyLowerPrice(myCurrentLowerPriceU);
-                                    } else {
-                                        count1 = (double) competitorLowerPriceU * present;
-                                        //расчитываем рекомендованню розничную цену с учётом величины демпинга
-                                        long count2 = Math.round(count1);
-                                        int count3 = (int) count2;
-                                        recommendedMyLowerPrice = count3;
-                                        resultProduct.setRecommendedMyLowerPrice(recommendedMyLowerPrice);
-                                    }
                                 }
                             }
+                        }
 
-                            //дублирование кода
-                            resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
+                        //дублирование кода
+                        resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
 
 //                            lock.tryLock();
 //                                if (competitorVendorCode.equals("-")) {
@@ -473,38 +471,36 @@ public class Main extends Application implements Controller.ActionInController {
 //                                    controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ok\n");
 //                                }
 //                            lock.unlock();
-                        }
-                    } catch (InterruptedException | ExecutionException | NullPointerException e) {
-                        System.out.println("для артикула " + myVendorCode + " ошибка - " + e.getMessage());
-                        //lock.unlock();
-                        e.printStackTrace();
                     }
-                    number++;
-                    System.out.println("resultProduct для " + myVendorCode + " записан в map");
-                    System.out.println();
+                } catch (InterruptedException | ExecutionException | NullPointerException e) {
+                    System.out.println("для артикула " + myVendorCode + " ошибка - " + e.getMessage());
+                    //lock.unlock();
+                    e.printStackTrace();
                 }
-                //outputExcelFile(number);
-                controller.getAreaLog().appendText("Количество проанализированных позицый - " + number + "\n");
-                executorService.shutdown();
-                controller.getAreaLog().appendText("Загрузка изображений...\n");
-
-                System.out.println("Запуск записи excel из main");
-                if (marketplaceFlag == 1){
-                    taskWriteExelForOzon.run();
-                } else {
-                    System.out.println("/////////");
-                    System.out.println("/   ||  /");
-                    System.out.println("/   ||  /");
-                    System.out.println("/   ||  /");
-                    System.out.println("/   ||  /");
-                    System.out.println("/   ||  /");
-                    System.out.println("/       /");
-                    System.out.println("/   //  /");
-                    System.out.println("/////////");
-                    taskWriteExelForWildberries.run();
-                }
+                number++;
+                System.out.println("resultProduct для " + myVendorCode + " записан в map");
+                System.out.println();
             }
+            //outputExcelFile(number);
+            controller.getAreaLog().appendText("Количество проанализированных позицый - " + number + "\n");
+            executorService.shutdown();
+            controller.getAreaLog().appendText("Загрузка изображений...\n");
 
+            System.out.println("Запуск записи excel из main");
+            if (marketplaceFlag == 1){
+                taskWriteExelForOzon.run();
+            } else {
+                System.out.println("/////////");
+                System.out.println("/   ||  /");
+                System.out.println("/   ||  /");
+                System.out.println("/   ||  /");
+                System.out.println("/   ||  /");
+                System.out.println("/   ||  /");
+                System.out.println("/       /");
+                System.out.println("/   //  /");
+                System.out.println("/////////");
+                taskWriteExelForWildberries.run();
+            }
         }).start();
     }
 

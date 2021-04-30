@@ -91,36 +91,17 @@ public class ParserOzon {
             System.out.println(getGreenString("Ссылка на картинку моего товара получена!"));
         } catch (Exception e) {
             System.out.println(getRedString("Ошибка при получении ссылки на картинку моего товара получена!"));
+            e.printStackTrace();
             System.out.println(pageForMyProduct.asXml());
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //если наш кеш пустой, то заносим туда первый каталог
-        if (resultMapForQueries.size() == 0) {
+        if (arrayParams.size() != 0) {
             System.out.println("Получение каталога аналогов для запроса \"" + myQuery + "\"");
             System.out.println("дополнительный параметр поиска - " + arrayParams.toString());
-            productList = getCatalogProducts(myQuery, productType, productModel, arrayParams);
-
-            resultMapForQueries.put(brand + " " + productModel, productList);
+            productList = getCatalogProducts(myQuery, productType, brand, productModel, arrayParams);
 
             if (productList.size() != 0) {
                 System.out.println("Размер полученного каталога аналогов = " + getRedString(String.valueOf(productList.size())));
-                //проходимся по всему списку и находим продукт с наименьшей ценой
-                System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
-                Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
-                //                                            (productList, myVendorCodes, vendorCodeFromRequest, brand, productModel, arrayParams)
-                if (buffProduct != null) {
-                    product = buffProduct;
-                }
-            } else {
-                System.out.println("Для данного запроса ничего не найдено");
-            }
-            //проверяем наш кеш на наличие каталога для запроса brand, productModel
-        } else if (resultMapForQueries.containsKey(brand + " " + productModel)) {
-            System.out.println("Для запроса \"" + brand + " " + productModel + " + arrayParams = " + arrayParams.toString() + "\" в кеше найден каталог аналогов для запросов \"" + brand + " " + productModel + "\", поэтому запрос на ozon не осуществляем");
-            productList = resultMapForQueries.get(brand + " " + productModel);
-            if (productList.size() != 0) {
-                System.out.println("Размер каталога аналогов = " + productList.size());
                 //проходимся по всему списку и находим продукт с наименьшей ценой
                 System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
                 Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
@@ -131,22 +112,59 @@ public class ParserOzon {
                 System.out.println("Для данного запроса ничего не найдено");
             }
         } else {
-            System.out.println("Получение каталога аналогов для \"" + myQuery + "\"");
-            System.out.println("дополнительный параметр поиска - " + arrayParams.toString());
-            productList = getCatalogProducts(myQuery, productType, productModel, arrayParams);
+            //для продуктов без параметров используем КЕШ
+            if (resultMapForQueries.size() == 0) {//если наш кеш пустой, то заносим туда первый каталог
+                System.out.println("Получение каталога аналогов для запроса \"" + myQuery + "\"");
+                System.out.println("дополнительный параметр поиска - " + arrayParams.toString());
+                productList = getCatalogProducts(myQuery, productType, brand, productModel, arrayParams);
 
-            resultMapForQueries.put(brand + " " + productModel, productList);
+                resultMapForQueries.put(brand + " " + productModel, productList);
 
-            if (productList.size() != 0) {
-                System.out.println("Размер полученного каталога аналогов = " + getRedString(String.valueOf(productList.size())));
-                //проходимся по всему списку и находим продукт с наименьшей ценой
-                System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
-                Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
-                if (buffProduct != null) {
-                    product = buffProduct;
+                if (productList.size() != 0) {
+                    System.out.println("Размер полученного каталога аналогов = " + getRedString(String.valueOf(productList.size())));
+                    //проходимся по всему списку и находим продукт с наименьшей ценой
+                    System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
+                    Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
+                    //                                            (productList, myVendorCodes, vendorCodeFromRequest, brand, productModel, arrayParams)
+                    if (buffProduct != null) {
+                        product = buffProduct;
+                    }
+                } else {
+                    System.out.println("Для данного запроса ничего не найдено");
+                }
+                //проверяем наш кеш на наличие каталога для запроса brand, productModel
+            } else if (resultMapForQueries.containsKey(brand + " " + productModel)) {
+                System.out.println("Для запроса \"" + brand + " " + productModel + " + arrayParams = " + arrayParams.toString() + "\" в кеше найден каталог аналогов для запросов \"" + brand + " " + productModel + "\", поэтому запрос на ozon не осуществляем");
+                productList = resultMapForQueries.get(brand + " " + productModel);
+                if (productList.size() != 0) {
+                    System.out.println("Размер каталога аналогов = " + productList.size());
+                    //проходимся по всему списку и находим продукт с наименьшей ценой
+                    System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
+                    Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
+                    if (buffProduct != null) {
+                        product = buffProduct;
+                    }
+                } else {
+                    System.out.println("Для данного запроса ничего не найдено");
                 }
             } else {
-                System.out.println("Для данного запроса ничего не найдено");
+                System.out.println("Получение каталога аналогов для \"" + myQuery + "\"");
+                System.out.println("дополнительный параметр поиска - " + arrayParams.toString());
+                productList = getCatalogProducts(myQuery, productType, brand, productModel, arrayParams);
+
+                resultMapForQueries.put(brand + " " + productModel, productList);
+
+                if (productList.size() != 0) {
+                    System.out.println("Размер полученного каталога аналогов = " + getRedString(String.valueOf(productList.size())));
+                    //проходимся по всему списку и находим продукт с наименьшей ценой
+                    System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
+                    Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
+                    if (buffProduct != null) {
+                        product = buffProduct;
+                    }
+                } else {
+                    System.out.println("Для данного запроса ничего не найдено");
+                }
             }
         }
 
@@ -154,10 +172,7 @@ public class ParserOzon {
         product.setMyRefForImage(refForMyImage);
 
         //устанавливаем ссылку на страницу поискового запроса аналогов
-        product.setMyRefForImage(refUrlForResult);
 
-        //записываем поисковый запрос
-        product.setQueryForSearch(myQuery);
 
         //устанавливаем ссылку на артикул моего товара
         product.setMyRefForPage(getString("https://www.ozon.ru/search/?text=", vendorCodeFromRequest, "&from_global=true"));
@@ -168,7 +183,7 @@ public class ParserOzon {
         return product;
     }
 
-    private static List<Product> getCatalogProducts(String query, String productType, String model, List<String> arrayParams) {
+    private static List<Product> getCatalogProducts(String query, String productType, String brand, String model, List<String> arrayParams) {
         List<Product> productList;
         String url = "-";
         url = getUrlForSearchQuery(query);
@@ -176,7 +191,7 @@ public class ParserOzon {
         refUrlForResult = url;
 
         //получение бренда, артикула, имени товара, ссылки на страницу товара, ссылки на картинкау товара, спец-акции, рейтинга
-        productList = getCatalogFromFPageForHtmlUnit(url, productType, model, arrayParams);
+        productList = getCatalogFromFPageForHtmlUnit(url, productType, brand, model, arrayParams);
 
         return productList;
     }
@@ -187,7 +202,7 @@ public class ParserOzon {
         return url;
     }
 
-    private static List<Product> getCatalogFromFPageForHtmlUnit(String url, String productType, String model, List<String> arrayParams) {
+    private static List<Product> getCatalogFromFPageForHtmlUnit(String url, String productType, String brand, String model, List<String> arrayParams) {
         List<Product> productList = new ArrayList<>();
         HtmlPage page = null;
         String stringPage = null;
@@ -256,17 +271,6 @@ public class ParserOzon {
 
                     int versionPage = 0;
 
-                    //определяем не уценённый ли товар, если уценённый то переходим к следующему
-                    try {
-                        final HtmlDivision div_class_a0v0 = (HtmlDivision) page.getByXPath("//div[@class='a0v0']").get(0);
-                        String text = div_class_a0v0.asText();
-                        if (text.contains(discountedItem)) {
-                            System.out.println(discountedItem);
-                            continue;
-                        }
-                    } catch (Exception ignored) {
-                    }
-
                     //получение ссылки на продукт
                     try {
                         refForProduct = "https://www.ozon.ru" + itemProduct.getFirstChild().getAttributes().getNamedItem("href").getNodeValue();
@@ -282,21 +286,14 @@ public class ParserOzon {
                             break;
                         }
                     }
-//                    /
-//                    if (vendorCode.equals("-")){
-//                        String[] arrayBuff2 = hRefProduct.split("-");
-//                        String vendorCodeBuff = arrayBuff2[arrayBuff2.length - 1];
-//                        String[] arrayBuff3 = vendorCodeBuff.split("/");
-//                        vendorCode = arrayBuff3[0];
-//                    }
-//                    /
+
                     if (vendorCode.equals("-")){
                         String[] arrayBuff2 = refForProduct.split("-");
                         String vendorCodeBuff = arrayBuff2[arrayBuff2.length - 1];
                         String[] arrayBuff3 = vendorCodeBuff.split("/");
                         vendorCode = arrayBuff3[0];
                     }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
                     //исчем 3 элемента,
                     // если versionPage = 1, то 1 элемент - ссылка на картинку, 2 элемент - цены, описание, продавец
                     // если versionPage = 2, то 1 элемент - ссылка на картинку, 2 элемент - описание, продавец, 3 элемент - цены
@@ -311,6 +308,7 @@ public class ParserOzon {
                     }
 
                     int childFor_a0c4 = 1;
+                    boolean isDiscountedItem = false;
 
                     for (DomElement elementFor_a0t0 : elementsFor_a0c4) {
                         //1 элемент - получение ссылки на картинку
@@ -322,6 +320,19 @@ public class ParserOzon {
                         //2 элемент
                         if (childFor_a0c4 == 2) {
                             DomNodeList<HtmlElement> asFor_a0s9 = elementFor_a0t0.getElementsByTagName("a");
+                            //определяем не уценённый ли товар
+                            DomNodeList<HtmlElement> divsFor_a0s9 = elementFor_a0t0.getElementsByTagName("div");
+                            for (HtmlElement element: divsFor_a0s9){
+                                if (element.asText().contains(discountedItem)) {
+                                    System.out.println(discountedItem);
+                                    isDiscountedItem = true;
+                                    break;
+                                }
+                            }
+                            if (isDiscountedItem){
+                                break;
+                            }
+                            /////////////////////////////////////////////
                             if (versionPage == 1) {//цены, описание, продавец
                                 //получение цен: currentBasicPriceString, competitorPriceU
                                 DomNodeList<HtmlElement> divsFor_a0y9 = null;
@@ -431,6 +442,9 @@ public class ParserOzon {
                         }
                         childFor_a0c4++;
                     }
+                    if (isDiscountedItem){
+                        continue;
+                    }
 
                     productList.add(new Product(
                             "-",
@@ -477,17 +491,141 @@ public class ParserOzon {
                     int countJavascript = itemsCountSearchJavascript.size();
                     int countForAnalise = 0;
                     int notValid = 0;
-                    if (countJavascript > 16) {
-                        countForAnalise = 16;
+                    if (countJavascript > 24) {
+                        countForAnalise = 24;
                     } else {
                         countForAnalise = countJavascript;
                     }
                     System.out.println("Получение " + countForAnalise + " товаров-аналогов для \"" + model + "\" через загрузку и обработку их ссылок");
                     for (int i = 0; i < countForAnalise; i++) {
-                        String description = itemsCountSearchJavascript.get(i).asText();
-                        //проходимся только по тем товарам, в названии которых есть наша модель
+                        String description = itemsCountSearchJavascript.get(i).asText().toLowerCase();
+                        //проходимся только по тем товарам, в названии которых есть наша модель и наши дополнительные параметры
                         System.out.println(getBlueString(String.valueOf(i + 1)) + " - " + description);
-                        if (description.toLowerCase().contains(model + ",") || description.toLowerCase().contains(model + " ") || description.toLowerCase().contains("(" + model + ")") ) {
+                        if (description.toLowerCase().contains(model + ",") || description.toLowerCase().contains(model + " ") || description.toLowerCase().contains("(" + model + ")") || description.toLowerCase().contains(", " + model + "")) {
+
+//в зависимости от типа продукта определяем по параметрам подходит ли он нам для дальнейшего анализа////////////////////
+                            switch (productType) {
+                                case Constants.PRODUCT_TYPE_1C_10:
+                                case Constants.PRODUCT_TYPE_1C_39:
+                                case Constants.PRODUCT_TYPE_1C_40:
+                                case Constants.PRODUCT_TYPE_1C_132:
+                                    System.out.println("Тип продукта - " + productType);
+                                    String param = "-";
+                                    try {
+                                        if (arrayParams.size() == 0) {
+                                            int check = 0;
+                                            for (String s : Constants.listForCharging) {
+                                                if (description.contains(s.toLowerCase())) {
+                                                    param = s;
+                                                    check++;
+                                                    break;
+                                                }
+                                            }
+                                            if (check != 0) {
+                                                System.out.println("не прошёл, так как есть доп. параметр поиска = " + getRedString(param));
+                                                continue;
+                                            }
+                                        }
+                                        //если в запросе бренд, модель и кабель то нам нужен первый product, в описании которого наш param
+                                        else {
+                                            //определяем коллекцию с разными названиями нашего param
+                                            List<String> listWithCable = getCollectionsParam(arrayParams, brand + model);
+                                            int check = 0;
+                                            for (String s : listWithCable) {
+                                                param = s;
+                                                if (description.contains(s)) {
+                                                    check++;
+                                                    break;
+                                                }
+                                            }
+                                            if (check == 0) {
+                                                System.out.println("не прошёл, так как отсутствует доп. параметр поиска = " + getRedString(param));
+                                                continue;
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
+                                    }
+                                    break;
+                                case Constants.PRODUCT_TYPE_1C_48:
+                                case Constants.PRODUCT_TYPE_1C_49:
+                                case Constants.PRODUCT_TYPE_1C_50:
+                                case Constants.PRODUCT_TYPE_1C_61:
+                                    //case Constants.PRODUCT_TYPE_1C_62:
+                                case Constants.PRODUCT_TYPE_1C_63:
+                                case Constants.PRODUCT_TYPE_1C_64:
+                                case Constants.PRODUCT_TYPE_1C_65:
+                                case Constants.PRODUCT_TYPE_1C_66:
+                                case Constants.PRODUCT_TYPE_1C_166:
+                                case Constants.PRODUCT_TYPE_1C_67:
+                                case Constants.PRODUCT_TYPE_1C_68:
+                                case Constants.PRODUCT_TYPE_1C_69:
+                                case Constants.PRODUCT_TYPE_1C_70:
+                                    System.out.println("Тип продукта - " + productType);
+                                    String param1 = "-";
+                                    String param2 = "-";
+                                    try {
+                                        //определяем коллекцию с разными названиями нашего param
+                                        List<String> listWithCableParam_1;
+                                        List<String> listWithCableParam_2 = null;
+                                        if (arrayParams.size() == 1) {
+                                            listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(0), brand + model);
+                                        } else {
+                                            listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(0), brand + model);
+                                            listWithCableParam_2 = getCollectionsParamCable(arrayParams.get(1), brand + model);
+                                        }
+                                        int check = 0;
+                                        for (String s1 : listWithCableParam_1) {
+                                            param1 = s1;
+                                            if (description.contains(s1)) {
+                                                if (listWithCableParam_2 != null) {
+                                                    check = 10;
+                                                    for (String s2 : listWithCableParam_2) {
+                                                        param2 = s2;
+                                                        if (description.contains(s2)) {
+                                                            check++;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (check != 0) {
+                                                        break;
+                                                    }
+                                                } else {
+                                                    check++;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (check == 0) {
+                                            System.out.println("не прошёл, тук как нет доп. параметра поиска = " + getRedString(param1));
+                                            continue;
+                                        }
+                                        if (check == 10) {
+                                            System.out.println("не прошёл, тук как нет доп. параметра поиска = " + getRedString(param2));
+                                            continue;
+                                        }
+                                    } catch (Exception e) {
+                                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
+                                    }
+                                    break;
+                                case Constants.PRODUCT_TYPE_1C_139:
+                                    System.out.println("Тип продукта - " + productType);
+                                    try {
+                                        if (arrayParams.size() == 1) {
+                                            if (!description.contains(arrayParams.get(0))) {
+                                                System.out.println("не прошёл, тук как нет доп. параметра поиска = " + getRedString(arrayParams.get(0)));
+                                                continue;
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
+                                    }
+                                    break;
+                                default:
+                                    System.out.println("Тип продукта - " + productType);
+                            }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
                             String refForImage = "-";
                             String vendorCode = "-";
                             String seller = "-";
@@ -502,7 +640,7 @@ public class ParserOzon {
                                 return null;
                             }
 
-                            //определяем не уценённый ли товар, если уценённый то переходим к следующему
+/////////////////////////////определяем не уценённый ли товар, если уценённый то переходим к следующему/////////////////
                             try {
                                 final HtmlDivision div_class_b2h1_b2h3 = (HtmlDivision) page.getByXPath("//div[@class='b2h1 b2h3']").get(0);
                                 DomNodeList<HtmlElement> spans = div_class_b2h1_b2h3.getElementsByTagName("span");
@@ -516,6 +654,7 @@ public class ParserOzon {
                             } catch (Exception ignored) {
                             }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                             //ссылка на картинку товара
                             final HtmlDivision div_class_a8n3 = (HtmlDivision) page.getByXPath("//div[@class='a8n3']").get(0);
                             refForImage = div_class_a8n3.getFirstChild().getFirstChild().getAttributes().getNamedItem("src").getNodeValue();
@@ -533,100 +672,71 @@ public class ParserOzon {
                             DomNodeList<HtmlElement> spansForPremiumPrice = null;
                             int competitorPremiumPrice = 0;
 
-                            int tries = 5;  // Amount of tries to avoid infinite loop
-                            boolean notFindRub = true;
-                            while (tries > 0 && notFindRub) {
-                                tries--;
+                            int tries = 5;
+                            boolean isNotValid1 = false;
+                            boolean isNotValid2 = false;
+                            boolean isNotValid3 = false;
+                            boolean isNotValid4 = false;
 
+                            while (tries > 0) {
                                 //попытки получения данных об аналогах
                                 try {
-                                    System.out.println("Попытка № " + tries + " получить элемент \"c8q5 c8r0 b1k2\"");//1 - c2h3 c2h9 c2e7, 2 - c8q5 c8r0 b1k2, 3 - c2h3 c2h9 c2e7
+                                    System.out.println("Попытка № " + tries + " получить элемент \"c8q5 c8r0 b1k2\"");//1 - c2h3 c2h9 c2e7, 2 - c8q5 c8r0 b1k2, 3 - c2h3 c2i c2e7, 4 - c8q5 c8r1 b1k2
                                     divClassForPrices = (HtmlDivision) page.getByXPath("//div[@class='c8q5 c8r0 b1k2']").get(0);
-                                    System.out.println("Попытка № " + tries + " получить элементы \"span\", которые содержат текущую цену и цену до скидки");
-                                    spansForPrices = divClassForPrices.getElementsByTagName("span");
-                                    System.out.println(spansForPrices.size());
-                                    if (spansForPrices.size() == 2) {
-                                        String competitorPriceUString = spansForPrices.get(1).asText();
-                                        if (competitorPriceUString.contains("₽")) {
-                                            competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
-                                            notFindRub = false;
-                                        }
-                                    } else {
-                                        String competitorBasicPriceUString = spansForPrices.get(1).asText();
-                                        if (competitorBasicPriceUString.contains("₽")) {
-                                            competitorPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
-                                            notFindRub = false;
-                                        }
-                                        competitorBasicPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
-                                        String competitorPriceUString = spansForPrices.get(2).asText();
-                                        competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
-                                    }
-                                    System.out.println(getBlueString("Полученные результаты валидны!!!"));
-                                } catch (Exception ignored) {
-                                    System.out.println("        Ошибка!!!");
-                                    notValid++;
+                                    break;
+                                } catch (Exception ignored){
+                                    isNotValid1 = true;
                                 }
 
                                 try {
-                                    System.out.println("Попытка № " + tries + " получить элемент \"c2h3 c2h9 c2e7\"");//1 - c2h3 c2h9 c2e7, 2 - c8q5 c8r0 b1k2, 3 - c2h3 c2h9 c2e7
+                                    System.out.println("Попытка № " + tries + " получить элемент \"c2h3 c2h9 c2e7\"");
                                     divClassForPrices = (HtmlDivision) page.getByXPath("//div[@class='c2h3 c2h9 c2e7']").get(0);
-                                    System.out.println("Попытка № " + tries + " получить элементы \"span\", которые содержат текущую цену и цену до скидки");
-                                    spansForPrices = divClassForPrices.getElementsByTagName("span");
-                                    System.out.println(spansForPrices.size());
-                                    if (spansForPrices.size() == 2) {
-                                        String competitorPriceUString = spansForPrices.get(1).asText();
-                                        if (competitorPriceUString.contains("₽")) {
-                                            competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
-                                            notFindRub = false;
-                                        }
-                                    } else {
-                                        String competitorBasicPriceUString = spansForPrices.get(1).asText();
-                                        if (competitorBasicPriceUString.contains("₽")) {
-                                            competitorPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
-                                            notFindRub = false;
-                                        }
-                                        competitorBasicPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
-                                        String competitorPriceUString = spansForPrices.get(2).asText();
-                                        competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
-                                    }
-                                    System.out.println(getBlueString("Полученные результаты валидны!!!"));
-                                } catch (Exception ignored) {
-                                    System.out.println("        Ошибка!!!");
-                                    notValid++;
+                                    break;
+                                } catch (Exception ignored){
+                                    isNotValid2 = true;
                                 }
 
                                 try {
-                                    System.out.println("Попытка № " + tries + " получить элемент \"c2h3 c2i c2e7\"");//1 - c2h3 c2h9 c2e7, 2 - c8q5 c8r0 b1k2, 3 - c2h3 c2h9 c2e7
+                                    System.out.println("Попытка № " + tries + " получить элемент \"c2h3 c2i c2e7\"");
                                     divClassForPrices = (HtmlDivision) page.getByXPath("//div[@class='c2h3 c2i c2e7']").get(0);
-                                    System.out.println("Попытка № " + tries + " получить элементы \"span\", которые содержат текущую цену и цену до скидки");
-                                    spansForPrices = divClassForPrices.getElementsByTagName("span");
-                                    System.out.println(spansForPrices.size());
-                                    if (spansForPrices.size() == 2) {
-                                        String competitorPriceUString = spansForPrices.get(1).asText();
-                                        if (competitorPriceUString.contains("₽")) {
-                                            competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
-                                            notFindRub = false;
-                                        }
-                                    } else {
-                                        String competitorBasicPriceUString = spansForPrices.get(1).asText();
-                                        if (competitorBasicPriceUString.contains("₽")) {
-                                            competitorPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
-                                            notFindRub = false;
-                                        }
-                                        competitorBasicPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
-                                        String competitorPriceUString = spansForPrices.get(2).asText();
-                                        competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
-                                    }
-                                    System.out.println(getBlueString("Полученные результаты валидны!!!"));
-                                } catch (Exception ignored) {
-                                    System.out.println("        Ошибка!!!");
-                                    notValid++;
+                                    break;
+                                } catch (Exception ignored){
+                                    isNotValid3 = true;
                                 }
 
-                                synchronized (page) {
-                                    page.wait(1000);  // How often to check
+                                try {
+                                    System.out.println("Попытка № " + tries + " получить элемент \"c8q5 c8r1 b1k2\"");
+                                    divClassForPrices = (HtmlDivision) page.getByXPath("//div[@class='c8q5 c8r1 b1k2']").get(0);
+                                    break;
+                                } catch (Exception ignored){
+                                    isNotValid4 = true;
                                 }
+                                tries--;
                             }
+
+                            if (isNotValid1 && isNotValid2 && isNotValid3 && isNotValid4){
+                                System.out.println(getRedString("Необходим анализ кода страницы!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+                                System.out.println(page.asXml());
+                                continue;
+                            }
+
+                            System.out.println("Попытка № " + tries + " получить элементы \"span\", которые содержат текущую цену и цену до скидки");
+                                spansForPrices = divClassForPrices.getElementsByTagName("span");
+                                System.out.println(spansForPrices.size());
+                                if (spansForPrices.size() == 2) {
+                                    String competitorPriceUString = spansForPrices.get(1).asText();
+                                    if (competitorPriceUString.contains("₽")) {
+                                        competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
+                                    }
+                                } else {
+                                    String competitorBasicPriceUString = spansForPrices.get(1).asText();
+                                    if (competitorBasicPriceUString.contains("₽")) {
+                                        competitorPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
+                                    }
+                                    competitorBasicPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
+                                    String competitorPriceUString = spansForPrices.get(2).asText();
+                                    competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
+                                }
 
                             //элемент с ценой Premium - b9w7
                             try {
@@ -636,56 +746,54 @@ public class ParserOzon {
                                 spansForPremiumPrice = divClassForPremiumPrice.getElementsByTagName("span");
                                 String competitorPremiumPriceString = spansForPremiumPrice.get(1).asText();
                                 competitorPremiumPrice = getIntegerFromString(competitorPremiumPriceString);
-                            } catch (Exception ignored) {
-                                System.out.println("Премиум-цена отсутствует");
+                            } catch (@SuppressWarnings("CatchMayIgnoreException") Exception ignored) {
+//                                System.out.println("Премиум-цена отсутствует. ignored = " + ignored.getMessage());
+//                                System.out.println(page.asXml());
                             }
 
-
-                            if (notValid == 3){
-                                System.out.println(page.asXml());
-                            } else {
-                                String[] arrayBuff1 = hRefProduct.split("/");
-                                for (int j = 0; j < arrayBuff1.length; j++) {
-                                    if (arrayBuff1[j].equals("id")) {
-                                        vendorCode = arrayBuff1[j + 1];
-                                        break;
-                                    }
+                            String[] arrayBuff1 = hRefProduct.split("/");
+                            for (int j = 0; j < arrayBuff1.length; j++) {
+                                if (arrayBuff1[j].equals("id")) {
+                                    vendorCode = arrayBuff1[j + 1];
+                                    break;
                                 }
-                                if (vendorCode.equals("-")) {
-                                    String[] arrayBuff2 = hRefProduct.split("-");
-                                    String vendorCodeBuff = arrayBuff2[arrayBuff2.length - 1];
-                                    String[] arrayBuff3 = vendorCodeBuff.split("/");
-                                    vendorCode = arrayBuff3[0];
-                                }
-
-                                productList.add(new Product(
-                                        "-",
-                                        "-",
-                                        "-",
-                                        "-",
-                                        "-",
-
-                                        querySearchAndCount,
-                                        refUrlForResult,
-
-                                        "-",
-                                        vendorCode,
-                                        description,
-                                        hRefProduct,
-                                        refForImage,
-                                        "-",
-                                        0,
-                                        competitorPriceU,
-                                        0,
-                                        competitorBasicPriceU,
-                                        0,
-                                        0,
-                                        competitorPremiumPrice,
-
-                                        seller
-                                ));
-                                page = null;
                             }
+                            if (vendorCode.equals("-")) {
+                                String[] arrayBuff2 = hRefProduct.split("-");
+                                String vendorCodeBuff = arrayBuff2[arrayBuff2.length - 1];
+                                String[] arrayBuff3 = vendorCodeBuff.split("/");
+                                vendorCode = arrayBuff3[0];
+                            }
+
+                            productList.add(new Product(
+                                    "-",
+                                    "-",
+                                    "-",
+                                    "-",
+                                    "-",
+
+                                    querySearchAndCount,
+                                    refUrlForResult,
+
+                                    "-",
+                                    vendorCode,
+                                    description,
+                                    hRefProduct,
+                                    refForImage,
+                                    "-",
+                                    0,
+                                    competitorPriceU,
+                                    0,
+                                    competitorBasicPriceU,
+                                    0,
+                                    0,
+                                    competitorPremiumPrice,
+
+                                    seller
+                            ));
+                            page = null;
+                        } else {
+                            System.out.println("Не прошёл по названию модели = " + model);
                         }
                     }
                 } catch (Exception ignored) {
@@ -826,67 +934,6 @@ public class ParserOzon {
     }
 
     private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes, String myVendorCodeFromRequest, String productType, String brand, String productModel, List<String> arrayParams) {
-//        if (productList.size() == 1){
-//            return productList.get(0);
-//        } else {
-//            Product product = null;
-//            //сортируем по цене
-//            productList.sort(comparing(Product::getCompetitorLowerPriceU));
-//
-//            try {
-//                if (model != null){
-//                    //если в запросе только бренд и модель, то нам нужен первый product, в описании которого только модель
-//                    if (arrayParams.size() == 0){
-//                        for (Product p : productList) {
-//                            for (String s: Constants.listForCharging){
-//                                if (p.getMyProductName().contains(s)){
-//                                    break;
-//                                } else {
-//                                    product = p;
-//                                }
-//                            }
-//                        }
-//                    }
-//                    //если в запросе бренд, модель и кабель то нам нужен первый product, в описании которого наш param
-//                    else {
-//                    //определяем коллекцию с разными названиями нашего param
-//                        List<String> listWithCable = getCollectionsParam(arrayParams, brand + " " + model);
-//
-//                        for (Product p : productList) {
-//                            for (String s: listWithCable){
-//                                if (p.getMyProductName().contains(s)) {
-//                                    product = p;
-//                                    break;
-//                                }
-//                            }
-//                            break;
-//                        }
-//                    }
-//                }
-//            } catch (Exception e) {
-//                System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
-//            }
-//
-//            if (productList.size() == 0){
-//                return null;
-//            }
-//
-//            //исключаем мои продукты
-//            for (Product p : productList) {
-//                if (!p.getCompetitorName().equals(Constants.MY_SELLER)) {
-//                    product = p;
-//                    break;
-//                }
-//            }
-//            if (product == null){
-//                try {
-//                    product = productList.get(0);
-//                } catch (Exception e) {
-//                    System.out.println("Ошибка IndexOutOfBoundsException для " + myVendorCodeFromRequest + ". productList = " + productList.size());
-//                }
-//            }
-//            return product;
-//        }
 
         boolean myProductIsLower = true;
 
@@ -909,7 +956,11 @@ public class ParserOzon {
                             if (arrayParams.size() == 0){
                                 for (Product p : productList) {
                                     String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                    if (nomenclature.contains(productModel)) {
+//                                    if (nomenclature.contains(productModel)) {
+                                    if (nomenclature.toLowerCase().contains(productModel + ",")
+                                            || nomenclature.toLowerCase().contains(productModel + " ")
+                                            || nomenclature.toLowerCase().contains("(" + productModel + ")")
+                                            || nomenclature.toLowerCase().contains(", " + productModel + "")) {
                                         int check = 0;
                                         for (String s : Constants.listForCharging) {
                                             if (nomenclature.contains(s.toLowerCase())) {
@@ -937,7 +988,11 @@ public class ParserOzon {
                                 List<String> listWithCable = getCollectionsParam(arrayParams, brand + productModel);
                                 for (Product p : productList) {
                                     String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                    if (nomenclature.contains(productModel)) {
+//                                    if (nomenclature.contains(productModel)) {
+                                    if (nomenclature.toLowerCase().contains(productModel + ",")
+                                            || nomenclature.toLowerCase().contains(productModel + " ")
+                                            || nomenclature.toLowerCase().contains("(" + productModel + ")")
+                                            || nomenclature.toLowerCase().contains(", " + productModel + "")) {
                                         int check = 0;
                                         for (String s : listWithCable) {
                                             if (nomenclature.contains(s)) {
@@ -980,33 +1035,54 @@ public class ParserOzon {
                 case Constants.PRODUCT_TYPE_1C_69:
                 case Constants.PRODUCT_TYPE_1C_70:
                     try {
-                        if (productModel != null & arrayParams.size() == 2){
+                        if (productModel != null){
                             //определяем коллекцию с разными названиями нашего param
-                            List<String> listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(1), brand + productModel);
-                            List<String> listWithCableParam_2 = getCollectionsParamCable(arrayParams.get(0), brand + productModel);
+                            List<String> listWithCableParam_1;
+                            List<String> listWithCableParam_2 = null;
+                            if (arrayParams.size() == 1){
+                                listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(0), brand + productModel);
+                            } else {
+                                listWithCableParam_1 = getCollectionsParamCable(arrayParams.get(0), brand + productModel);
+                                listWithCableParam_2 = getCollectionsParamCable(arrayParams.get(1), brand + productModel);
+                            }
+
                             for (Product p : productList) {
                                 String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                if (nomenclature.contains(productModel)) {
+//                                if (nomenclature.contains(productModel)) {
+                                if (nomenclature.toLowerCase().contains(productModel + ",") || nomenclature.toLowerCase().contains(productModel + " ") || nomenclature.toLowerCase().contains("(" + productModel + ")") || nomenclature.toLowerCase().contains(", " + productModel + "")) {
                                     int check = 0;
                                     for (String s1 : listWithCableParam_1) {
                                         if (nomenclature.contains(s1)) {
-//                                            for (String s2 : listWithCableParam_2) {//пока исключим поиск по длине кабеля
-//                                                if (nomenclature.contains(s2)) {
-                                                    if (p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase()) || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                                        if (myProductIsLower) {
+                                            if (listWithCableParam_2 != null){
+                                                for (String s2 : listWithCableParam_2) {
+                                                    if (nomenclature.contains(s2)) {
+                                                        if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                                            if (myProductIsLower) {
+                                                                product = p;
+                                                                myProductIsLower = false;
+                                                            }
+                                                        } else {
                                                             product = p;
-                                                            myProductIsLower = false;
+                                                            check++;
+                                                            break;
                                                         }
-                                                    } else {
-                                                        product = p;
-                                                        check++;
-                                                        break;
                                                     }
-//                                                }
-//                                            }
-//                                            if (check != 0) {
-//                                                break;
-//                                            }
+                                                }
+                                                if (check != 0) {
+                                                    break;
+                                                }
+                                            } else {
+                                                if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
+                                                    if (myProductIsLower) {
+                                                        product = p;
+                                                        myProductIsLower = false;
+                                                    }
+                                                } else {
+                                                    product = p;
+                                                    check++;
+                                                    break;
+                                                }
+                                            }
                                         }
                                     }
                                     if (check != 0) {

@@ -465,20 +465,25 @@ public class TaskWriteExelForOzon extends Task<File> {
                 }
 
                 //установка картинки для моего товара
+                System.out.println("Загрузка картинок для артикула WB = " + myVendorCode);
                 String myImageUrl = productArrayList.get(i).getMyRefForImage();
                 if (myImageUrl != null) {
                     if (!myImageUrl.equals("-")) {
+                        System.out.println("Моя картинка url = " + myImageUrl);
                         setImageForCell(myImageUrl, 5, i, 0.3, 0.3, myVendorCode);
                     }
                 }
+                myImageUrl = "-";
 
                 //установка картинки для конкурента
                 String imageUrl = productArrayList.get(i).getCompetitorRefForImage();
                 if (imageUrl != null) {
                     if (!imageUrl.equals("-")) {
-                        setImageForCell(imageUrl, 9, i, 0.3, 0.3, myVendorCode);
+                        System.out.println("Картинка конкурента url = " + imageUrl);
+                        setImageForCell(imageUrl, 10, i, 0.3, 0.3, myVendorCode);
                     }
                 }
+                imageUrl = "-";
 
                 this.updateProgress(i + 1, countRows);
                 System.out.println("Запись строки " + countRows++);
@@ -490,7 +495,7 @@ public class TaskWriteExelForOzon extends Task<File> {
         System.out.println("Создание файла");
         File currDir = new File(".");
         String path = currDir.getAbsolutePath();
-        String fileLocation = path.substring(0, path.length() - 1) + "Analytics.xlsx";
+        String fileLocation = path.substring(0, path.length() - 1) + "AnalyticForOzon.xlsx";
 
         FileOutputStream outputStream = null;
         try {
@@ -506,9 +511,7 @@ public class TaskWriteExelForOzon extends Task<File> {
     }
 
     private void setImageForCell(String url, int columnIndex, int rowIndex, double scaleX, double scaleY, String myVendorCode) {
-        System.out.println("Загрузка картинки для артикула WB = " + myVendorCode);
         try {
-            System.out.println("Загрузка картинки для url=" + url);
             byte[] bytes = Jsoup.connect(url)
                     .userAgent("Chrome")
                     .timeout(30000)

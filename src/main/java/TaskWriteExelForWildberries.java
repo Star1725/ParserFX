@@ -206,6 +206,9 @@ public class TaskWriteExelForWildberries extends Task<File> {
 
             boolean isMyAnalog = myVendorCodesSet.contains(productArrayList.get(i).getCompetitorVendorCode());
 
+            System.out.println();
+            System.out.println("Начало записи строки - " + (i + 1));
+
             //Бренд
             Cell cell = row.createCell(0);
             cell.setCellValue(productArrayList.get(i).getMyBrand());
@@ -487,31 +490,34 @@ public class TaskWriteExelForWildberries extends Task<File> {
                 cell.setCellValue("-");
             }
 
-            //установка картинки для моего товара 0.0625
+            //установка картинки для моего товара
+            System.out.println("Загрузка картинок для артикула WB = " + vendorCodeWildberries);
+            String myImageUrl = "-";
             try {
-                String myImageUrl = productArrayList.get(i).getMyRefForImage();
+                myImageUrl = productArrayList.get(i).getMyRefForImage();
                 if (!myImageUrl.equals("-")){
                     setImageForCell(myImageUrl, 5, i, 0.0625, 0.0625, vendorCodeWildberries);
                 }
             } catch (Exception ignored) {
             }
 
-            //установка картинки для конкурента imageUrl 0.25
+            //установка картинки для конкурента imageUrl
+            String imageUrl = "-";
             try {
-                String imageUrl = productArrayList.get(i).getCompetitorRefForImage();
+                imageUrl = productArrayList.get(i).getCompetitorRefForImage();
                 if (!imageUrl.equals("-")){
                     setImageForCell(imageUrl, 9, i, 0.25, 0.25, vendorCodeWildberries);
                 }
             } catch (Exception ignored) {
             }
-
-
+            System.out.println();
+            System.out.println("Конец записи строки - " + (i + 1));
             this.updateProgress(i + 1, countRows);
         }
 
         File currDir = new File(".");
         String path = currDir.getAbsolutePath();
-        String fileLocation = path.substring(0, path.length() - 1) + "Analytics.xlsx";
+        String fileLocation = path.substring(0, path.length() - 1) + "AnalyticForWB.xlsx";
 
         FileOutputStream outputStream = null;
         try {

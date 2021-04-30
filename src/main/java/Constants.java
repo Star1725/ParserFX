@@ -292,6 +292,8 @@ public class Constants {
     public static final String ELEMENT_WITH_DESCRIPTION_MY_PRODUCT = "div[class=j-description collapsable-content description-text]";
     //Html элементы страницы поискового запроса аналогов
     public static final String ELEMENT_WITH_CATALOG = "div[class=catalog_main_table j-products-container]";
+    public static final String ELEMENT_WITH_EMPTY_RESULT_SEARCH_1 = "h1[class=searching-results-title]";
+    public static final String ELEMENT_WITH_EMPTY_RESULT_SEARCH_2 = "p[class=searching-results-text]";
     public static final String ELEMENT_WITH_RESULT_SEARCH = "div[class=searching-results-inner]";
     //public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList i-dtList j-card-item]"; элементы перестали находиться 14.04.21
     public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList-inner]";
@@ -376,6 +378,7 @@ public class Constants {
         listForCable_1m.add("1.0 м");
         listForCable_1m.add("1.0m");
         listForCable_1m.add("1.0 m");
+        listForCable_1m.add("100 см");
 
         listForCable_1_2m.add("1.2м");
         listForCable_1_2m.add("1.2 м");
@@ -446,6 +449,7 @@ public class Constants {
         listForChargingApple.add("для айфона");
 
         listForChargingType.add("type");
+        listForChargingType.add("type-c");
 
         listForCharging_2in1.add("2 в 1");
         listForCharging_2in1.add("2в1");
