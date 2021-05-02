@@ -276,7 +276,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         break;
 
                     //для кабелей - длина
-                    case Constants.PRODUCT_TYPE_1C_48:
+                    //case Constants.PRODUCT_TYPE_1C_48:
                     case Constants.PRODUCT_TYPE_1C_49:
                     case Constants.PRODUCT_TYPE_1C_50:
                     case Constants.PRODUCT_TYPE_1C_61:
@@ -287,9 +287,9 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     case Constants.PRODUCT_TYPE_1C_66:
                     case Constants.PRODUCT_TYPE_1C_166:
                     case Constants.PRODUCT_TYPE_1C_67:
-                    case Constants.PRODUCT_TYPE_1C_68:
-                    case Constants.PRODUCT_TYPE_1C_69:
-                    case Constants.PRODUCT_TYPE_1C_70:
+//                    case Constants.PRODUCT_TYPE_1C_68:
+//                    case Constants.PRODUCT_TYPE_1C_69:
+//                    case Constants.PRODUCT_TYPE_1C_70:
                         for (String type : Constants.listForCable){
                             if (myNomenclature.replaceAll(",", "").contains(type)) {
                                 if (type.contains("1.0")){

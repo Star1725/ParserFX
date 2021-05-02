@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Constants {
     //настройки для прокси-сервера
@@ -463,6 +464,7 @@ public class Constants {
         listForCharging_3in1.add("3-in-1");
         listForCharging_3in1.add("3-in-");
         listForCharging_3in1.add("3in1");
+        listForCharging_3in1.add("lightning+micro+type-c");
 
         listForCharging_4in1.add("4 в 1");
         listForCharging_4in1.add("4в1");
@@ -647,5 +649,100 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_164);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_165);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_166);
+    }
+
+    static List<String> getCollectionsParam(List<String> arrayParams, String url) {
+        //определяем коллекцию с названием одного и того же кабеля
+        List<String> listWithCable = null;
+        if (arrayParams.size() == 1){
+            String param = arrayParams.get(0);
+            boolean b = Constants.listForChargingMicro.contains(param);
+
+            if (b){
+                listWithCable = Constants.listForChargingMicro;
+            } else if (Constants.listForChargingApple.contains(param)){
+                listWithCable = Constants.listForChargingApple;
+            } else if (Constants.listForChargingType.contains(param)){
+                listWithCable = Constants.listForChargingType;
+            } else {
+                System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
+            }
+            return listWithCable;
+        } else {
+            return  null;
+        }
+    }
+
+    static List<String> getCollectionsParamCable(String param, String url) {
+        //определяем коллекцию с названием одного и того же кабеля
+        List<String> listWithCable = null;
+        boolean b = Constants.listForChargingMicro.contains(param);
+
+        if (b) {
+            listWithCable = Constants.listForChargingMicro;
+        } else if (Constants.listForChargingApple.contains(param)) {
+            listWithCable = Constants.listForChargingApple;
+        } else if (Constants.listForChargingType.contains(param)) {
+            listWithCable = Constants.listForChargingType;
+        } else if (Constants.listForCharging_2in1.contains(param)) {
+            listWithCable = Constants.listForCharging_2in1;
+        } else if (Constants.listForCharging_3in1.contains(param)) {
+            listWithCable = Constants.listForCharging_3in1;
+        } else if (Constants.listForCharging_4in1.contains(param)) {
+            listWithCable = Constants.listForCharging_4in1;
+        } else if (Constants.listForCable_0_2m.contains(param)) {
+            listWithCable = Constants.listForCable_0_2m;
+        } else if (Constants.listForCable_0_25m.contains(param)) {
+            listWithCable = Constants.listForCable_0_25m;
+        } else if (Constants.listForCable_1m.contains(param)) {
+            listWithCable = Constants.listForCable_1m;
+        } else if (Constants.listForCable_1_2m.contains(param)) {
+            listWithCable = Constants.listForCable_1_2m;
+        } else if (Constants.listForCable_1_4m.contains(param)) {
+            listWithCable = Constants.listForCable_1_4m;
+        } else if (Constants.listForCable_1_6m.contains(param)) {
+            listWithCable = Constants.listForCable_1_6m;
+        } else if (Constants.listForCable_1_8m.contains(param)) {
+            listWithCable = Constants.listForCable_1_8m;
+        } else if (Constants.listForCable_2m.contains(param)) {
+            listWithCable = Constants.listForCable_2m;
+        } else if (Constants.listForCable_3m.contains(param)) {
+            listWithCable = Constants.listForCable_3m;
+        } else {
+            System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
+        }
+        return listWithCable;
+    }
+
+    static String getRedString(String s){
+        /*
+        Если хочешь другой цвет, то измени "[31mWarning!". Например, на "[35mWarning!". Текст будет пурпурным.
+        30 - черный. 31 - красный. 32 - зеленый. 33 - желтый. 34 - синий. 35 - пурпурный. 36 - голубой. 37 - белый.
+         */
+        return (char) 27 + "[31m" + s + (char)27 + "[0m";
+    }
+
+    static String getBlueString(String s){
+        /*
+        Если хочешь другой цвет, то измени "[31mWarning!". Например, на "[35mWarning!". Текст будет пурпурным.
+        30 - черный. 31 - красный. 32 - зеленый. 33 - желтый. 34 - синий. 35 - пурпурный. 36 - голубой. 37 - белый.
+         */
+        return (char) 27 + "[34m" + s + (char)27 + "[0m";
+    }
+
+    static String getGreenString(String s){
+        /*
+        Если хочешь другой цвет, то измени "[31mWarning!". Например, на "[35mWarning!". Текст будет пурпурным.
+        30 - черный. 31 - красный. 32 - зеленый. 33 - желтый. 34 - синий. 35 - пурпурный. 36 - голубой. 37 - белый.
+         */
+        return (char) 27 + "[32m" + s + (char)27 + "[0m";
+    }
+
+    static String getYellowString(String s){
+        /*
+        Если хочешь другой цвет, то измени "[31mWarning!". Например, на "[35mWarning!". Текст будет пурпурным.
+        30 - черный. 31 - красный. 32 - зеленый. 33 - желтый. 34 - синий. 35 - пурпурный. 36 - голубой. 37 - белый.
+         */
+        return (char) 27 + "[33m" + s + (char)27 + "[0m";
     }
 }

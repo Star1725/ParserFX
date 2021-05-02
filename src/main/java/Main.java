@@ -387,15 +387,6 @@ public class Main extends Application implements Controller.ActionInController {
                     } else {
                         System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
                         Product product = executorCompletionService.take().get();
-//                            if (number % 4 == 0){
-//                            //переключение на новый IP после трёх удачных запросов
-//                                System.out.println("прверка - lock свободен: " + lock.toString());
-//                                lock.lock();
-//                                System.out.println("В main number кратен 4, смена IP");
-//                                switchIpForProxy();
-//                                lock.unlock();
-//                                System.out.println("прверка - lock свободен: " + lock.toString());
-//                            }
                         //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
                         myVendorCode = product.getMyVendorCodeFromRequest();
                         System.out.println(number + "/" + resultMap.size() + " - получили результат для задачи № " + myVendorCode);

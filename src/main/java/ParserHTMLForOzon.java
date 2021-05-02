@@ -1,226 +1,31 @@
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.*;
-import java.util.concurrent.locks.Lock;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Comparator.comparing;
+public class ParserHTMLForOzon {
 
-public class ParserOzon {
-
-    static String refUrlForResult = "-";
-    static String myQuery;
-
-    private static final Object mon = new Object();
-    static WebClient webClientForOzon;
-    static Lock lockOzon;
-
-    static String myVendorCodeFromRequest;
-
-    static int countUseIP;
-    public static int countSwitchIP = 1;
-
-    private static Map<String, List<Product>> resultMapForQueries = new LinkedHashMap<>();
-
-    public Product getProduct(String vendorCodeFromRequest, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
-        List<Product> productList = new ArrayList<>();
-        String params = "";
-        if (arrayParams != null) {
-            if (arrayParams.size() != 0) {
-                for (String s : arrayParams) {
-                    params = params + s + " ";
-                }
-            } else {
-                params = "-";
-            }
-        }
-        Product product = new Product(vendorCodeFromRequest,
-                "-",
-                "-",
-                "-",
-                "-",
-
-                "-",
-                "-",
-
-                "-",
-                "-",
-                "по вашему запросу ничего не найдено",
-                "-",
-                "-",
-                "-",
-                0,
-
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-
-                "-");
-
-        if (specQuerySearch.equals("-") || specQuerySearch.equals("")) {
-            myQuery = brand.toLowerCase() + " " + productModel.toLowerCase();
-        } else {
-            myQuery = specQuerySearch;
-        }
-
-        webClientForOzon = webClient;
-        lockOzon = lock;
-        myVendorCodeFromRequest = vendorCodeFromRequest;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//получение страницы с моим товаром по коду Ozon
-        String refForMyImage = "-";
-        HtmlPage pageForMyProduct = null;
-        System.out.println(Constants.getYellowString("Получение ссылки на картинку моего товара"));
-        try {
-            pageForMyProduct = getHtmlPage("https://www.ozon.ru/search/?from_global=true&text=" + vendorCodeFromRequest);
-            //ссылка на картинку товара
-            final HtmlDivision div_class_a0i7 = (HtmlDivision) pageForMyProduct.getByXPath("//div[@class='a0i7']").get(0);
-            refForMyImage = div_class_a0i7.getFirstChild().getAttributes().getNamedItem("src").getNodeValue();
-            System.out.println(Constants.getGreenString("Ссылка на картинку моего товара получена!"));
-        } catch (Exception e) {
-            System.out.println(Constants.getRedString("Ошибка при получении ссылки на картинку моего товара получена!"));
-            e.printStackTrace();
-            System.out.println(pageForMyProduct.asXml());
-        }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        if (arrayParams.size() != 0) {
-            System.out.println("Получение каталога аналогов для запроса \"" + myQuery + "\"");
-            System.out.println("дополнительный параметр поиска - " + arrayParams.toString());
-            productList = getCatalogProducts(myQuery, productType, brand, productModel, arrayParams);
-
-            if (productList.size() != 0) {
-                System.out.println("Размер полученного каталога аналогов = " + Constants.getRedString(String.valueOf(productList.size())));
-                //проходимся по всему списку и находим продукт с наименьшей ценой
-                System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
-                Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
-                if (buffProduct != null) {
-                    product = buffProduct;
-                }
-            } else {
-                System.out.println("Для данного запроса ничего не найдено");
-            }
-        } else {
-            //для продуктов без параметров используем КЕШ
-            if (resultMapForQueries.size() == 0) {//если наш кеш пустой, то заносим туда первый каталог
-                System.out.println("Получение каталога аналогов для запроса \"" + myQuery + "\"");
-                System.out.println("дополнительный параметр поиска - " + arrayParams.toString());
-                productList = getCatalogProducts(myQuery, productType, brand, productModel, arrayParams);
-
-                resultMapForQueries.put(brand + " " + productModel, productList);
-
-                if (productList.size() != 0) {
-                    System.out.println("Размер полученного каталога аналогов = " + Constants.getRedString(String.valueOf(productList.size())));
-                    //проходимся по всему списку и находим продукт с наименьшей ценой
-                    System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
-                    Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
-                    //                                            (productList, myVendorCodes, vendorCodeFromRequest, brand, productModel, arrayParams)
-                    if (buffProduct != null) {
-                        product = buffProduct;
-                    }
-                } else {
-                    System.out.println("Для данного запроса ничего не найдено");
-                }
-                //проверяем наш кеш на наличие каталога для запроса brand, productModel
-            } else if (resultMapForQueries.containsKey(brand + " " + productModel)) {
-                System.out.println("Для запроса \"" + brand + " " + productModel + " + arrayParams = " + arrayParams.toString() + "\" в кеше найден каталог аналогов для запросов \"" + brand + " " + productModel + "\", поэтому запрос на ozon не осуществляем");
-                productList = resultMapForQueries.get(brand + " " + productModel);
-                if (productList.size() != 0) {
-                    System.out.println("Размер каталога аналогов = " + productList.size());
-                    //проходимся по всему списку и находим продукт с наименьшей ценой
-                    System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
-                    Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
-                    if (buffProduct != null) {
-                        product = buffProduct;
-                    }
-                } else {
-                    System.out.println("Для данного запроса ничего не найдено");
-                }
-            } else {
-                System.out.println("Получение каталога аналогов для \"" + myQuery + "\"");
-                System.out.println("дополнительный параметр поиска - " + arrayParams.toString());
-                productList = getCatalogProducts(myQuery, productType, brand, productModel, arrayParams);
-
-                resultMapForQueries.put(brand + " " + productModel, productList);
-
-                if (productList.size() != 0) {
-                    System.out.println("Размер полученного каталога аналогов = " + Constants.getRedString(String.valueOf(productList.size())));
-                    //проходимся по всему списку и находим продукт с наименьшей ценой
-                    System.out.println("Получение аналога с мин. ценой и подходящего по параметрам productModel и arrayParams");
-                    Product buffProduct = getProductWithLowerPrice(productList, myVendorCodes, myVendorCodeFromRequest, productType, brand, productModel, arrayParams);
-                    if (buffProduct != null) {
-                        product = buffProduct;
-                    }
-                } else {
-                    System.out.println("Для данного запроса ничего не найдено");
-                }
-            }
-        }
-
-        //устанавливаем ссылку на картинку моего товара
-        product.setMyRefForImage(refForMyImage);
-
-        //устанавливаем ссылку на страницу поискового запроса аналогов
-
-
-        //устанавливаем ссылку на артикул моего товара
-        product.setMyRefForPage(getString("https://www.ozon.ru/search/?text=", vendorCodeFromRequest, "&from_global=true"));
-//                                            https://www.ozon.ru/search/?text=210646439&from_global=true
-        //устанавливаем мой vendorCode
-        product.setMyVendorCodeFromRequest(vendorCodeFromRequest);
-
-        return product;
-    }
-
-    private static List<Product> getCatalogProducts(String query, String productType, String brand, String model, List<String> arrayParams) {
-        List<Product> productList;
-        String url = "-";
-        url = getUrlForSearchQuery(query);
-
-        refUrlForResult = url;
-
-        //получение бренда, артикула, имени товара, ссылки на страницу товара, ссылки на картинкау товара, спец-акции, рейтинга
-        productList = ParserHTMLForOzon.getCatalogFromFPageForHtmlUnit(url, productType, brand, model, arrayParams);
-
-        return productList;
-    }
-
-    private static String getUrlForSearchQuery(String query) {
-        String url = "-";
-        url = getString("https://www.ozon.ru/search/?from_global=true&sorting=price&text=", getQueryUTF8(query), "");
-        return url;
-    }
-
-    private static List<Product> getCatalogFromFPageForHtmlUnit(String url, String productType, String brand, String model, List<String> arrayParams) {
+    static List<Product> getCatalogFromFPageForHtmlUnit(String url, String productType, String brand, String model, List<String> arrayParams) {
         List<Product> productList = new ArrayList<>();
         HtmlPage page = null;
         String stringPage = null;
         String querySearchAndCount = "-";
         String category = "-";
 
-        System.out.println("IP №" + countSwitchIP + ".Получение страницы ozon для запроса - " + myQuery + ". Артикул Ozon - " + myVendorCodeFromRequest);
+        System.out.println("IP №" + ParserOzon.countSwitchIP + ".Получение страницы ozon для запроса - " + ParserOzon.myQuery + ". Артикул Ozon - " + ParserOzon.myVendorCodeFromRequest);
         boolean isNotGetValidPage = true;
         while (isNotGetValidPage){
             //получение страницы поискового запроса с аналогами
-            page = getHtmlPage(url);
+            page = SupplierHtmlPage.getHtmlPage(url);
 
             if (page == null) {
                 System.out.println("Запрашиваемая страница = null");
                 return null;
             }
 
-            String sPage = page.asXml();
+            //String sPage = page.asXml();
 
             //получаем кол-во найденных аналогов с уже известными ценами
             List<HtmlElement> itemsCountSearch = page.getByXPath("//div[@class='b6e2']");
@@ -239,7 +44,7 @@ public class ParserOzon {
             }
 
             if (querySearchAndCount.contains("товаров сейчас нет")){
-                productList.add(new Product("Запрос - " + myQuery + ". " + querySearchAndCount, "-1"));
+                productList.add(new Product("Запрос - " + ParserOzon.myQuery + ". " + querySearchAndCount, "-1"));
                 return productList;
             }
 
@@ -454,7 +259,7 @@ public class ParserOzon {
                             "-",
 
                             querySearchAndCount,
-                            refUrlForResult,
+                            ParserOzon.refUrlForResult,
 
                             competitorBrand,
                             vendorCode,
@@ -632,7 +437,7 @@ public class ParserOzon {
                             String discountedItem = "Уценённый товар";
                             //получение ссылки на продукт
                             String hRefProduct = "https://www.ozon.ru" + itemsCountSearchJavascript.get(i).getFirstChild().getAttributes().getNamedItem("href").getNodeValue();
-                            page = getHtmlPage(hRefProduct);
+                            page = SupplierHtmlPage.getHtmlPage(hRefProduct);
 
                             String sHRef = page.asXml();
                             if (page == null) {
@@ -721,22 +526,22 @@ public class ParserOzon {
                             }
 
                             System.out.println("Попытка № " + tries + " получить элементы \"span\", которые содержат текущую цену и цену до скидки");
-                                spansForPrices = divClassForPrices.getElementsByTagName("span");
-                                System.out.println(spansForPrices.size());
-                                if (spansForPrices.size() == 2) {
-                                    String competitorPriceUString = spansForPrices.get(1).asText();
-                                    if (competitorPriceUString.contains("₽")) {
-                                        competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
-                                    }
-                                } else {
-                                    String competitorBasicPriceUString = spansForPrices.get(1).asText();
-                                    if (competitorBasicPriceUString.contains("₽")) {
-                                        competitorPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
-                                    }
-                                    competitorBasicPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
-                                    String competitorPriceUString = spansForPrices.get(2).asText();
+                            spansForPrices = divClassForPrices.getElementsByTagName("span");
+                            System.out.println(spansForPrices.size());
+                            if (spansForPrices.size() == 2) {
+                                String competitorPriceUString = spansForPrices.get(1).asText();
+                                if (competitorPriceUString.contains("₽")) {
                                     competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
                                 }
+                            } else {
+                                String competitorBasicPriceUString = spansForPrices.get(1).asText();
+                                if (competitorBasicPriceUString.contains("₽")) {
+                                    competitorPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
+                                }
+                                competitorBasicPriceU = getIntegerFromString(competitorBasicPriceUString) * 100;
+                                String competitorPriceUString = spansForPrices.get(2).asText();
+                                competitorPriceU = getIntegerFromString(competitorPriceUString) * 100;
+                            }
 
                             //элемент с ценой Premium - b9w7
                             try {
@@ -773,7 +578,7 @@ public class ParserOzon {
                                     "-",
 
                                     querySearchAndCount,
-                                    refUrlForResult,
+                                    ParserOzon.refUrlForResult,
 
                                     "-",
                                     vendorCode,
@@ -807,112 +612,6 @@ public class ParserOzon {
         return productList;
     }
 
-    private static HtmlPage getHtmlPage(String url) {
-        System.out.println("проверка - lock свободен: " + lockOzon.toString());
-        lockOzon.lock();
-        HtmlPage page = null;
-        boolean isBloking = true;
-        String blocking = "Блокировка сервером";
-        while (isBloking) {
-            int count = 10;//количество попыток получения валидной станицы ozon
-            //webClientForOzon.getOptions().setTimeout(15000);
-            int countPageNull = 0;
-            while (count > 0) {
-                System.out.println("Непосредственно получение страницы. Время таймаута = " + webClientForOzon.getOptions().getTimeout() / 1000 + " c");
-                try {
-                    if (countPageNull == 2){
-                        System.out.println("Кол-во полученных страниц NULL = 2. Меняем IP");
-                        switchIpForProxy();
-                    }
-                    if (countUseIP == 5){
-                        System.out.println("Кол-во использования IP № " + countSwitchIP + " = " + countUseIP + ". Меняем IP");
-                        switchIpForProxy();
-                        countUseIP = 0;
-                        countSwitchIP++;
-                    }
-
-                    page = webClientForOzon.getPage(url);
-
-                    countUseIP++;
-
-                } catch (Exception ignored) {
-                    System.out.println("Ошибка при получении страницы для запроса \"" + myQuery + "\": " + ignored.getMessage());
-                    if (count == 0) {
-                        System.out.println("Попытки получения страницы поискового запроса закончились");
-                        webClientForOzon.close();
-                        lockOzon.unlock();
-                        return null;
-                    }
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
-                    }
-                    count--;
-                    System.out.println("Осталось попыток: " + count);
-                }
-
-                //проверка на null
-                if (page == null) {
-                    System.out.println("countPageNull = " + countPageNull);
-                    countPageNull++;
-                    continue;
-                }
-                count = 0;
-            }
-            //проверка на бан сервером (name="ROBOTS")
-            try {
-                DomNodeList<DomElement> metas = page.getElementsByTagName("meta");
-                if (metas.get(0).getAttribute("name").equals("ROBOTS")) {
-                    System.out.println(Constants.getRedString(blocking) + ". Попытка смены IP");
-                    switchIpForProxy();
-                } else {
-                    isBloking = false;
-                }
-            } catch (Exception ignored) {
-            }
-        }
-        System.out.println(Constants.getGreenString("IP №" + countSwitchIP) + ". Страница ozon для запроса \"" + myQuery + "\" получена");
-        lockOzon.unlock();
-        System.out.println("проверка - lock свободен: " + lockOzon.toString());
-        webClientForOzon.close();
-        return page;
-    }
-
-    public static void switchIpForProxy() throws InterruptedException {
-        int count = 999;//попытки смены IP
-        HtmlPage page = null;
-        URL uri = null;
-        try {
-            uri = new URL(Constants.URL_FOR_SWITCH_IP);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        System.out.println("вход в цикл");
-        while (count > 0){
-            System.out.println("количество попыток смены IP - " + count);
-            try {
-                page = webClientForOzon.getPage(uri);
-                count = 0;
-                DomNodeList<DomElement> metas = page.getElementsByTagName("body");
-                //проверка ответа сервером (<body>ok</body>)
-                if (metas.get(0).asText().equals("ok")) {
-                    System.out.println("смена IP успешна");
-                    Thread.sleep(2000);
-                }
-            } catch (IOException e) {
-                System.out.println("проблема при смене IP");
-                e.printStackTrace();
-                if (count == 0) {
-//                    webClientForOzon.close();
-                    break;
-                }
-                count--;
-            }
-        }
-//        webClientForOzon.close();
-    }
-
     private static Iterable<DomElement> getDomElements(HtmlElement itemProduct) throws Exception {
 
         while (itemProduct.getChildElementCount() != 3) {
@@ -932,227 +631,4 @@ public class ParserOzon {
         }
         return Integer.parseInt(resultPrice.toString());
     }
-
-    private static Product getProductWithLowerPrice(List<Product> productList, Set myVendorCodes, String myVendorCodeFromRequest, String productType, String brand, String productModel, List<String> arrayParams) {
-
-        boolean myProductIsLower = true;
-
-        if (productList.size() == 0) {
-            return null;
-        } else if (productList.size() == 1){
-            return productList.get(0);
-        } else {
-            Product product = null;
-            productList.sort(comparing(Product::getCompetitorLowerPriceU));
-
-            switch (productType){
-                case Constants.PRODUCT_TYPE_1C_10:
-                case Constants.PRODUCT_TYPE_1C_39:
-                case Constants.PRODUCT_TYPE_1C_40:
-                case Constants.PRODUCT_TYPE_1C_132:
-                    try {
-                        if (productModel != null){
-                            //если в запросе только бренд и модель, то нам нужен первый product, в описании которого только модель
-                            if (arrayParams.size() == 0){
-                                for (Product p : productList) {
-                                    String nomenclature = p.getCompetitorProductName().toLowerCase();
-//                                    if (nomenclature.contains(productModel)) {
-                                    if (nomenclature.toLowerCase().contains(productModel + ",")
-                                            || nomenclature.toLowerCase().contains(productModel + " ")
-                                            || nomenclature.toLowerCase().contains("(" + productModel + ")")
-                                            || nomenclature.toLowerCase().contains(", " + productModel + "")) {
-                                        int check = 0;
-                                        for (String s : Constants.listForCharging) {
-                                            if (nomenclature.contains(s.toLowerCase())) {
-                                                check++;
-                                                break;
-                                            }
-                                        }
-                                        if (check == 0) {
-                                            if (p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase()) || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                                if (myProductIsLower) {
-                                                    product = p;
-                                                    myProductIsLower = false;
-                                                }
-                                            } else {
-                                                product = p;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            //если в запросе бренд, модель и кабель то нам нужен первый product, в описании которого наш param
-                            else {
-                                //определяем коллекцию с разными названиями нашего param
-                                List<String> listWithCable = Constants.getCollectionsParam(arrayParams, brand + productModel);
-                                for (Product p : productList) {
-                                    String nomenclature = p.getCompetitorProductName().toLowerCase();
-//                                    if (nomenclature.contains(productModel)) {
-                                    if (nomenclature.toLowerCase().contains(productModel + ",")
-                                            || nomenclature.toLowerCase().contains(productModel + " ")
-                                            || nomenclature.toLowerCase().contains("(" + productModel + ")")
-                                            || nomenclature.toLowerCase().contains(", " + productModel + "")) {
-                                        int check = 0;
-                                        for (String s : listWithCable) {
-                                            if (nomenclature.contains(s)) {
-                                                if (p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase()) || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                                    if (myProductIsLower) {
-                                                        product = p;
-                                                        myProductIsLower = false;
-                                                    }
-                                                } else {
-                                                    product = p;
-                                                    check++;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        if (check != 0) {
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
-                    }
-                    break;
-
-                case Constants.PRODUCT_TYPE_1C_48:
-                case Constants.PRODUCT_TYPE_1C_49:
-                case Constants.PRODUCT_TYPE_1C_50:
-                case Constants.PRODUCT_TYPE_1C_61:
-                    //case Constants.PRODUCT_TYPE_1C_62:
-                case Constants.PRODUCT_TYPE_1C_63:
-                case Constants.PRODUCT_TYPE_1C_64:
-                case Constants.PRODUCT_TYPE_1C_65:
-                case Constants.PRODUCT_TYPE_1C_66:
-                case Constants.PRODUCT_TYPE_1C_166:
-                case Constants.PRODUCT_TYPE_1C_67:
-                case Constants.PRODUCT_TYPE_1C_68:
-                case Constants.PRODUCT_TYPE_1C_69:
-                case Constants.PRODUCT_TYPE_1C_70:
-                    try {
-                        if (productModel != null){
-                            //определяем коллекцию с разными названиями нашего param
-                            List<String> listWithCableParam_1;
-                            List<String> listWithCableParam_2 = null;
-                            if (arrayParams.size() == 1){
-                                listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), brand + productModel);
-                            } else {
-                                listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), brand + productModel);
-                                listWithCableParam_2 = Constants.getCollectionsParamCable(arrayParams.get(1), brand + productModel);
-                            }
-
-                            for (Product p : productList) {
-                                String nomenclature = p.getCompetitorProductName().toLowerCase();
-//                                if (nomenclature.contains(productModel)) {
-                                if (nomenclature.toLowerCase().contains(productModel + ",") || nomenclature.toLowerCase().contains(productModel + " ") || nomenclature.toLowerCase().contains("(" + productModel + ")") || nomenclature.toLowerCase().contains(", " + productModel + "")) {
-                                    int check = 0;
-                                    for (String s1 : listWithCableParam_1) {
-                                        if (nomenclature.contains(s1)) {
-                                            if (listWithCableParam_2 != null){
-                                                for (String s2 : listWithCableParam_2) {
-                                                    if (nomenclature.contains(s2)) {
-                                                        if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
-                                                            if (myProductIsLower) {
-                                                                product = p;
-                                                                myProductIsLower = false;
-                                                            }
-                                                        } else {
-                                                            product = p;
-                                                            check++;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                                if (check != 0) {
-                                                    break;
-                                                }
-                                            } else {
-                                                if (myVendorCodes.contains(p.getCompetitorVendorCode())) {
-                                                    if (myProductIsLower) {
-                                                        product = p;
-                                                        myProductIsLower = false;
-                                                    }
-                                                } else {
-                                                    product = p;
-                                                    check++;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (check != 0) {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
-                    }
-                    break;
-
-                case Constants.PRODUCT_TYPE_1C_139:
-                    try {
-                        if (productModel != null){
-                            if (arrayParams.size() == 1){
-                                for (Product p : productList) {
-                                    String nomenclature = p.getCompetitorProductName().replaceAll(",", "").toLowerCase();
-                                    if (nomenclature.contains(arrayParams.get(0))) {
-                                        if (p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase()) || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                            if (myProductIsLower) {
-                                                product = p;
-                                                myProductIsLower = false;
-                                            }
-                                        } else {
-                                            product = p;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
-                    }
-                    break;
-                default:
-                    //исключаем мои продукты
-                    for (Product p : productList) {
-                        if (p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase()) || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                            if (myProductIsLower) {
-                                product = p;
-                                myProductIsLower = false;
-                            }
-                        } else {
-                            product = p;
-                            break;
-                        }
-                    }
-            }
-            return product;
-        }
-    }
-
-    private static String getString(String s, String queryUTF8, String s2) {
-        return s + queryUTF8 + s2;
-    }
-//
-    private static String getQueryUTF8(String query){
-        String queryUTF8 = null;
-        try {
-            queryUTF8 = URLEncoder.encode(query, "UTF-8");
-            //замена символа "+" на код "%20"
-            queryUTF8 = queryUTF8.replace("+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            System.out.println("Ошибка декодирования в UTF8");
-        }
-        return queryUTF8;
-    }
-
-
 }
