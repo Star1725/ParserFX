@@ -14,7 +14,7 @@ public class ParserHTMLForOzon {
         String querySearchAndCount = "-";
         String category = "-";
 
-        System.out.println("IP №" + ParserOzon.countSwitchIP + ".Получение страницы ozon для запроса - " + ParserOzon.myQuery + ". Артикул Ozon - " + ParserOzon.myVendorCodeFromRequest);
+        System.out.println("IP №" + LowerProductFinder.countSwitchIP + ".Получение страницы ozon для запроса - " + LowerProductFinder.myQuery + ". Артикул Ozon - " + LowerProductFinder.myVendorCodeFromRequest);
         boolean isNotGetValidPage = true;
         while (isNotGetValidPage){
             //получение страницы поискового запроса с аналогами
@@ -34,6 +34,7 @@ public class ParserHTMLForOzon {
             } else {
                 try {
                     querySearchAndCount = itemsCountSearch.get(0).asText();
+                    LowerProductFinder.resultSearch = querySearchAndCount;
                     System.out.println(Constants.getRedString(querySearchAndCount));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -44,7 +45,7 @@ public class ParserHTMLForOzon {
             }
 
             if (querySearchAndCount.contains("товаров сейчас нет")){
-                productList.add(new Product("Запрос - " + ParserOzon.myQuery + ". " + querySearchAndCount, "-1"));
+                productList.add(new Product("Запрос - " + LowerProductFinder.myQuery + ". " + querySearchAndCount, "-1"));
                 return productList;
             }
 
@@ -258,8 +259,8 @@ public class ParserHTMLForOzon {
                             "-",
                             "-",
 
-                            querySearchAndCount,
-                            ParserOzon.refUrlForResult,
+                            LowerProductFinder.resultSearch,
+                            LowerProductFinder.refUrlForResult,
 
                             competitorBrand,
                             vendorCode,
@@ -577,8 +578,8 @@ public class ParserHTMLForOzon {
                                     "-",
                                     "-",
 
-                                    querySearchAndCount,
-                                    ParserOzon.refUrlForResult,
+                                    LowerProductFinder.resultSearch,
+                                    LowerProductFinder.refUrlForResult,
 
                                     "-",
                                     vendorCode,

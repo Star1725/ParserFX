@@ -1,18 +1,18 @@
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.locks.Lock;
 
 public class SupplierHtmlPage {
 
     static HtmlPage getHtmlPage(String url) {
-        System.out.println("проверка - lock свободен: " + ParserOzon.lockOzon.toString());
-        ParserOzon.lockOzon.lock();
+        System.out.println("проверка - lock свободен: " + LowerProductFinder.lockOzon.toString());
+        LowerProductFinder.lockOzon.lock();
         HtmlPage page = null;
         boolean isBloking = true;
         String blocking = "Блокировка сервером";
@@ -21,29 +21,29 @@ public class SupplierHtmlPage {
             //webClientForOzon.getOptions().setTimeout(15000);
             int countPageNull = 0;
             while (count > 0) {
-                System.out.println("Непосредственно получение страницы. Время таймаута = " + ParserOzon.webClientForOzon.getOptions().getTimeout() / 1000 + " c");
+                System.out.println("Непосредственно получение страницы. Время таймаута = " + LowerProductFinder.webClientForOzon.getOptions().getTimeout() / 1000 + " c");
                 try {
                     if (countPageNull == 2){
                         System.out.println("Кол-во полученных страниц NULL = 2. Меняем IP");
                         switchIpForProxy();
                     }
-                    if (ParserOzon.countUseIP == 5){
-                        System.out.println("Кол-во использования IP № " + ParserOzon.countSwitchIP + " = " + ParserOzon.countUseIP + ". Меняем IP");
+                    if (LowerProductFinder.countUseIP == 5){
+                        System.out.println("Кол-во использования IP № " + LowerProductFinder.countSwitchIP + " = " + LowerProductFinder.countUseIP + ". Меняем IP");
                         switchIpForProxy();
-                        ParserOzon.countUseIP = 0;
-                        ParserOzon.countSwitchIP++;
+                        LowerProductFinder.countUseIP = 0;
+                        LowerProductFinder.countSwitchIP++;
                     }
 
-                    page = ParserOzon.webClientForOzon.getPage(url);
+                    page = LowerProductFinder.webClientForOzon.getPage(url);
 
-                    ParserOzon.countUseIP++;
+                    LowerProductFinder.countUseIP++;
 
                 } catch (Exception ignored) {
-                    System.out.println("Ошибка при получении страницы для запроса \"" + ParserOzon.myQuery + "\": " + ignored.getMessage());
+                    System.out.println("Ошибка при получении страницы для запроса \"" + LowerProductFinder.myQuery + "\": " + ignored.getMessage());
                     if (count == 0) {
                         System.out.println("Попытки получения страницы поискового запроса закончились");
-                        ParserOzon.webClientForOzon.close();
-                        ParserOzon.lockOzon.unlock();
+                        LowerProductFinder.webClientForOzon.close();
+                        LowerProductFinder.lockOzon.unlock();
                         return null;
                     }
                     try {
@@ -75,10 +75,10 @@ public class SupplierHtmlPage {
             } catch (Exception ignored) {
             }
         }
-        System.out.println(Constants.getGreenString("IP №" + ParserOzon.countSwitchIP) + ". Страница ozon для запроса \"" + ParserOzon.myQuery + "\" получена");
-        ParserOzon.lockOzon.unlock();
-        System.out.println("проверка - lock свободен: " + ParserOzon.lockOzon.toString());
-        ParserOzon.webClientForOzon.close();
+        System.out.println(Constants.getGreenString("IP №" + LowerProductFinder.countSwitchIP) + ". Страница ozon для запроса \"" + LowerProductFinder.myQuery + "\" получена");
+        LowerProductFinder.lockOzon.unlock();
+        System.out.println("проверка - lock свободен: " + LowerProductFinder.lockOzon.toString());
+        LowerProductFinder.webClientForOzon.close();
         return page;
     }
 
@@ -95,7 +95,7 @@ public class SupplierHtmlPage {
         while (count > 0){
             System.out.println("количество попыток смены IP - " + count);
             try {
-                page = ParserOzon.webClientForOzon.getPage(uri);
+                page = LowerProductFinder.webClientForOzon.getPage(uri);
                 count = 0;
                 DomNodeList<DomElement> metas = page.getElementsByTagName("body");
                 //проверка ответа сервером (<body>ok</body>)
@@ -114,4 +114,25 @@ public class SupplierHtmlPage {
             }
         }
     }
+
+//для Wildberries
+    static Document getPageForUrl(String url) {
+
+        Document page = null;
+        while (page == null){
+            try {
+                System.out.println("Получение страницы для url = " + url);
+                page = Jsoup.parse(new URL(url), 30000);
+            } catch (IOException ignored) {
+                try {
+                    System.out.println("Получаем пустую страницу. Видимо проблемы с соединением");
+                    Thread.sleep(1000);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
+            }
+        }
+        return page;
+    }
+
 }

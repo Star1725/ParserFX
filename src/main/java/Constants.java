@@ -298,6 +298,8 @@ public class Constants {
     public static final String ELEMENT_WITH_RESULT_SEARCH = "div[class=searching-results-inner]";
     //public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList i-dtList j-card-item]"; элементы перестали находиться 14.04.21
     public static final String ELEMENT_WITH_PRODUCT = "div[class=dtList-inner]";
+    public static final String ELEMENT_WITH_PP = "div[class=pp]";
+    public static final String ELEMENT_SPAN_IN_PP = "span";
     public static final String ATTRIBUTE_WITH_VENDOR_CODE = "data-popup-nm-id";
     public static final String ELEMENT_WITH_CARD_PRODUCT = "a[class=ref_goods_n_p j-open-full-product-card]";
     public static final String ELEMENT_WITH_NAME_PRODUCT = "div[class=dtlist-inner-brand-name]";
@@ -371,6 +373,7 @@ public class Constants {
         listForCable_0_25m.add("0.25m");
         listForCable_0_25m.add("0.25 m");
 
+        listForCable_1m.add("100");
         listForCable_1m.add("1м");
         listForCable_1m.add("1 м");
         listForCable_1m.add("1m");
@@ -379,12 +382,18 @@ public class Constants {
         listForCable_1m.add("1.0 м");
         listForCable_1m.add("1.0m");
         listForCable_1m.add("1.0 m");
-        listForCable_1m.add("100 см");
 
+        listForCable_1_2m.add("120");
         listForCable_1_2m.add("1.2м");
         listForCable_1_2m.add("1.2 м");
         listForCable_1_2m.add("1.2m");
         listForCable_1_2m.add("1.2 m");
+        listForCable_1_2m.add("1,2м");
+        listForCable_1_2m.add("1,2 м");
+        listForCable_1_2m.add("1,2m");
+        listForCable_1_2m.add("1,2 m");
+        listForCable_1_2m.add("1.2");
+        listForCable_1_2m.add("1,2");
 
         listForCable_1_4m.add("1.4м");
         listForCable_1_4m.add("1.4 м");

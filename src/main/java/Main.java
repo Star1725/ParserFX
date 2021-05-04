@@ -40,8 +40,8 @@ public class Main extends Application implements Controller.ActionInController {
     private TaskWriteExelForWildberries taskWriteExelForWildberries;
     private TaskWriteExelForOzon taskWriteExelForOzon;
 
-    static ParserWildBer parserWildBer = new ParserWildBer();
-    static ParserOzon parserOzon = new ParserOzon();
+//    static ParserWildBer parserWildBer = new ParserWildBer();
+    static LowerProductFinder lowerProductFinder = new LowerProductFinder();
 
     private ExecutorService executorService;
 
@@ -225,7 +225,7 @@ public class Main extends Application implements Controller.ActionInController {
                 String myProductModel = entry.getValue().getMyProductModel();
                 List<String> arrayParams = entry.getValue().getArrayListParams();
 
-                myCalls.add(new MyCall(key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, specQuerySearchForWildberiesOrOzon, webClient, lock));
+                myCalls.add(new MyCall(marketplaceFlag, key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, specQuerySearchForWildberiesOrOzon, webClient, lock));
             }
 
             List<Future<Product>> futureList = new ArrayList<>();
@@ -243,7 +243,7 @@ public class Main extends Application implements Controller.ActionInController {
                 String myVendorCode = "-";
                 String myRefForPage = "-";
                 String myRefForImage = "-";
-                String myProductName = "-";
+//                String myProductName = "-";
                 String mySpecAction = "-";
                 String competitorVendorCode = "-";
                 String competitorProductName = "-";
@@ -281,7 +281,7 @@ public class Main extends Application implements Controller.ActionInController {
 
                         myRefForPage = product.getMyRefForPage();
                         myRefForImage = product.getMyRefForImage();
-                        myProductName = product.getMyProductName();
+//                        myProductName = product.getMyProductName();
                         mySpecAction = product.getMySpecAction();
                         competitorVendorCode = product.getCompetitorVendorCode();
                         competitorProductName = product.getCompetitorProductName();
@@ -302,7 +302,7 @@ public class Main extends Application implements Controller.ActionInController {
 
                         resultProduct.setMyRefForPage(myRefForPage);
                         resultProduct.setMyRefForImage(myRefForImage);
-                        resultProduct.setMyProductName(myProductName);
+//                        resultProduct.setMyProductName(myProductName);
                         resultProduct.setMySpecAction(mySpecAction);
                         resultProduct.setCompetitorVendorCode(competitorVendorCode);
                         resultProduct.setCompetitorProductName(competitorProductName);
@@ -481,35 +481,14 @@ public class Main extends Application implements Controller.ActionInController {
             if (marketplaceFlag == 1){
                 taskWriteExelForOzon.run();
             } else {
-                System.out.println("/////////");
-                System.out.println("/   ||  /");
-                System.out.println("/   ||  /");
-                System.out.println("/   ||  /");
-                System.out.println("/   ||  /");
-                System.out.println("/   ||  /");
-                System.out.println("/       /");
-                System.out.println("/   //  /");
-                System.out.println("/////////");
                 taskWriteExelForWildberries.run();
             }
         }).start();
     }
 
-//    private void outputExcelFile(int number) {
-//        controller.getAreaLog().appendText("Количество проанализированных позицый - " + number + "\n");
-//        executorService.shutdown();
-//        controller.getAreaLog().appendText("Загрузка изображений...");
-//
-//        if (marketplaceFlag == 1){
-//            taskWriteExelForOzon.run();
-//        } else {
-//            taskWriteExelForWildberries.run();
-//        }
-//    }
-
-
     //колобэл, который выполняет запросы на wildberries
     static class MyCall implements Callable<Product> {
+        int marketplaceFlag;
         String key;
         String category;
         String brand;
@@ -521,7 +500,7 @@ public class Main extends Application implements Controller.ActionInController {
         WebClient webClient;
         Lock lock;
 
-        public MyCall(String key, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
+        public MyCall(int marketplaceFlag, String key, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
             this.key = key;
             this.category = category;
             this.brand = brand;
@@ -532,19 +511,23 @@ public class Main extends Application implements Controller.ActionInController {
             this.myVendorCodes = myVendorCodes;
             this.webClient = webClient;
             this.lock = lock;
+            this.marketplaceFlag = marketplaceFlag;
         }
 
         @Override
         //1 - флаг для Ozon
         //2 - флаг для Wildberies
         public Product call() throws Exception {
-            if (marketplaceFlag == 1){
-                System.out.println("Запуск задачи parserOzon.getProduct() для артикула Ozon = " + key + ", где brand = " + brand + ", productModel = " + productModel);
-                return parserOzon.getProduct(key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient, lock);
-            } else if (marketplaceFlag == 2){
-                System.out.println("Запуск задачи parserWildBer.getProduct()для артикула WB = " + key + ", где brand = " + brand + ", productModel = " + productModel);
-                return parserWildBer.getProduct(key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient);
-            } else return null;
+            System.out.println("Запуск задачи lowerProductFinder.getProduct() для маркетплейса = " + marketplaceFlag + " артикула Ozon = " + key + ", где brand = " + brand + ", productModel = " + productModel);
+            return lowerProductFinder.getProduct(marketplaceFlag, key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient, lock);
+
+//            if (marketplaceFlag == 1){
+//                System.out.println("Запуск задачи parserOzon.getProduct() для артикула Ozon = " + key + ", где brand = " + brand + ", productModel = " + productModel);
+//                return lowerProductFinder.getProduct(marketplaceFlag, key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient, lock);
+//            } else if (marketplaceFlag == 2){
+//                System.out.println("Запуск задачи parserWildBer.getProduct()для артикула WB = " + key + ", где brand = " + brand + ", productModel = " + productModel);
+//                return parserWildBer.getProduct(marketplaceFlag, key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient);
+//            } else return null;
         }
     }
 }

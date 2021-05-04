@@ -247,7 +247,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
 
             //моё наименование товара
             cell = row.createCell(4);
-            cell.setCellValue(productArrayList.get(i).getMyProductName());
+            cell.setCellValue(productArrayList.get(i).getMyNomenclature_1C());
             if (isMy && isMyAnalog){
                 cell.setCellStyle(styleMyProduct);
             } else if (!isMy && isMyAnalog){
