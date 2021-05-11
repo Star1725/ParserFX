@@ -12,48 +12,55 @@ import java.util.*;
 
 public class TaskReadExcelForOzon extends Task<Map> {
 
-    private int countReadsRows;
-    private int countReadsRows_1C;
+    static int countReadsRows;
+    static int countReadsRows_1C;
+    static int countFull;
 
-    public TaskReadExcelForOzon(List<File> files) {
+    int marketPlaceFlag;
+
+    Workbook workbookReport = null;
+    Workbook workbook_1C = null;
+
+    Sheet sheetReport;
+    Sheet sheet_1C;
+
+    Map<String, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
+    static Map<String, Supplier> supplierSpecPriceHashMapWithKeyCode_1C = new HashMap<>();
+    Map<String, Integer> mapCountForMyProductName = new HashMap<>();
+
+    public TaskReadExcelForOzon(List<File> files, int marketPlaceFlag) {
         this.files = files;
+        this.marketPlaceFlag = marketPlaceFlag;
     }
 
     private final List<File> files;
 
     public Map<String, ResultProduct> readWorkbook(List<File> files) {
 
-        Map<String, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
-        Map<String, Supplier> supplierSpecPriceHashMapWithKeyCode_1C = new HashMap<>();
-        Map<String, Integer> mapCountForMyProductName = new HashMap<>();
-
-        //читаем файл отчёта Ozon и файл 1С
-        Workbook workbookOzon = null;
-        Workbook workbook_1C = null;
+        //читаем файл отчёта и файл 1С
         try {
-            workbookOzon = new XSSFWorkbook(files.get(0));
+            workbookReport = new XSSFWorkbook(files.get(0));
             workbook_1C = new XSSFWorkbook(files.get(1));
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
         }
 
         //получаем страницы
-        Sheet sheetOzon = null;
-        Sheet sheet_1C = null;
         try {
-            sheetOzon = workbookOzon.getSheetAt(1);
+            sheetReport = workbookReport.getSheetAt(1);
             sheet_1C = workbook_1C.getSheetAt(0);
         } catch (Exception e) {
-            sheetOzon = workbook_1C.getSheetAt(1);
-            sheet_1C = workbookOzon.getSheetAt(0);
+            sheetReport = workbook_1C.getSheetAt(1);
+            sheet_1C = workbookReport.getSheetAt(0);
         }
 
         //проверяем, правильно ли мы прочитали файлы
-        if (!checkFileOzon(sheetOzon) || !checkFile_1C(sheet_1C)) {
+
+        if (!checkFileOzon(sheetReport) || !checkFile_1C(sheet_1C)) {
             Sheet sheetBuff = sheet_1C;
-            sheet_1C = sheetOzon;
-            sheetOzon = sheetBuff;
-            if (!checkFileOzon(sheetOzon) || !checkFile_1C(sheet_1C)) {
+            sheet_1C = sheetReport;
+            sheetReport = sheetBuff;
+            if (!checkFileOzon(sheetReport) || !checkFile_1C(sheet_1C)) {
                 System.out.println("ошибка чтения файлов Excel. Проверьте правильность написания названий столбцов, и их очерёдность\n" +
                         "");
                 resultProductHashMap.put("Ошибка чтения файла Excel с остатками Ozon", null);
@@ -61,16 +68,18 @@ public class TaskReadExcelForOzon extends Task<Map> {
             }
         }
 
+
+
         //считаем кол-во строк в файлах для работы ProgressBar
-        int countRowsInWildberies = sheetOzon.getLastRowNum();
+        int countRowsInWildberies = sheetReport.getLastRowNum();
         int countRowsIn_1C = sheet_1C.getLastRowNum();
-        int countFull = countRowsInWildberies + countRowsIn_1C;
+        countFull = countRowsInWildberies + countRowsIn_1C;
         int i = 1;
 
         try {
             //считываем информацию с отчёта Ozon
             System.out.println("считываем информацию с отчёта Ozon");
-            Iterator rowIterator = sheetOzon.rowIterator();
+            Iterator rowIterator = sheetReport.rowIterator();
             while (rowIterator.hasNext()) {
 
                 //получаем строку
@@ -277,33 +286,21 @@ public class TaskReadExcelForOzon extends Task<Map> {
 
                     //для кабелей - длина
                     //case Constants.PRODUCT_TYPE_1C_48:
-                    case Constants.PRODUCT_TYPE_1C_49:
-                    case Constants.PRODUCT_TYPE_1C_50:
-                    case Constants.PRODUCT_TYPE_1C_61:
-                        //case Constants.PRODUCT_TYPE_1C_62:
-                    case Constants.PRODUCT_TYPE_1C_63:
-                    case Constants.PRODUCT_TYPE_1C_64:
-                    case Constants.PRODUCT_TYPE_1C_65:
-                    case Constants.PRODUCT_TYPE_1C_66:
-                    case Constants.PRODUCT_TYPE_1C_166:
-                    case Constants.PRODUCT_TYPE_1C_67:
-//                    case Constants.PRODUCT_TYPE_1C_68:
-//                    case Constants.PRODUCT_TYPE_1C_69:
-//                    case Constants.PRODUCT_TYPE_1C_70:
-                        for (String type : Constants.listForCable){
-                            if (myNomenclature.replaceAll(",", "").contains(type)) {
-                                if (type.contains("1.0")){
-                                    arrayParams.add("1 м");
-                                } else if (type.contains("2.0")){
-                                    arrayParams.add("2 м");
-                                } else if (type.contains("3.0")){
-                                    arrayParams.add("3 м");
-                                } else {
-                                    arrayParams.add(type);
-                                }
-                            }
-                        }
-                        break;
+//                    case Constants.PRODUCT_TYPE_1C_49:
+//                    case Constants.PRODUCT_TYPE_1C_50:
+//                    case Constants.PRODUCT_TYPE_1C_61:
+//                        //case Constants.PRODUCT_TYPE_1C_62:
+//                    case Constants.PRODUCT_TYPE_1C_63:
+//                    case Constants.PRODUCT_TYPE_1C_64:
+//                    case Constants.PRODUCT_TYPE_1C_65:
+//                    case Constants.PRODUCT_TYPE_1C_66:
+//                    case Constants.PRODUCT_TYPE_1C_166:
+//                    case Constants.PRODUCT_TYPE_1C_67:
+////                    case Constants.PRODUCT_TYPE_1C_68:
+////                    case Constants.PRODUCT_TYPE_1C_69:
+////                    case Constants.PRODUCT_TYPE_1C_70:
+//                        addedParamForCableLenght(arrayParams, myNomenclature);
+//                        break;
 
                     //для защитных стекол -  его тип
                     case Constants.PRODUCT_TYPE_1C_139:
@@ -394,8 +391,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_58:
                         case Constants.PRODUCT_TYPE_1C_59:
                         case Constants.PRODUCT_TYPE_1C_60:
-                        case Constants.PRODUCT_TYPE_1C_62:
-                        case Constants.PRODUCT_TYPE_1C_67:
+
                         case Constants.PRODUCT_TYPE_1C_72:
                         case Constants.PRODUCT_TYPE_1C_73:
                         case Constants.PRODUCT_TYPE_1C_74:
@@ -411,8 +407,8 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_89:
                         case Constants.PRODUCT_TYPE_1C_90:
                         case Constants.PRODUCT_TYPE_1C_91:
-                        case Constants.PRODUCT_TYPE_1C_92:
-                        case Constants.PRODUCT_TYPE_1C_93:
+//                        case Constants.PRODUCT_TYPE_1C_92:
+
                         case Constants.PRODUCT_TYPE_1C_94:
                         case Constants.PRODUCT_TYPE_1C_96:
                         case Constants.PRODUCT_TYPE_1C_97:
@@ -453,7 +449,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
 
                         case Constants.PRODUCT_TYPE_1C_134:
                         case Constants.PRODUCT_TYPE_1C_135:
-                        case Constants.PRODUCT_TYPE_1C_136:
+//                        case Constants.PRODUCT_TYPE_1C_136:
                         case Constants.PRODUCT_TYPE_1C_137:
                         case Constants.PRODUCT_TYPE_1C_138:
                         case Constants.PRODUCT_TYPE_1C_139:
@@ -483,9 +479,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_164:
                         case Constants.PRODUCT_TYPE_1C_39:
                         case Constants.PRODUCT_TYPE_1C_40:
-                        case Constants.PRODUCT_TYPE_1C_49:
-                        case Constants.PRODUCT_TYPE_1C_50:
-                        case Constants.PRODUCT_TYPE_1C_61:
+
                         case Constants.PRODUCT_TYPE_1C_132:
 
                             querySearch = brand + " " + model;
@@ -498,18 +492,54 @@ public class TaskReadExcelForOzon extends Task<Map> {
 
                             break;
 
+                        case Constants.PRODUCT_TYPE_1C_93:
+                        case Constants.PRODUCT_TYPE_1C_136:
+                        case Constants.PRODUCT_TYPE_1C_167:
+                        case Constants.PRODUCT_TYPE_1C_92:
+                            String series = "-";
+                            addedParamForSeriesCover(arrayParams, myNomenclature);
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+
+                            break;
+
                         //для этих кабелей в поисковом запросе указываем бренд, модель тип коннектора и длину
+                        case Constants.PRODUCT_TYPE_1C_49:
+                            String connect = "-";
+                            connect = "type-c - type-c";
+                            arrayParams.add(connect);
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+                            break;
+                        case Constants.PRODUCT_TYPE_1C_50:
+                        case Constants.PRODUCT_TYPE_1C_62:
+                            connect = "type-c - apple";
+                            arrayParams.add(connect);
+                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+                            break;
+                        case Constants.PRODUCT_TYPE_1C_61:
                         case Constants.PRODUCT_TYPE_1C_63:
                         case Constants.PRODUCT_TYPE_1C_64:
                         case Constants.PRODUCT_TYPE_1C_65:
                         case Constants.PRODUCT_TYPE_1C_66:
+                        case Constants.PRODUCT_TYPE_1C_67:
                         case Constants.PRODUCT_TYPE_1C_166:
-                            String connect = "-";
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_63) || productType.equals(Constants.PRODUCT_TYPE_1C_64)) {
+
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_63)
+                                    || productType.equals(Constants.PRODUCT_TYPE_1C_64)
+                                    ||  productType.equals(Constants.PRODUCT_TYPE_1C_62)
+                                    ||  productType.equals(Constants.PRODUCT_TYPE_1C_50)) {
                                 connect = "apple";
                                 arrayParams.add(connect);
                             }
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_65)) {
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_65) || productType.equals(Constants.PRODUCT_TYPE_1C_49)) {
                                 connect = "type-c";
                                 arrayParams.add(connect);
                             }
@@ -517,13 +547,14 @@ public class TaskReadExcelForOzon extends Task<Map> {
                                 connect = "micro";
                                 arrayParams.add(connect);
                             }
-                            querySearch = brand + " " + model + " " + connect;
+                            addedParamForCableLenght(arrayParams, myNomenclature);
+                            //querySearch = brand + " " + model + " " + connect;
                             System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
                             System.out.println("arrayParams = " + arrayParams.toString());
 
-                            System.out.println("querySearch = " + querySearch);
+                            //System.out.println("querySearch = " + querySearch);
 
                             break;
 //                        case Constants.PRODUCT_TYPE_1C_48:
@@ -665,6 +696,30 @@ public class TaskReadExcelForOzon extends Task<Map> {
         System.out.println("Добавили в итоговый мап все ResultProducts");
         System.out.println();
         return resultProductHashMap;
+    }
+
+    private void addedParamForCableLenght(List<String> arrayParams, String myNomenclature) {
+        for (String type : Constants.listForCable){
+            if (myNomenclature.replaceAll(",", "").contains(type)) {
+                if (type.contains("1.0")){
+                    arrayParams.add("1 м");
+                } else if (type.contains("2.0")){
+                    arrayParams.add("2 м");
+                } else if (type.contains("3.0")){
+                    arrayParams.add("3 м");
+                } else {
+                    arrayParams.add(type);
+                }
+            }
+        }
+    }
+
+    private void addedParamForSeriesCover(List<String> arrayParams, String myNomenclature) {
+        for (String series : Constants.listForSeriesCover) {
+            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(series)) {
+                arrayParams.add(series);
+            }
+        }
     }
 
     private boolean checkFileOzon(Sheet sheet){

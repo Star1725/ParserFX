@@ -236,6 +236,11 @@ public class TaskWriteExelForWildberries extends Task<File> {
             //Мой артикул по Wildberies
             cell = row.createCell(3);
             String vendorCodeWildberries = productArrayList.get(i).getMyVendorCodeForWildberiesOrOzon();
+            String competitorVendorCodeWildberries = "-";
+            try {
+                competitorVendorCodeWildberries = productArrayList.get(i).getCompetitorVendorCode();
+            } catch (Exception ignored) {
+            }
             cell.setCellValue(vendorCodeWildberries);
             if (isMy && isMyAnalog){
                 cell.setCellStyle(styleMyProduct);
@@ -491,7 +496,6 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //установка картинки для моего товара
-            System.out.println("Загрузка картинок для артикула WB = " + vendorCodeWildberries);
             String myImageUrl = "-";
             try {
                 myImageUrl = productArrayList.get(i).getMyRefForImage();
@@ -506,7 +510,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             try {
                 imageUrl = productArrayList.get(i).getCompetitorRefForImage();
                 if (!imageUrl.equals("-")){
-                    setImageForCell(imageUrl, 9, i, 0.25, 0.25, vendorCodeWildberries);
+                    setImageForCell(imageUrl, 9, i, 0.25, 0.25, competitorVendorCodeWildberries);
                 }
             } catch (Exception ignored) {
             }

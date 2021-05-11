@@ -1,4 +1,5 @@
 import com.gargoylesoftware.htmlunit.html.*;
+import org.w3c.dom.html.HTMLDListElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +36,19 @@ public class ParserHTMLForOzon {
                 try {
                     querySearchAndCount = itemsCountSearch.get(0).asText();
                     LowerProductFinder.resultSearch = querySearchAndCount;
+                    LowerProductFinder.refUrlForResult = url;
                     System.out.println(Constants.getRedString(querySearchAndCount));
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("////////////////////////////////////////Невалидная страница///////////////////////////////////////////");
                     System.out.println(page.asXml());
+                    HtmlBody htmlBody = (HtmlBody) page.getBody();
+                    String hrefForNewCatalog = htmlBody.getTextContent();
+                    System.out.println(hrefForNewCatalog);
+                    String[] strBuff = hrefForNewCatalog.split("=", 2);
+                    String temp = strBuff[1].substring(strBuff[1].indexOf("\"") + 1, strBuff[1].lastIndexOf("\""));
+                    String newUrlForNewCatalog = "https://www.ozon.ru" + temp;
+                    url = newUrlForNewCatalog;
                     continue;
                 }
             }
@@ -49,7 +58,7 @@ public class ParserHTMLForOzon {
                 return productList;
             }
 
-            //получаем список продуктов, полученный по поисковому запросу аналогов
+            //получаем первые 4 продукта, полученные по поисковому запросу аналогов
             List<HtmlElement> itemsForListProducts1 = page.getByXPath("//div[@class='a0c6 a0c9']");
             List<HtmlElement> itemsForListProducts = page.getByXPath("//div[@class='a0c4']");
             boolean isException1 = false;
@@ -160,7 +169,7 @@ public class ParserHTMLForOzon {
                                 }
                                 competitorBasicPriceU = getIntegerFromString(currentBasicPriceString) * 100;
 
-                                //получение цены currentPriceUString
+//получение цены currentPriceUString
                                 try {
                                     String currentPriceUString = elementsFor_b5v4.get(1).asText();
                                     competitorPriceU = getIntegerFromString(currentPriceUString) * 100;
@@ -171,7 +180,7 @@ public class ParserHTMLForOzon {
 //                                    System.out.println("isException2 = " + isException2);
                                 }
 
-                                //получение цены premiumPriceString
+//получение цены premiumPriceString
                                 try {
                                     //пробуем получить премиум цену, если есть
                                     String premiumPriceString = divsFor_a0y9.get(divsFor_a0y9.size() - 1).asText();
@@ -185,9 +194,47 @@ public class ParserHTMLForOzon {
                                     System.out.println("isException3 = " + isException3);
                                 }
 
-                                //получение описания продукта
+//получение описания продукта
                                 productDescription = asFor_a0s9.get(1).asText();
-                                //определяем какой бренд
+//для кабелей определение наличия длинны в описании
+                                if (arrayParams.size() == 2){
+                                    boolean check1 = false;
+                                    List<String> listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), brand + model);
+                                    for (String type: listWithCableParam_1){
+                                        if (productDescription.toLowerCase().contains(type)){
+                                            check1 = true;
+                                            break;
+                                        }
+                                    }
+                                    if (check1){
+                                        boolean check2 = false;
+                                        for (String length: Constants.listForCableAllLength){
+                                            if (productDescription.contains(length)) {
+                                                check2 = true;
+                                                break;
+                                            }
+                                        }
+                                        //если длины нет, то идем на страницу товара и исчем длину там
+                                        if (!check2){
+                                            System.out.println("Поиск длинны кабеля на его странице = " + refForProduct);
+                                            HtmlPage pageProduct = SupplierHtmlPage.getHtmlPage(refForProduct);
+                                            try {
+                                                List<HtmlElement> dListElement = pageProduct.getByXPath("//dl[@class='db8']");
+                                                for (HtmlElement db: dListElement){
+                                                    if (db.asText().contains("Длина")){
+                                                        String length = db.getElementsByTagName("dd").get(0).asText();
+                                                        productDescription = productDescription + " " + length + "м";
+                                                    }
+                                                }
+                                            } catch (Exception ignored) {
+                                                ignored.printStackTrace();
+                                            }
+                                        }
+                                    }
+
+                                }
+
+//определяем какой бренд
                                 competitorBrand = "-";
                                 for (String s : Constants.listForBrands) {
                                     if (productDescription.contains(s)) {
@@ -285,9 +332,9 @@ public class ParserHTMLForOzon {
                 System.out.println("//////////////////////////////////////Попытка получения новой валидной страницы//////////////////////////////////////");
                 System.out.println("isNotGetValidPage = " + isNotGetValidPage);
             }
-
-//*TO-DO. из запроса получаем те элементы, которые хотим проконтроллировать в описании(модель, тип кабеля)//////////////////////////////////////////////////
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//*TO-DO. Получаем остальные 35 продукта, полученные по поисковому запросу аналогов//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //получаем кол-во элементов javascript
             List<HtmlElement> itemsCountSearchJavascript = page.getByXPath("//div[@class='a1j1']");
             if (itemsCountSearchJavascript == null) {
@@ -297,8 +344,8 @@ public class ParserHTMLForOzon {
                     int countJavascript = itemsCountSearchJavascript.size();
                     int countForAnalise = 0;
                     int notValid = 0;
-                    if (countJavascript > 24) {
-                        countForAnalise = 24;
+                    if (countJavascript > 35) {
+                        countForAnalise = 35;
                     } else {
                         countForAnalise = countJavascript;
                     }
@@ -307,7 +354,11 @@ public class ParserHTMLForOzon {
                         String description = itemsCountSearchJavascript.get(i).asText().toLowerCase();
                         //проходимся только по тем товарам, в названии которых есть наша модель и наши дополнительные параметры
                         System.out.println(Constants.getBlueString(String.valueOf(i + 1)) + " - " + description);
-                        if (description.toLowerCase().contains(model + ",") || description.toLowerCase().contains(model + " ") || description.toLowerCase().contains("(" + model + ")") || description.toLowerCase().contains(", " + model + "")) {
+//                        if (description.toLowerCase().contains(model + ",")
+//                                || description.toLowerCase().contains(model + " ")
+//                                || description.toLowerCase().contains("(" + model + ")")
+//                                || description.toLowerCase().contains(", " + model + "")
+//                                || description.toLowerCase().contains(" " + model + "")) {
 
 //в зависимости от типа продукта определяем по параметрам подходит ли он нам для дальнейшего анализа////////////////////
                             switch (productType) {
@@ -357,7 +408,7 @@ public class ParserHTMLForOzon {
                                 case Constants.PRODUCT_TYPE_1C_49:
                                 case Constants.PRODUCT_TYPE_1C_50:
                                 case Constants.PRODUCT_TYPE_1C_61:
-                                    //case Constants.PRODUCT_TYPE_1C_62:
+                                case Constants.PRODUCT_TYPE_1C_62:
                                 case Constants.PRODUCT_TYPE_1C_63:
                                 case Constants.PRODUCT_TYPE_1C_64:
                                 case Constants.PRODUCT_TYPE_1C_65:
@@ -380,41 +431,54 @@ public class ParserHTMLForOzon {
                                             listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), brand + model);
                                             listWithCableParam_2 = Constants.getCollectionsParamCable(arrayParams.get(1), brand + model);
                                         }
-                                        int check = 0;
+                                        int check1 = 0;
+                                        int check2 = 10;
                                         for (String s1 : listWithCableParam_1) {
                                             param1 = s1;
                                             if (description.contains(s1)) {
                                                 if (listWithCableParam_2 != null) {
-                                                    check = 10;
                                                     for (String s2 : listWithCableParam_2) {
                                                         param2 = s2;
                                                         if (description.contains(s2)) {
-                                                            check++;
+                                                            check2++;
                                                             break;
+                                                        } else {
+                                                            for (String length: Constants.listForCableAllLength){
+                                                                if (!description.contains(length)){
+                                                                    check2++;
+                                                                    check1++;
+                                                                }
+                                                            }
                                                         }
                                                     }
-                                                    if (check != 0) {
+                                                    if (check2 != 0) {
                                                         break;
                                                     }
                                                 } else {
-                                                    check++;
+                                                    check1++;
                                                     break;
                                                 }
                                             }
                                         }
-                                        if (check == 0) {
+                                        if (check1 == 0) {
                                             System.out.println("не прошёл, тук как нет доп. параметра поиска = " + Constants.getRedString(param1));
                                             continue;
                                         }
-                                        if (check == 10) {
-                                            System.out.println("не прошёл, тук как нет доп. параметра поиска = " + Constants.getRedString(param2));
-                                            continue;
+                                        if (arrayParams.size() == 2){
+                                            if (check2 == 10) {
+                                                System.out.println("не прошёл, тук как нет доп. параметра поиска = " + Constants.getRedString(param2));
+                                                continue;
+                                            }
                                         }
                                     } catch (Exception e) {
                                         System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
                                     }
                                     break;
                                 case Constants.PRODUCT_TYPE_1C_139:
+                                case Constants.PRODUCT_TYPE_1C_93:
+                                case Constants.PRODUCT_TYPE_1C_136:
+                                case Constants.PRODUCT_TYPE_1C_167:
+                                case Constants.PRODUCT_TYPE_1C_92:
                                     System.out.println("Тип продукта - " + productType);
                                     try {
                                         if (arrayParams.size() == 1) {
@@ -468,7 +532,35 @@ public class ParserHTMLForOzon {
                             //получаем продовца
                             final HtmlDivision div_class_b1c6 = (HtmlDivision) page.getByXPath("//div[@class='b1c6']").get(0);
                             seller = div_class_b1c6.asText();
-
+//для кабелей ищем длинну
+                            switch (productType){
+                                case Constants.PRODUCT_TYPE_1C_48:
+                                case Constants.PRODUCT_TYPE_1C_49:
+                                case Constants.PRODUCT_TYPE_1C_50:
+                                case Constants.PRODUCT_TYPE_1C_61:
+                                case Constants.PRODUCT_TYPE_1C_62:
+                                case Constants.PRODUCT_TYPE_1C_63:
+                                case Constants.PRODUCT_TYPE_1C_64:
+                                case Constants.PRODUCT_TYPE_1C_65:
+                                case Constants.PRODUCT_TYPE_1C_66:
+                                case Constants.PRODUCT_TYPE_1C_166:
+                                case Constants.PRODUCT_TYPE_1C_67:
+                                case Constants.PRODUCT_TYPE_1C_68:
+                                case Constants.PRODUCT_TYPE_1C_69:
+                                case Constants.PRODUCT_TYPE_1C_70:
+                                    try {
+                                        List<HtmlElement> dListElement = page.getByXPath("//dl[@class='db8']");
+                                        for (HtmlElement db: dListElement){
+                                            if (db.asText().contains("Длина")){
+                                                String length = db.getElementsByTagName("dd").get(0).asText();
+                                                description = description + " " + length;
+                                            }
+                                        }
+                                    } catch (Exception ignored) {
+                                        ignored.printStackTrace();
+                                    }
+                            }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                             HtmlDivision divClassForPrices = null;
                             DomNodeList<HtmlElement> spansForPrices = null;
                             int competitorPriceU = 0;
@@ -598,9 +690,9 @@ public class ParserHTMLForOzon {
                                     seller
                             ));
                             page = null;
-                        } else {
-                            System.out.println("Не прошёл по названию модели = " + model);
-                        }
+//                        } else {
+//                            System.out.println("Не прошёл по названию модели = " + model);
+//                        }
                     }
                 } catch (Exception ignored) {
                     ignored.printStackTrace();

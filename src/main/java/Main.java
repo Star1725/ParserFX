@@ -37,6 +37,8 @@ public class Main extends Application implements Controller.ActionInController {
     static int stepFlag;
     private TaskReadExcelForWildberies taskReadExcelForWildberies;
     private TaskReadExcelForOzon taskReadExcelForOzon;
+
+
     private TaskWriteExelForWildberries taskWriteExelForWildberries;
     private TaskWriteExelForOzon taskWriteExelForOzon;
 
@@ -109,7 +111,7 @@ public class Main extends Application implements Controller.ActionInController {
 
         System.out.println("selectFile - " + marketplaceFlag);
         if (marketplaceFlag == 1){
-            taskReadExcelForOzon = new TaskReadExcelForOzon(files);
+            taskReadExcelForOzon = new TaskReadExcelForOzon(files, marketplaceFlag);
             controller.getAreaLog().appendText("Чтение файлов для аналитики Ozon - \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
         } else if (marketplaceFlag == 2){
             taskReadExcelForWildberies = new TaskReadExcelForWildberies(files);

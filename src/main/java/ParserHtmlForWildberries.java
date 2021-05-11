@@ -145,10 +145,10 @@ public class ParserHtmlForWildberries {
                     List<String> listWithCableParam_1 = null;
                     List<String> listWithCableParam_2 = null;
                     if (arrayParams.size() == 1){
-                        listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), refForPage);
+                        listWithCableParam_1 = Constants.getCollectionsParamCableForSearchInTitle(arrayParams.get(0), refForPage);
                     } else if (arrayParams.size() == 2){
-                        listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), refForPage);
-                        listWithCableParam_2 = Constants.getCollectionsParamCable(arrayParams.get(1), refForPage);
+                        listWithCableParam_1 = Constants.getCollectionsParamCableForSearchInTitle(arrayParams.get(0), refForPage);
+                        listWithCableParam_2 = Constants.getCollectionsParamCableForSearchInTitle(arrayParams.get(1), refForPage);
                     }
 
                     boolean check1 = false;

@@ -250,6 +250,7 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_164="Автомойка";
     public static final String PRODUCT_TYPE_1C_165="Велосипедный держатель";
     public static final String PRODUCT_TYPE_1C_166 ="Кабель USB - micro USB";
+    public static final String PRODUCT_TYPE_1C_167="Чехол силиконовый";
 
     public static final String MARKETPLACE = "https://www.wildberries.ru";
 
@@ -340,6 +341,11 @@ public class Constants {
     public static final ArrayList<String> listForHeadset = new ArrayList<>();
     public static final ArrayList<String> listForBrands = new ArrayList<>();
     public static final ArrayList<String> listForCategoryBy_1C = new ArrayList<>();
+    public static final ArrayList<String> listForCableAllLength = new ArrayList<>();
+    public static final ArrayList<String> listForAllTypeConnect = new ArrayList<>();
+    public static final ArrayList<String> listForCable_Type_C_to_Type_C = new ArrayList<>();
+    public static final ArrayList<String> listForCable_Type_C_to_Apple = new ArrayList<>();
+    public static final ArrayList<String> listForSeriesCover = new ArrayList<>();
 
 
     static {
@@ -363,17 +369,146 @@ public class Constants {
         listForCable.add("2.0м");
         listForCable.add("3.0м");
 
+        listForCableAllLength.add("20 см");
+        listForCableAllLength.add("0.2м");
+        listForCableAllLength.add("0.2 м");
+        listForCableAllLength.add("0.2m");
+        listForCableAllLength.add("0.2 m");
+        listForCableAllLength.add("0,2м");
+        listForCableAllLength.add("0,2 м");
+        listForCableAllLength.add("0,2m");
+        listForCableAllLength.add("0,2 m");
+        listForCableAllLength.add("25 см");
+        listForCableAllLength.add("0.25м");
+        listForCableAllLength.add("0.25 м");
+        listForCableAllLength.add("0.25m");
+        listForCableAllLength.add("0.25 m");
+        listForCableAllLength.add("0,25м");
+        listForCableAllLength.add("0,25 м");
+        listForCableAllLength.add("0,25m");
+        listForCableAllLength.add("0,25 m");
+        listForCableAllLength.add("100 см");
+        listForCableAllLength.add("1м");
+        listForCableAllLength.add("1 м");
+        listForCableAllLength.add("1m");
+        listForCableAllLength.add("1 m");
+        listForCableAllLength.add("1.0м");
+        listForCableAllLength.add("1.0 м");
+        listForCableAllLength.add("1.0m");
+        listForCableAllLength.add("1.0 m");
+        listForCableAllLength.add("120 см");
+        listForCableAllLength.add("1.2м");
+        listForCableAllLength.add("1.2 м");
+        listForCableAllLength.add("1.2m");
+        listForCableAllLength.add("1.2 m");
+        listForCableAllLength.add("1,2м");
+        listForCableAllLength.add("1,2 м");
+        listForCableAllLength.add("1,2m");
+        listForCableAllLength.add("1,2 m");
+        listForCableAllLength.add("1.2");
+        listForCableAllLength.add("1,2");
+        listForCableAllLength.add("140 см");
+        listForCableAllLength.add("1.4м");
+        listForCableAllLength.add("1.4 м");
+        listForCableAllLength.add("1.4m");
+        listForCableAllLength.add("1.4 m");
+        listForCableAllLength.add("1,4м");
+        listForCableAllLength.add("1,4 м");
+        listForCableAllLength.add("1,4m");
+        listForCableAllLength.add("1,4 m");
+        listForCableAllLength.add("1.6м");
+        listForCableAllLength.add("1.6 м");
+        listForCableAllLength.add("1.6m");
+        listForCableAllLength.add("1.6 m");
+        listForCableAllLength.add("1,6м");
+        listForCableAllLength.add("1,6 м");
+        listForCableAllLength.add("1,6m");
+        listForCableAllLength.add("1,6 m");
+        listForCableAllLength.add("180 см");
+        listForCableAllLength.add("1.8м");
+        listForCableAllLength.add("1.8 м");
+        listForCableAllLength.add("1.8m");
+        listForCableAllLength.add("1.8 m");
+        listForCableAllLength.add("1,8м");
+        listForCableAllLength.add("1,8 м");
+        listForCableAllLength.add("1,8m");
+        listForCableAllLength.add("1,8 m");
+        listForCableAllLength.add("200 см");
+        listForCableAllLength.add("2м");
+        listForCableAllLength.add("2 м");
+        listForCableAllLength.add("2m");
+        listForCableAllLength.add("2 m");
+        listForCableAllLength.add("2.0м");
+        listForCableAllLength.add("2.0 м");
+        listForCableAllLength.add("2.0m");
+        listForCableAllLength.add("2.0 m");
+        listForCableAllLength.add("2,0м");
+        listForCableAllLength.add("2,0 м");
+        listForCableAllLength.add("2,0m");
+        listForCableAllLength.add("2,0 m");
+        listForCableAllLength.add("300 см");
+        listForCableAllLength.add("3м");
+        listForCableAllLength.add("3 м");
+        listForCableAllLength.add("3m");
+        listForCableAllLength.add("3 m");
+        listForCableAllLength.add("3.0м");
+        listForCableAllLength.add("3.0 м");
+        listForCableAllLength.add("3.0m");
+        listForCableAllLength.add("3.0 m");
+        listForCableAllLength.add("3,0м");
+        listForCableAllLength.add("3,0 м");
+        listForCableAllLength.add("3,0m");
+        listForCableAllLength.add("3,0 m");
+
+        listForAllTypeConnect.add("микро");
+        listForAllTypeConnect.add("micro");
+        listForAllTypeConnect.add("apple 8 pin");
+        listForAllTypeConnect.add("apple");
+        listForAllTypeConnect.add("8 pin");
+        listForAllTypeConnect.add("8pin");
+        listForAllTypeConnect.add("lightning");
+        listForAllTypeConnect.add("iphone");
+        listForAllTypeConnect.add("для айфона");
+        listForAllTypeConnect.add("type-c");
+        listForAllTypeConnect.add("type");
+        listForAllTypeConnect.add("2 в 1");
+        listForAllTypeConnect.add("2в1");
+        listForAllTypeConnect.add("2 in 1");
+        listForAllTypeConnect.add("2-in-1");
+        listForAllTypeConnect.add("2-in-");
+        listForAllTypeConnect.add("2in1");
+        listForAllTypeConnect.add("3 в 1");
+        listForAllTypeConnect.add("3в1");
+        listForAllTypeConnect.add("3 in 1");
+        listForAllTypeConnect.add("3-in-1");
+        listForAllTypeConnect.add("3-in-");
+        listForAllTypeConnect.add("3in1");
+        listForAllTypeConnect.add("4 в 1");
+        listForAllTypeConnect.add("4в1");
+        listForAllTypeConnect.add("4 in 1");
+        listForAllTypeConnect.add("4-in-1");
+        listForAllTypeConnect.add("4in1");
+
+        listForCable_0_2m.add("20 см");
         listForCable_0_2m.add("0.2м");
         listForCable_0_2m.add("0.2 м");
         listForCable_0_2m.add("0.2m");
         listForCable_0_2m.add("0.2 m");
+        listForCable_0_2m.add("0,2м");
+        listForCable_0_2m.add("0,2 м");
+        listForCable_0_2m.add("0,2m");
+        listForCable_0_2m.add("0,2 m");
 
-        listForCable_0_25m.add("0.25м");
+        listForCable_0_25m.add("25 см");
         listForCable_0_25m.add("0.25 м");
         listForCable_0_25m.add("0.25m");
         listForCable_0_25m.add("0.25 m");
+        listForCable_0_25m.add("0,25м");
+        listForCable_0_25m.add("0,25 м");
+        listForCable_0_25m.add("0,25m");
+        listForCable_0_25m.add("0,25 m");
 
-        listForCable_1m.add("100");
+        listForCable_1m.add("100 см");
         listForCable_1m.add("1м");
         listForCable_1m.add("1 м");
         listForCable_1m.add("1m");
@@ -382,8 +517,12 @@ public class Constants {
         listForCable_1m.add("1.0 м");
         listForCable_1m.add("1.0m");
         listForCable_1m.add("1.0 m");
+        listForCable_1m.add("1,0м");
+        listForCable_1m.add("1,0 м");
+        listForCable_1m.add("1,0m");
+        listForCable_1m.add("1,0 m");
 
-        listForCable_1_2m.add("120");
+        listForCable_1_2m.add("120 см");
         listForCable_1_2m.add("1.2м");
         listForCable_1_2m.add("1.2 м");
         listForCable_1_2m.add("1.2m");
@@ -395,21 +534,37 @@ public class Constants {
         listForCable_1_2m.add("1.2");
         listForCable_1_2m.add("1,2");
 
+        listForCable_1_4m.add("140 см");
         listForCable_1_4m.add("1.4м");
         listForCable_1_4m.add("1.4 м");
         listForCable_1_4m.add("1.4m");
         listForCable_1_4m.add("1.4 m");
+        listForCable_1_4m.add("1,4м");
+        listForCable_1_4m.add("1,4 м");
+        listForCable_1_4m.add("1,4m");
+        listForCable_1_4m.add("1,4 m");
 
+        listForCable_1_6m.add("160 см");
         listForCable_1_6m.add("1.6м");
         listForCable_1_6m.add("1.6 м");
         listForCable_1_6m.add("1.6m");
         listForCable_1_6m.add("1.6 m");
+        listForCable_1_6m.add("1,6м");
+        listForCable_1_6m.add("1,6 м");
+        listForCable_1_6m.add("1,6m");
+        listForCable_1_6m.add("1,6 m");
 
+        listForCable_1_8m.add("180 см");
         listForCable_1_8m.add("1.8м");
         listForCable_1_8m.add("1.8 м");
         listForCable_1_8m.add("1.8m");
         listForCable_1_8m.add("1.8 m");
+        listForCable_1_8m.add("1,8м");
+        listForCable_1_8m.add("1,8 м");
+        listForCable_1_8m.add("1,8m");
+        listForCable_1_8m.add("1,8 m");
 
+        listForCable_2m.add("200 см");
         listForCable_2m.add("2м");
         listForCable_2m.add("2 м");
         listForCable_2m.add("2m");
@@ -418,7 +573,12 @@ public class Constants {
         listForCable_2m.add("2.0 м");
         listForCable_2m.add("2.0m");
         listForCable_2m.add("2.0 m");
+        listForCable_2m.add("2,0м");
+        listForCable_2m.add("2,0 м");
+        listForCable_2m.add("2,0m");
+        listForCable_2m.add("2,0 m");
 
+        listForCable_3m.add("300 см");
         listForCable_3m.add("3м");
         listForCable_3m.add("3 м");
         listForCable_3m.add("3m");
@@ -427,6 +587,10 @@ public class Constants {
         listForCable_3m.add("3.0 м");
         listForCable_3m.add("3.0m");
         listForCable_3m.add("3.0 m");
+        listForCable_3m.add("3,0м");
+        listForCable_3m.add("3,0 м");
+        listForCable_3m.add("3,0m");
+        listForCable_3m.add("3,0 m");
 
         listForTypeGlass.add("eye protection");
         listForTypeGlass.add("5d");
@@ -458,13 +622,14 @@ public class Constants {
         listForChargingApple.add("iphone");
         listForChargingApple.add("для айфона");
 
-        listForChargingType.add("type");
         listForChargingType.add("type-c");
+        listForChargingType.add("type");
 
         listForCharging_2in1.add("2 в 1");
         listForCharging_2in1.add("2в1");
         listForCharging_2in1.add("2 in 1");
         listForCharging_2in1.add("2-in-1");
+        listForCharging_2in1.add("2-in-");
         listForCharging_2in1.add("2in1");
 
         listForCharging_3in1.add("3 в 1");
@@ -480,6 +645,16 @@ public class Constants {
         listForCharging_4in1.add("4 in 1");
         listForCharging_4in1.add("4-in-1");
         listForCharging_4in1.add("4in1");
+
+        listForCable_Type_C_to_Type_C.add("type-c - type-c");
+        listForCable_Type_C_to_Type_C.add("type-c to type-c");
+
+        listForCable_Type_C_to_Apple.add("type-c - apple 8 pin");
+        listForCable_Type_C_to_Apple.add("type-c to apple 8 pin");
+        listForCable_Type_C_to_Apple.add("type-c - lightning");
+        listForCable_Type_C_to_Apple.add("type-c to lightning");
+        listForCable_Type_C_to_Apple.add("type-c - 8 pin");
+        listForCable_Type_C_to_Apple.add("type-c to 8 pin");
 
         listForBugs.add("(S)");
         listForBugs.add("(L)");
@@ -497,6 +672,17 @@ public class Constants {
         listForBrands.add("mietubl");
         listForBrands.add("xivi");
         listForBrands.add("aiqura");
+
+        listForSeriesCover.add("fellwell series");
+        listForSeriesCover.add("pure series");
+        listForSeriesCover.add("silicon case");
+        listForSeriesCover.add("delicate shadow");
+        listForSeriesCover.add("fascination series");
+        listForSeriesCover.add("gentle series");
+        listForSeriesCover.add("minni series");
+        listForSeriesCover.add("kingdom series");
+        listForSeriesCover.add("light series");
+        listForSeriesCover.add("thin series");
 
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_1);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_2);
@@ -717,6 +903,25 @@ public class Constants {
             listWithCable = Constants.listForCable_2m;
         } else if (Constants.listForCable_3m.contains(param)) {
             listWithCable = Constants.listForCable_3m;
+        } else if (Constants.listForCable_Type_C_to_Type_C.contains(param)) {
+            listWithCable = Constants.listForCable_Type_C_to_Type_C;
+        } else if (Constants.listForCable_Type_C_to_Apple.contains(param)) {
+            listWithCable = Constants.listForCable_Type_C_to_Apple;
+        }else {
+            System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
+        }
+        return listWithCable;
+    }
+
+    static List<String> getCollectionsParamCableForSearchInTitle(String param, String url) {
+        //определяем коллекцию с названием одного и того же кабеля
+        List<String> listWithCable = null;
+        boolean b = Constants.listForCableAllLength.contains(param);
+
+        if (b) {
+            listWithCable = Constants.listForCableAllLength;
+        } else if (Constants.listForAllTypeConnect.contains(param)) {
+            listWithCable = Constants.listForAllTypeConnect;
         } else {
             System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
         }
@@ -753,5 +958,29 @@ public class Constants {
         30 - черный. 31 - красный. 32 - зеленый. 33 - желтый. 34 - синий. 35 - пурпурный. 36 - голубой. 37 - белый.
          */
         return (char) 27 + "[33m" + s + (char)27 + "[0m";
+    }
+
+    static void addedParamForSeriesCover(List<String> arrayParams, String myNomenclature) {
+        for (String series : Constants.listForSeriesCover) {
+            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(series)) {
+                arrayParams.add(series);
+            }
+        }
+    }
+
+    static void addedParamForCableLenght(List<String> arrayParams, String myNomenclature) {
+        for (String type : Constants.listForCable){
+            if (myNomenclature.replaceAll(",", "").contains(type)) {
+                if (type.contains("1.0")){
+                    arrayParams.add("1 м");
+                } else if (type.contains("2.0")){
+                    arrayParams.add("2 м");
+                } else if (type.contains("3.0")){
+                    arrayParams.add("3 м");
+                } else {
+                    arrayParams.add(type);
+                }
+            }
+        }
     }
 }
