@@ -38,6 +38,7 @@ public class Main extends Application implements Controller.ActionInController {
     private TaskReadExcelForWildberies taskReadExcelForWildberies;
     private TaskReadExcelForOzon taskReadExcelForOzon;
 
+    private UnifierDataFromExcelFiles unifierDataFromExcelFiles;
 
     private TaskWriteExelForWildberries taskWriteExelForWildberries;
     private TaskWriteExelForOzon taskWriteExelForOzon;
@@ -109,57 +110,80 @@ public class Main extends Application implements Controller.ActionInController {
         if (step.equals(Constants.RUB)) stepFlag = 1;//рубли
         else if (step.equals(Constants.PERCENT)) stepFlag = 2;//проценты
 
-        System.out.println("selectFile - " + marketplaceFlag);
-        if (marketplaceFlag == 1){
-            taskReadExcelForOzon = new TaskReadExcelForOzon(files, marketplaceFlag);
-            controller.getAreaLog().appendText("Чтение файлов для аналитики Ozon - \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
-        } else if (marketplaceFlag == 2){
-            taskReadExcelForWildberies = new TaskReadExcelForWildberies(files);
-            controller.getAreaLog().appendText("Чтение файлов для аналитики Wildberies - \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
-        }
+//        System.out.println("selectFile - " + marketplaceFlag);
+//        if (marketplaceFlag == 1){
+//            taskReadExcelForOzon = new TaskReadExcelForOzon(files, marketplaceFlag);
+//            controller.getAreaLog().appendText("Чтение файлов для аналитики Ozon - \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
+//        } else if (marketplaceFlag == 2){
+//            taskReadExcelForWildberies = new TaskReadExcelForWildberies(files);
+//            controller.getAreaLog().appendText("Чтение файлов для аналитики Wildberies - \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
+//        }
+
+        controller.getAreaLog().appendText("Чтение файлов для аналитики " + marketPlace + " - \"" + files.get(0).getName() + "\" и \"" + files.get(1).getName() + "\"");
+        unifierDataFromExcelFiles = new UnifierDataFromExcelFiles(files, marketplaceFlag);
 
         controller.getProgressBar().setProgress(0);
         // Unbind progress property
         controller.getProgressBar().progressProperty().unbind();
 
-        if (marketplaceFlag == 1){
-            // Bind progress property
-            controller.getProgressBar().progressProperty().bind(taskReadExcelForOzon.progressProperty());
-            // When completed taskReadExcelForOzon
-            taskReadExcelForOzon.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    resultMap = taskReadExcelForOzon.getValue();
-                    taskReadExcelForOzon.cancel(true);
-                    controller.getAreaLog().appendText(" - ok!\n");
-                    controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
-                    controller.getProgressBar().progressProperty().unbind();
+        // Bind progress property
+        controller.getProgressBar().progressProperty().bind(unifierDataFromExcelFiles.progressProperty());
+        // When completed taskReadExcelForOzon
+        unifierDataFromExcelFiles.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                resultMap = unifierDataFromExcelFiles.getValue();
+                unifierDataFromExcelFiles.cancel(true);
+                controller.getAreaLog().appendText(" - ok!\n");
+                controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
+                controller.getProgressBar().progressProperty().unbind();
 
-                    controller.getAreaLog().appendText("Анализ артикулов:\n");
+                controller.getAreaLog().appendText("Анализ артикулов:\n");
 
-                    getResultProduct(resultMap);
-                }
-            });
-            new Thread(taskReadExcelForOzon).start();
-        } else if (marketplaceFlag == 2){
-            // Bind progress property
-            controller.getProgressBar().progressProperty().bind(taskReadExcelForWildberies.progressProperty());
-            // When completed tasks for Wildberies
-            taskReadExcelForWildberies.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    resultMap = taskReadExcelForWildberies.getValue();
-                    taskReadExcelForWildberies.cancel(true);
-                    controller.getAreaLog().appendText(" - ok!\n");
-                    controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
-                    controller.getProgressBar().progressProperty().unbind();
-                    controller.getAreaLog().appendText("Анализ артикулов:\n");
+                getResultProduct(resultMap);
+            }
+        });
+        new Thread(unifierDataFromExcelFiles).start();
 
-                    getResultProduct(resultMap);
-                }
-            });
-            new Thread(taskReadExcelForWildberies).start();
-        }
+
+//        if (marketplaceFlag == 1){
+//            // Bind progress property
+//            controller.getProgressBar().progressProperty().bind(taskReadExcelForOzon.progressProperty());
+//            // When completed taskReadExcelForOzon
+//            taskReadExcelForOzon.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+//                @Override
+//                public void handle(WorkerStateEvent event) {
+//                    resultMap = taskReadExcelForOzon.getValue();
+//                    taskReadExcelForOzon.cancel(true);
+//                    controller.getAreaLog().appendText(" - ok!\n");
+//                    controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
+//                    controller.getProgressBar().progressProperty().unbind();
+//
+//                    controller.getAreaLog().appendText("Анализ артикулов:\n");
+//
+//                    getResultProduct(resultMap);
+//                }
+//            });
+//            new Thread(taskReadExcelForOzon).start();
+//        } else if (marketplaceFlag == 2){
+//            // Bind progress property
+//            controller.getProgressBar().progressProperty().bind(taskReadExcelForWildberies.progressProperty());
+//            // When completed tasks for Wildberies
+//            taskReadExcelForWildberies.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+//                @Override
+//                public void handle(WorkerStateEvent event) {
+//                    resultMap = taskReadExcelForWildberies.getValue();
+//                    taskReadExcelForWildberies.cancel(true);
+//                    controller.getAreaLog().appendText(" - ok!\n");
+//                    controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
+//                    controller.getProgressBar().progressProperty().unbind();
+//                    controller.getAreaLog().appendText("Анализ артикулов:\n");
+//
+//                    getResultProduct(resultMap);
+//                }
+//            });
+//            new Thread(taskReadExcelForWildberies).start();
+//        }
     }
 
     private static void openFile(File file) {

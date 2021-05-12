@@ -40,6 +40,7 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
     public Map<String, ResultProduct> readWorkbook(List<File> files) {
 
         //читаем файл отчёта и файл 1С
+        System.out.println("читаем файл отчёта и файл 1С");
         try {
             workbookReport = new XSSFWorkbook(files.get(0));
             workbook_1C = new XSSFWorkbook(files.get(1));
@@ -48,15 +49,25 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
         }
 
         //получаем страницы
-        try {
-            sheetReport = workbookReport.getSheetAt(1);
+        System.out.println("получаем страницы");
+        if (marketPlaceFlag == 1){
+            try {
+                sheetReport = workbookReport.getSheetAt(1);
+                sheet_1C = workbook_1C.getSheetAt(0);
+            } catch (Exception e) {
+                sheetReport = workbook_1C.getSheetAt(1);
+                sheet_1C = workbookReport.getSheetAt(0);
+            }
+        } else if (marketPlaceFlag == 2){
+            sheetReport = workbookReport.getSheetAt(0);
             sheet_1C = workbook_1C.getSheetAt(0);
-        } catch (Exception e) {
-            sheetReport = workbook_1C.getSheetAt(1);
-            sheet_1C = workbookReport.getSheetAt(0);
         }
 
+
+
+
         //проверяем, правильно ли мы прочитали файлы
+        System.out.println("проверяем, правильно ли мы прочитали файлы");
         if (!readerExcel.checkExcelFile(sheetReport) || !readerExcelFor_1C.checkFile_1C(sheet_1C)) {
             Sheet sheetBuff = sheet_1C;
             sheet_1C = sheetReport;
@@ -69,9 +80,13 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
         }
 
         //считаем кол-во строк в файлах для работы ProgressBar
+        System.out.println("считаем кол-во строк в файлах для работы ProgressBar");
         int countRowsInReport = sheetReport.getLastRowNum();
         int countRowsIn_1C = sheet_1C.getLastRowNum();
         countFull = countRowsInReport + countRowsIn_1C;
+        System.out.println("countRowsInReport = " + countRowsInReport);
+        System.out.println("countRowsIn_1C = " + countRowsIn_1C);
+
 
         readerExcel.getDataFromExcelFile(sheetReport);
         readerExcelFor_1C.getDataFromBase_1C(sheet_1C);

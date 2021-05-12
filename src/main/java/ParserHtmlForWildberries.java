@@ -253,7 +253,7 @@ public class ParserHtmlForWildberries {
                         "-",
 
                         LowerProductFinder.resultSearch,
-                        "-",
+                        LowerProductFinder.refUrlForResult,
 
                         brandName,
                         vendorCode,

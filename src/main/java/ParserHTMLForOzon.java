@@ -36,7 +36,7 @@ public class ParserHTMLForOzon {
                 try {
                     querySearchAndCount = itemsCountSearch.get(0).asText();
                     LowerProductFinder.resultSearch = querySearchAndCount;
-                    LowerProductFinder.refUrlForResult = url;
+                    //LowerProductFinder.refUrlForResult = url;
                     System.out.println(Constants.getRedString(querySearchAndCount));
                 } catch (Exception e) {
                     e.printStackTrace();

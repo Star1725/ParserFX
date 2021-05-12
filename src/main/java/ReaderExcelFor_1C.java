@@ -484,7 +484,7 @@ public class ReaderExcelFor_1C {
 
                 UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,  specQuery, specPrice_1C));
                 //увеличиваем ProgressBar
-                //unifierDataFromExcelFiles.updateProgress(i, UnifierDataFromExcelFiles.countFull);
+//                unifierDataFromExcelFiles.updateProgress(i, UnifierDataFromExcelFiles.countFull);
                 UnifierDataFromExcelFiles.countReadsRows_1C++;
                 i++;
             }

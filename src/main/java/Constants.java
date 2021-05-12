@@ -460,6 +460,20 @@ public class Constants {
         listForCableAllLength.add("3,0m");
         listForCableAllLength.add("3,0 m");
 
+        listForAllTypeConnect.add("type-c - apple 8 pin");
+        listForAllTypeConnect.add("type-c to apple 8 pin");
+        listForAllTypeConnect.add("type-c to apple");
+        listForAllTypeConnect.add("type-c - apple");
+        listForAllTypeConnect.add("type-c - lightning");
+        listForAllTypeConnect.add("type-c to lightning");
+        listForAllTypeConnect.add("type-c - 8 pin");
+        listForAllTypeConnect.add("type-c to 8 pin");
+        listForAllTypeConnect.add("apple 8 pin - type-c");
+        listForAllTypeConnect.add("apple 8 pin to type-c");
+        listForAllTypeConnect.add("lightning - type-c");
+        listForAllTypeConnect.add("lightning to type-c");
+        listForAllTypeConnect.add("type-c - type-c");
+        listForAllTypeConnect.add("type-c to type-c");
         listForAllTypeConnect.add("микро");
         listForAllTypeConnect.add("micro");
         listForAllTypeConnect.add("apple 8 pin");
@@ -471,6 +485,7 @@ public class Constants {
         listForAllTypeConnect.add("для айфона");
         listForAllTypeConnect.add("type-c");
         listForAllTypeConnect.add("type");
+
         listForAllTypeConnect.add("2 в 1");
         listForAllTypeConnect.add("2в1");
         listForAllTypeConnect.add("2 in 1");
@@ -651,10 +666,16 @@ public class Constants {
 
         listForCable_Type_C_to_Apple.add("type-c - apple 8 pin");
         listForCable_Type_C_to_Apple.add("type-c to apple 8 pin");
+        listForCable_Type_C_to_Apple.add("type-c - apple");
+        listForCable_Type_C_to_Apple.add("type-c to apple");
         listForCable_Type_C_to_Apple.add("type-c - lightning");
         listForCable_Type_C_to_Apple.add("type-c to lightning");
         listForCable_Type_C_to_Apple.add("type-c - 8 pin");
         listForCable_Type_C_to_Apple.add("type-c to 8 pin");
+        listForCable_Type_C_to_Apple.add("apple 8 pin - type-c");
+        listForCable_Type_C_to_Apple.add("apple 8 pin to type-c");
+        listForCable_Type_C_to_Apple.add("lightning - type-c");
+        listForCable_Type_C_to_Apple.add("lightning to type-c");
 
         listForBugs.add("(S)");
         listForBugs.add("(L)");
