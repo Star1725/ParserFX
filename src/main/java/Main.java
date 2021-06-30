@@ -1,4 +1,7 @@
 import com.gargoylesoftware.htmlunit.*;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Playwright;
 import controllers.Controller;
 import javafx.application.Application;
 import javafx.concurrent.WorkerStateEvent;
@@ -17,6 +20,8 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.*;
+import java.util.logging.Formatter;
 
 public class Main extends Application implements Controller.ActionInController {
 
@@ -26,6 +31,11 @@ public class Main extends Application implements Controller.ActionInController {
 
     private Object mon = new Object();
     private static WebClient webClient = null;
+
+    static Playwright playwright = Playwright.create();
+    static BrowserType chromium = null;
+    static Browser browser = null;
+
     public static Lock lock = new ReentrantLock();
 
     private Controller controller;
@@ -33,7 +43,25 @@ public class Main extends Application implements Controller.ActionInController {
 
     private static Set<String> setMyVendorCodes;
 
-    static int marketplaceFlag;
+    private static final Logger loggerMain = Logger.getLogger(Main.class.getName());
+    public static Handler fileHandler = null;
+    static {
+        try {
+            fileHandler = new FileHandler("log.log");
+            fileHandler.setFormatter(new Formatter() {
+                                         @Override
+                                         public String format(LogRecord record) {
+                                             return record.getMessage() + "\n";
+                                         }
+                                     });
+                    loggerMain.addHandler(fileHandler);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int marketplaceFlag;
+    public static String marketplace;
     static int stepFlag;
     private TaskReadExcelForWildberies taskReadExcelForWildberies;
     private TaskReadExcelForOzon taskReadExcelForOzon;
@@ -64,27 +92,22 @@ public class Main extends Application implements Controller.ActionInController {
         Controller.subscribe(this);
         controller = mainWindowLoader.getController();
 
-        webClient = new WebClient(BrowserVersion.CHROME);
-
-        ProxyConfig proxyConfig = new ProxyConfig(Constants.PROXY_HOST, Constants.PROXY_PORT);
+//for ver 2.500.0
+        //webClient = new WebClient(BrowserVersion.BEST_SUPPORTED, true, Constants.PROXY_HOST, Constants.PROXY_PORT, "https");
+        //ProxyConfig proxyConfig = new ProxyConfig(Constants.PROXY_HOST, Constants.PROXY_PORT, "HTTPS");
+//for ver 2.47.1
+        webClient = new WebClient(BrowserVersion.BEST_SUPPORTED, Constants.PROXY_HOST, Constants.PROXY_PORT);
+        //ProxyConfig proxyConfig = new ProxyConfig(Constants.PROXY_HOST, Constants.PROXY_PORT);
+        /* Setting proxy to be used */
+        //webClient.getOptions().setProxyConfig(proxyConfig);
+//указываем логин и пароль для прокси-сервера
         DefaultCredentialsProvider credentialsProvider = new DefaultCredentialsProvider();
-        //указываем логин и пароль для прокси-сервера
         credentialsProvider.addCredentials(Constants.LOGIN, Constants.PASSWORD);
         webClient.setCredentialsProvider(credentialsProvider);
 
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setUseInsecureSSL(true);
-        webClient.getOptions().setTimeout(15000);
-
         /* Clearing Cache and Cookies */
-        //webClient.getCookieManager().clearCookies();
-        //webClient.getCache().clear();
-
-        /* Setting proxy to be used */
-        webClient.getOptions().setProxyConfig(proxyConfig);
+//        webClient.getCookieManager().clearCookies();
+//        webClient.getCache().clear();
 
         //попробовать в классе ParserOzon
         /* Create ProxyStatus record
@@ -105,8 +128,33 @@ public class Main extends Application implements Controller.ActionInController {
     public void selectFile(List<File> files, String marketPlace, String step) {
         System.out.println("selectFile - " + marketPlace + ", " + step);
 
-        if (marketPlace.equals(Constants.OZON)) marketplaceFlag = 1;//Ozon
-        else if (marketPlace.equals(Constants.WILDBERIES)) marketplaceFlag = 2;//Wildberies
+        if (marketPlace.equals(Constants.OZON)){
+            marketplace = marketPlace;
+            marketplaceFlag = 1;//Ozon
+            webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setJavaScriptEnabled(false);
+            webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
+            webClient.getOptions().setUseInsecureSSL(true);
+            webClient.getOptions().setTimeout(15000);
+        }
+        else if (marketPlace.equals(Constants.WILDBERIES)) {
+            marketplace = marketPlace;
+            marketplaceFlag = 2;//Wildberies
+//            try (Playwright playwright = Playwright.create()) {
+                chromium = playwright.chromium();
+                browser = chromium.launch();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            webClient.getOptions().setCssEnabled(false);
+//            webClient.getOptions().setJavaScriptEnabled(true);
+            //webClient.setAjaxController (new NicelyResynchronizingAjaxController ());
+//            webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+//            webClient.getOptions().setThrowExceptionOnScriptError(false);
+//            webClient.getOptions().setUseInsecureSSL(true);
+//            webClient.getOptions().setTimeout(15000);
+        }
         if (step.equals(Constants.RUB)) stepFlag = 1;//рубли
         else if (step.equals(Constants.PERCENT)) stepFlag = 2;//проценты
 
@@ -145,48 +193,10 @@ public class Main extends Application implements Controller.ActionInController {
         });
         new Thread(unifierDataFromExcelFiles).start();
 
-
-//        if (marketplaceFlag == 1){
-//            // Bind progress property
-//            controller.getProgressBar().progressProperty().bind(taskReadExcelForOzon.progressProperty());
-//            // When completed taskReadExcelForOzon
-//            taskReadExcelForOzon.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
-//                @Override
-//                public void handle(WorkerStateEvent event) {
-//                    resultMap = taskReadExcelForOzon.getValue();
-//                    taskReadExcelForOzon.cancel(true);
-//                    controller.getAreaLog().appendText(" - ok!\n");
-//                    controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
-//                    controller.getProgressBar().progressProperty().unbind();
-//
-//                    controller.getAreaLog().appendText("Анализ артикулов:\n");
-//
-//                    getResultProduct(resultMap);
-//                }
-//            });
-//            new Thread(taskReadExcelForOzon).start();
-//        } else if (marketplaceFlag == 2){
-//            // Bind progress property
-//            controller.getProgressBar().progressProperty().bind(taskReadExcelForWildberies.progressProperty());
-//            // When completed tasks for Wildberies
-//            taskReadExcelForWildberies.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
-//                @Override
-//                public void handle(WorkerStateEvent event) {
-//                    resultMap = taskReadExcelForWildberies.getValue();
-//                    taskReadExcelForWildberies.cancel(true);
-//                    controller.getAreaLog().appendText(" - ok!\n");
-//                    controller.getAreaLog().appendText("Объём анализа - " + resultMap.size() + " позиций\n");
-//                    controller.getProgressBar().progressProperty().unbind();
-//                    controller.getAreaLog().appendText("Анализ артикулов:\n");
-//
-//                    getResultProduct(resultMap);
-//                }
-//            });
-//            new Thread(taskReadExcelForWildberies).start();
-//        }
     }
 
     private static void openFile(File file) {
+        browser.close();
         try {
             desktop.open(file);
         } catch (IOException e) {
@@ -300,6 +310,7 @@ public class Main extends Application implements Controller.ActionInController {
 
 ////////////////////////для wildberries//////////////////////////////////////////////////////////////////////////////////
                     if (marketplaceFlag == 2){
+                        loggerMain.info("В main запускаем executorCompletionService.take().get() № " + number);
                         System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
                         Product product = executorCompletionService.take().get();
                         //получение моего кода необходимо для того, чтобы достать из map тот ResultProduct, по которому производился поиск аналога
@@ -402,13 +413,13 @@ public class Main extends Application implements Controller.ActionInController {
                         //дублирование кода
                         resultMap.put(resultProduct.getMyVendorCodeForWildberiesOrOzon(), resultProduct);
 
-                        synchronized (mon) {
-                            if (competitorVendorCode.equals("-")) {
-                                controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ошибка\n");
-                            } else {
-                                controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ok\n");
-                            }
-                        }
+//                        synchronized (mon) {
+//                            if (competitorVendorCode.equals("-")) {
+//                                controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ошибка\n");
+//                            } else {
+//                                controller.getAreaLog().appendText(number + " - " + myVendorCode + " - ok\n");
+//                            }
+//                        }
 ///////////////////Ozon//////////////////////////////////////////////////////////////////////
                     } else {
                         System.out.println("В main запускаем executorCompletionService.take().get() № " + number);
@@ -426,6 +437,7 @@ public class Main extends Application implements Controller.ActionInController {
                         competitorSpecAction = product.getCompetitorSpecAction();
                         queryForSearch = product.getQueryForSearch();
                         refUrlForResult = product.getRefUrlForResultSearch();
+                        competitorPriceU = product.getCompetitorPriceU();
                         competitorBasicPriceU = product.getCompetitorBasicPriceU();
                         competitorPremiumPriceForOzon = product.getCompetitorPremiumPriceForOzon();
 
@@ -440,6 +452,7 @@ public class Main extends Application implements Controller.ActionInController {
                         resultProduct.setCompetitorName(competitorName);
                         resultProduct.setQueryForSearch(queryForSearch);
                         resultProduct.setRefUrlForResultSearch(refUrlForResult);
+                        resultProduct.setCompetitorPriceU(competitorPriceU);
                         resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
                         resultProduct.setCompetitorPremiumPriceForOzon(competitorPremiumPriceForOzon);
 
@@ -544,16 +557,9 @@ public class Main extends Application implements Controller.ActionInController {
         //1 - флаг для Ozon
         //2 - флаг для Wildberies
         public Product call() throws Exception {
-            System.out.println("Запуск задачи lowerProductFinder.getProduct() для маркетплейса = " + marketplaceFlag + " артикула Ozon = " + key + ", где brand = " + brand + ", productModel = " + productModel);
+            loggerMain.info("Запуск задачи lowerProductFinder.getProduct() для маркетплейса = " + marketplace + " артикула = " + key + ", где brand = " + brand + ", productModel = " + productModel);
+            System.out.println("Запуск задачи lowerProductFinder.getProduct() для маркетплейса = " + marketplace + " артикула = " + key + ", где brand = " + brand + ", productModel = " + productModel);
             return lowerProductFinder.getProduct(marketplaceFlag, key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient, lock);
-
-//            if (marketplaceFlag == 1){
-//                System.out.println("Запуск задачи parserOzon.getProduct() для артикула Ozon = " + key + ", где brand = " + brand + ", productModel = " + productModel);
-//                return lowerProductFinder.getProduct(marketplaceFlag, key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient, lock);
-//            } else if (marketplaceFlag == 2){
-//                System.out.println("Запуск задачи parserWildBer.getProduct()для артикула WB = " + key + ", где brand = " + brand + ", productModel = " + productModel);
-//                return parserWildBer.getProduct(marketplaceFlag, key, category, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient);
-//            } else return null;
         }
     }
 }

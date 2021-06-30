@@ -81,71 +81,75 @@ public class TaskWriteExelForWildberries extends Task<File> {
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(7);
-        headerCell.setCellValue("ссылка на результат запроса");
+        headerCell.setCellValue("доп. парам. поиска");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(8);
-        headerCell.setCellValue("Наименование товара конкур.");
+        headerCell.setCellValue("ссылка на результат запроса");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(9);
-        headerCell.setCellValue("Ссылка на конкурента");
+        headerCell.setCellValue("Наименование товара конкур.");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(10);
-        headerCell.setCellValue("Имя продавца");
+        headerCell.setCellValue("Ссылка на конкурента");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(11);
-        headerCell.setCellValue("Участие в акции");
+        headerCell.setCellValue("Имя продавца");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(12);
-        headerCell.setCellValue("Мои базовая цена(до скидки)");
+        headerCell.setCellValue("Участие в акции");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(13);
-        headerCell.setCellValue("Моя тек. роз. цена");
+        headerCell.setCellValue("Мои базовая цена(до скидки)");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(14);
-        headerCell.setCellValue("Комиссия (%)");
+        headerCell.setCellValue("Моя тек. роз. цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(15);
-        headerCell.setCellValue("Логистика");
+        headerCell.setCellValue("Комиссия (%)");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(16);
-        headerCell.setCellValue("Реком. роз. цена");
+        headerCell.setCellValue("Логистика");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(17);
-        headerCell.setCellValue("Спец-цена");
+        headerCell.setCellValue("Реком. роз. цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(18);
-        headerCell.setCellValue("Наша пороговая цена");
+        headerCell.setCellValue("Спец-цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(19);
-        headerCell.setCellValue("Тек. роз. цена конкур.");
+        headerCell.setCellValue("Наша пороговая цена");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(20);
-        headerCell.setCellValue("В случае повышения - новая реком. розн. цена (до скидки)");
+        headerCell.setCellValue("Тек. роз. цена конкур.");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(21);
-        headerCell.setCellValue("Реком. согласованная скидка");
+        headerCell.setCellValue("В случае повышения - новая реком. розн. цена (до скидки)");
         headerCell.setCellStyle(headerStyle);
 
         headerCell = header.createCell(22);
+        headerCell.setCellValue("Реком. согласованная скидка");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(23);
         headerCell.setCellValue("Реком. новая скидка по промокоду");
         headerCell.setCellStyle(headerStyle);
 
         //настройка автоширины ячейки по содержимому
-        for (int columnIndex = 0; columnIndex < 23; columnIndex++) {
+        for (int columnIndex = 0; columnIndex < 24; columnIndex++) {
             sheet.autoSizeColumn(columnIndex);
         }
 
@@ -185,6 +189,13 @@ public class TaskWriteExelForWildberries extends Task<File> {
         styleRedCell.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         styleRedCell.setFont(font2);
 
+        //настройка стиля для голубой ячейки
+        CellStyle styleBlueCell = workbook.createCellStyle();
+        styleBlueCell.setWrapText(true);
+        styleBlueCell.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        styleBlueCell.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        styleBlueCell.setFont(font2);
+
         //настройка стиля для ячейки с ошибкой
         CellStyle styleGreenCell = workbook.createCellStyle();
         styleGreenCell.setWrapText(true);
@@ -212,7 +223,11 @@ public class TaskWriteExelForWildberries extends Task<File> {
             //Бренд
             Cell cell = row.createCell(0);
             cell.setCellValue(productArrayList.get(i).getMyBrand());
-            cell.setCellStyle(style);
+            if (productArrayList.get(i).getMyBrand().equals("xivi") || productArrayList.get(i).getMyBrand().equals("mietubl")){
+                cell.setCellStyle(styleBlueCell);//настройка для игнорируемых брендов "xivi" и "mietubl"
+            } else {
+                cell.setCellStyle(style);
+            }
 
             //Категория товара
             cell = row.createCell(1);
@@ -276,7 +291,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
                 cell.setCellStyle(style);
             }
 
-            //поисковый запрос и ссылка на его
+            //результат поискового запроса
             cell = row.createCell(6);
             try {
                 cell.setCellValue(productArrayList.get(i).getQueryForSearch());
@@ -285,8 +300,23 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
             cell.setCellStyle(style);
 
-            //поисковый запрос и ссылка на его
+            //дополнительный параметр поиска
             cell = row.createCell(7);
+            if (productArrayList.get(i).getArrayListParams() != null){
+                if (productArrayList.get(i).getArrayListParams().size() == 0){
+                    cell.setCellValue("Дополнит. парам. поиска \n\r не найдены");
+                } else {
+                    String result = "";
+                    for (String s: productArrayList.get(i).getArrayListParams()){
+                        result = result + s + " ";
+                    }
+                    cell.setCellValue(result);
+                }
+                cell.setCellStyle(style);
+            }
+
+            //ссылка на результат поискового запроса
+            cell = row.createCell(8);
             try {
                 cell.setCellValue(productArrayList.get(i).getRefUrlForResultSearch());
             } catch (Exception ignored) {
@@ -295,7 +325,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             cell.setCellStyle(style);
 
             //наименование продукта конкурента(если нашли)
-            cell = row.createCell(8);
+            cell = row.createCell(9);
             try {
                 if (productArrayList.get(i).getCompetitorProductName().equals("-")){
                     cell.setCellValue(Constants.NOT_FOUND_PAGE);
@@ -315,7 +345,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //ссылка на конкурента, или самого себя, или мой аналогичный товар
-            cell = row.createCell(9);
+            cell = row.createCell(10);
             try {
                 cell.setCellValue(productArrayList.get(i).getCompetitorRefForPage());
                 if (isMy && isMyAnalog){
@@ -330,7 +360,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Имя продавца
-            cell = row.createCell(10);
+            cell = row.createCell(11);
             try {
                 cell.setCellValue(productArrayList.get(i).getCompetitorName());
                 cell.setCellStyle(style);
@@ -339,7 +369,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Спец-акция
-            cell = row.createCell(11);
+            cell = row.createCell(12);
             try {
                 String specAction = productArrayList.get(i).getMySpecAction();
                 if (specAction.equals(Constants.NOT_FOUND_HTML_ITEM)){
@@ -354,7 +384,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Моя базовая цена
-            cell = row.createCell(12);
+            cell = row.createCell(13);
             try {
                 int myPriceU = Math.round(productArrayList.get(i).getMyPriceU() / 100);
                 cell.setCellValue(myPriceU);
@@ -376,7 +406,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             //int logistic = 33;
 
             //Моя тек. роз. цена
-            cell = row.createCell(13);
+            cell = row.createCell(14);
             try {
                 cell.setCellValue(myLowerPrice);
                 if (competitorLowerPrice == myLowerPrice){
@@ -391,7 +421,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Коммисия
-            cell = row.createCell(14);
+            cell = row.createCell(15);
             double commissionPercentage = 0;
             try {
                 commissionPercentage = productArrayList.get(i).getMyCommissionForOzonOrWildberries();
@@ -402,7 +432,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Логистика
-            cell = row.createCell(15);
+            cell = row.createCell(16);
             double logistic = 0;
             try {
                 logistic = productArrayList.get(i).getMyLastMileForOzonOrWildberries();
@@ -413,7 +443,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Рекомендуемая роз. цена
-            cell = row.createCell(16);
+            cell = row.createCell(17);
             int recommendLowerPrice = 0;
             try {
                 recommendLowerPrice = Math.round(productArrayList.get(i).getRecommendedMyLowerPrice() / 100);
@@ -430,7 +460,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Спец-цена
-            cell = row.createCell(17);
+            cell = row.createCell(18);
             if (specPrice == 0){
                 cell.setCellValue("н/д");
                 cell.setCellStyle(style);
@@ -440,7 +470,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Наша пороговая цена
-            cell = row.createCell(18);
+            cell = row.createCell(19);
             try {
                 int criticPrice = (int) Math.round(recommendLowerPrice * commissionPercentage - logistic);
                 cell.setCellValue(criticPrice);
@@ -454,7 +484,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Тек. роз. цена конкурента
-            cell = row.createCell(19);
+            cell = row.createCell(20);
             try {
                 cell.setCellValue(competitorLowerPrice);
                 if (competitorLowerPrice == myLowerPrice){
@@ -469,7 +499,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //Если баз. скидка < 3 или > 90%, то новая реком. розн. цена (до скидки)
-            cell = row.createCell(20);
+            cell = row.createCell(21);
             try {
                 cell.setCellValue(Math.round(productArrayList.get(i).getRecommendedPriceU()/100));
                 cell.setCellStyle(style);
@@ -478,7 +508,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //"Реком. согласованная скидка"
-            cell = row.createCell(21);
+            cell = row.createCell(22);
             try {
                 cell.setCellValue((productArrayList.get(i).getRecommendedBasicSale()));
                 cell.setCellStyle(style);
@@ -487,7 +517,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             }
 
             //"Реком. новая скидка по промокоду"
-            cell = row.createCell(22);
+            cell = row.createCell(23);
             try {
                 cell.setCellValue((productArrayList.get(i).getRecommendedPromoSale()));
                 cell.setCellStyle(style);

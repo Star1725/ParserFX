@@ -9,12 +9,13 @@ import java.util.List;
 public class ReaderExcelFor_1C {
 
     UnifierDataFromExcelFiles unifierDataFromExcelFiles;
+    int marketPlaceFlag;
 
     public ReaderExcelFor_1C(UnifierDataFromExcelFiles unifierDataFromExcelFiles){
         this.unifierDataFromExcelFiles = unifierDataFromExcelFiles;
     }
 
-    void getDataFromBase_1C(Sheet sheet_1C){
+    void getDataFromBase_1C(Sheet sheet_1C, int marketPlaceFlag){
         int i = 1;
         try {
             System.out.println("считываем информацию с базы 1C");
@@ -41,6 +42,22 @@ public class ReaderExcelFor_1C {
                 cell = row.getCell(2);
                 String brand = cell.getRichStringCellValue().getString().toLowerCase().trim();
 
+                //получаем комиссию
+                double commission = 0;
+                cell = row.getCell(6);
+                try {
+                    commission = cell.getNumericCellValue();
+                } catch (Exception ignored) {
+                }
+
+                //получаем доставку
+                cell = row.getCell(7);
+                int delivery = 0;
+                try {
+                    delivery = (int) cell.getNumericCellValue();
+                } catch (Exception ignored) {
+                }
+
                 //получаем бренд и наименование продукта и сразу пытаемся получить поисковый запрос
                 cell = row.getCell(3);
                 String myNomenclature = cell.getRichStringCellValue().getString().toLowerCase().trim();
@@ -54,6 +71,7 @@ public class ReaderExcelFor_1C {
                 String productType = "-";
                 for (String s: Constants.listForCategoryBy_1C){
                     if (buff1[0]
+                            .trim()
                             .toLowerCase()
                             .trim()
                             .startsWith(s.toLowerCase())){
@@ -139,14 +157,19 @@ public class ReaderExcelFor_1C {
                 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //если модель сразу за брендом после запятой
-                String model ="-";
-                if (buff1[1].startsWith(",")){
-                    String[] buff2 = buff1[1].trim().split(",", 3);
-                    model = buff2[1].trim();
-                } else {
-                    //если запятой нет
-                    String[] buff2 = buff1[1].trim().split(",", 2);
-                    model = buff2[0];
+                String model = null;
+                try {
+                    model = "-";
+                    if (buff1[1].startsWith(",")){
+                        String[] buff2 = buff1[1].trim().split(",", 3);
+                        model = buff2[1].trim();
+                    } else {
+                        //если запятой нет
+                        String[] buff2 = buff1[1].trim().split(",", 2);
+                        model = buff2[0];
+                    }
+                } catch (Exception ignored) {
+                    System.out.println(Constants.getRedString("Ошибка поиска наименования модели(не нашёл имя бренда)"));
                 }
 
                 //получаем поисковый запрос
@@ -305,8 +328,9 @@ public class ReaderExcelFor_1C {
                         case Constants.PRODUCT_TYPE_1C_164:
                         case Constants.PRODUCT_TYPE_1C_39:
                         case Constants.PRODUCT_TYPE_1C_40:
-
                         case Constants.PRODUCT_TYPE_1C_132:
+                        case Constants.PRODUCT_TYPE_1C_169:
+                        case Constants.PRODUCT_TYPE_1C_170:
 
                             querySearch = brand + " " + model;
                             System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
@@ -321,6 +345,7 @@ public class ReaderExcelFor_1C {
                         case Constants.PRODUCT_TYPE_1C_93:
                         case Constants.PRODUCT_TYPE_1C_136:
                         case Constants.PRODUCT_TYPE_1C_167:
+                        case Constants.PRODUCT_TYPE_1C_168:
                         case Constants.PRODUCT_TYPE_1C_92:
                             String series = "-";
                             Constants.addedParamForSeriesCover(arrayParams, myNomenclature);
@@ -351,6 +376,9 @@ public class ReaderExcelFor_1C {
                             System.out.println("arrayParams = " + arrayParams.toString());
                             break;
                         case Constants.PRODUCT_TYPE_1C_61:
+                            connect = "aux";
+                            arrayParams.add(connect);
+                            break;
                         case Constants.PRODUCT_TYPE_1C_63:
                         case Constants.PRODUCT_TYPE_1C_64:
                         case Constants.PRODUCT_TYPE_1C_65:
@@ -474,15 +502,25 @@ public class ReaderExcelFor_1C {
 
                 String specQuery = "-";
                 try {
-                    cell = row.getCell(8);
+                    if (marketPlaceFlag == 1){
+                        cell = row.getCell(8);
+                    } else if (marketPlaceFlag == 2){
+                        cell = row.getCell(9);
+                    }
                     specQuery = cell.getRichStringCellValue().getString();
                     System.out.println("для кода 1С = " + code_1C + " запрос по-умолчанию заменяется на спец QUERY = " + specQuery);
                     System.out.println();
                 } catch (Exception ignored) {
-                    System.out.println();
+                    System.out.println(ignored.getMessage());
                 }
 
-                UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,  specQuery, specPrice_1C));
+                if (marketPlaceFlag == 1){
+                    UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,  specQuery, specPrice_1C));
+                } else if (marketPlaceFlag == 2){
+                    UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, specQuery, specPrice_1C, commission, delivery));
+                }
+
+
                 //увеличиваем ProgressBar
 //                unifierDataFromExcelFiles.updateProgress(i, UnifierDataFromExcelFiles.countFull);
                 UnifierDataFromExcelFiles.countReadsRows_1C++;

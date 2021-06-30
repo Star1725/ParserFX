@@ -35,60 +35,6 @@ public class Constants {
 
     public static final String BLOCKING = "блокировка сервером";
 
-
-    //категории для Wildberies с наценкой
-    public static final String CATEGORY_WILD_5 = "Держатели в авто";//5
-    public static final String CATEGORY_WILD_13 = "Пылесосы автомобильные";//5
-    public static final String CATEGORY_WILD_18 = "Подставки для мобильных устройств";//5
-
-    public static final String CATEGORY_WILD_2 = "Внешние аккумуляторы";//7
-    public static final String CATEGORY_WILD_15 = "Переходники";//7
-
-    public static final String CATEGORY_WILD_1 = "Автомобильные зарядные устройства";//12
-    public static final String CATEGORY_WILD_3 = "Гарнитуры";//12
-    public static final String CATEGORY_WILD_6 = "Зарядные устройства";//12
-    public static final String CATEGORY_WILD_7 = "Защитные стекла";//12
-    public static final String CATEGORY_WILD_8 = "Кабели";//12
-    public static final String CATEGORY_WILD_9 = "Колонки";//12
-    public static final String CATEGORY_WILD_11 = "Моноподы";//12
-    public static final String CATEGORY_WILD_12 = "Наушники";//12
-    public static final String CATEGORY_WILD_14 = "Увлажнители";//12
-    public static final String CATEGORY_WILD_16 = "Термометры медицинские";//12
-    public static final String CATEGORY_WILD_17 = "Адаптеры";//12
-    public static final String CATEGORY_WILD_24 = "Мусорные ведра";//12
-    public static final String CATEGORY_WILD_25 = "Мухобойки механические";//12
-    public static final String CATEGORY_WILD_26 = "Мыльницы";//12
-    public static final String CATEGORY_WILD_27 = "Подсветка для ноутбука";//12
-    public static final String CATEGORY_WILD_28 = "Подстаканники электрические";//12
-    public static final String CATEGORY_WILD_29 = "Подушки автомобильные";//12
-    public static final String CATEGORY_WILD_30 = "Пульты дистанционной съемки";//12
-    public static final String CATEGORY_WILD_32 = "Салфетки для авто";//12
-    public static final String CATEGORY_WILD_33 = "Светильники";//12
-    public static final String CATEGORY_WILD_35 = "Таблички для авто";//12
-    public static final String CATEGORY_WILD_36 = "Фильтры воздушные";//12
-    public static final String CATEGORY_WILD_37 = "Автомобильные ароматизаторы";//12
-    public static final String CATEGORY_WILD_38 = "FM-трансмиттеры";//12
-    public static final String CATEGORY_WILD_39 = "Автохимия";//12
-    public static final String CATEGORY_WILD_40 = "Насадки для швабр";//12
-
-    public static final String CATEGORY_WILD_4 = "Гироскутеры";//15
-    public static final String CATEGORY_WILD_10 = "Маски одноразовые";//15
-    public static final String CATEGORY_WILD_19 = "Чехлы для телефонов";//15
-    public static final String CATEGORY_WILD_20 = "Дезинфицирующие средства";//15
-    public static final String CATEGORY_WILD_21 = "Защитные кейсы";//15
-    public static final String CATEGORY_WILD_22 = "Лампы автомобильные";//15
-    public static final String CATEGORY_WILD_23 = "Массажеры электрические";//15
-    public static final String CATEGORY_WILD_31 = "Ремешки для умных часов";//15
-    public static final String CATEGORY_WILD_34 = "Сумки для ноутбуков";//15
-    public static final String CATEGORY_WILD_41 = "Молотки";//15
-    public static final String CATEGORY_WILD_42 = "Облучатели-рециркуляторы";//15
-    public static final String CATEGORY_WILD_43 = "Пепельницы";//15
-    public static final String CATEGORY_WILD_44 = "Подсветка автомобильная";//15
-    public static final String CATEGORY_WILD_45 = "Подставки для бытовой техники";//15
-    public static final String CATEGORY_WILD_46 = "Ресиверы";//15
-    public static final String CATEGORY_WILD_47 = "Стилусы";//15
-    public static final String CATEGORY_WILD_48 = "Насосы автомобильные";//15
-
     //категории по 1С
     public static final String PRODUCT_TYPE_1C_1   = "FM-трансмиттер";
     public static final String PRODUCT_TYPE_1C_2   = "USB-концентратор";
@@ -251,8 +197,11 @@ public class Constants {
     public static final String PRODUCT_TYPE_1C_165="Велосипедный держатель";
     public static final String PRODUCT_TYPE_1C_166 ="Кабель USB - micro USB";
     public static final String PRODUCT_TYPE_1C_167="Чехол силиконовый";
+    public static final String PRODUCT_TYPE_1C_168="Чехол-книжка";
+    public static final String PRODUCT_TYPE_1C_169="Противоскользящий коврик";
+    public static final String PRODUCT_TYPE_1C_170="Набор для очистки экрана";
 
-    public static final String MARKETPLACE = "https://www.wildberries.ru";
+    public static final String MARKETPLACE_WILDBERRIES_RU = "https://www.wildberries.ru";
 
     public static final String NOT_FOUND_PAGE = "Превышено время ожидания ответа сервера либо не найдена страница товара";
     public static final String NOT_FOUND_HTML_ITEM = "html item not found";
@@ -330,6 +279,7 @@ public class Constants {
     public static final ArrayList<String> listForCable_3m = new ArrayList<>();
     //public static final ArrayList<String> listForLength = new ArrayList<>();
     public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
+    public static final ArrayList<String> listForTypeGlass_Super_D = new ArrayList<>();
     public static final ArrayList<String> listForCharging = new ArrayList<>();
     public static final ArrayList<String> listForChargingApple = new ArrayList<>();
     public static final ArrayList<String> listForChargingMicro = new ArrayList<>();
@@ -346,6 +296,7 @@ public class Constants {
     public static final ArrayList<String> listForCable_Type_C_to_Type_C = new ArrayList<>();
     public static final ArrayList<String> listForCable_Type_C_to_Apple = new ArrayList<>();
     public static final ArrayList<String> listForSeriesCover = new ArrayList<>();
+    public static final ArrayList<String> listForCable_AUX = new ArrayList<>();
 
 
     static {
@@ -494,6 +445,7 @@ public class Constants {
         listForAllTypeConnect.add("2in1");
         listForAllTypeConnect.add("3 в 1");
         listForAllTypeConnect.add("3в1");
+        listForAllTypeConnect.add("3-в-1");
         listForAllTypeConnect.add("3 in 1");
         listForAllTypeConnect.add("3-in-1");
         listForAllTypeConnect.add("3-in-");
@@ -608,7 +560,7 @@ public class Constants {
         listForCable_3m.add("3,0 m");
 
         listForTypeGlass.add("eye protection");
-        listForTypeGlass.add("5d");
+        listForTypeGlass.add(" 5d");
         listForTypeGlass.add("11d");
         listForTypeGlass.add("2.5d");
         listForTypeGlass.add("superd");
@@ -616,6 +568,10 @@ public class Constants {
         listForTypeGlass.add("super-d");
         listForTypeGlass.add("eye");
         listForTypeGlass.add("privacy");
+
+        listForTypeGlass_Super_D.add("superd");
+        listForTypeGlass_Super_D.add("super d");
+        listForTypeGlass_Super_D.add("super-d");
 
         listForCharging.add("микро");
         listForCharging.add("micro");
@@ -649,6 +605,7 @@ public class Constants {
 
         listForCharging_3in1.add("3 в 1");
         listForCharging_3in1.add("3в1");
+        listForCharging_3in1.add("3-в-1");
         listForCharging_3in1.add("3 in 1");
         listForCharging_3in1.add("3-in-1");
         listForCharging_3in1.add("3-in-");
@@ -676,6 +633,10 @@ public class Constants {
         listForCable_Type_C_to_Apple.add("apple 8 pin to type-c");
         listForCable_Type_C_to_Apple.add("lightning - type-c");
         listForCable_Type_C_to_Apple.add("lightning to type-c");
+
+        listForCable_AUX.add("aux");
+        listForCable_AUX.add("аудио кабель");
+        listForCable_AUX.add("аудио-кабель");
 
         listForBugs.add("(S)");
         listForBugs.add("(L)");
@@ -865,6 +826,10 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_164);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_165);
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_166);
+        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_167);
+        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_168);
+        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_169);
+        listForCategoryBy_1C.add(PRODUCT_TYPE_1C_170);
     }
 
     static List<String> getCollectionsParam(List<String> arrayParams, String url) {
@@ -928,23 +893,30 @@ public class Constants {
             listWithCable = Constants.listForCable_Type_C_to_Type_C;
         } else if (Constants.listForCable_Type_C_to_Apple.contains(param)) {
             listWithCable = Constants.listForCable_Type_C_to_Apple;
-        }else {
+        } else if (Constants.listForCable_AUX.contains(param)) {
+            listWithCable = Constants.listForCable_AUX;
+        } else if (Constants.listForTypeGlass_Super_D.contains(param)) {
+            listWithCable = Constants.listForTypeGlass_Super_D;
+        } else {
             System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
         }
         return listWithCable;
     }
 
-    static List<String> getCollectionsParamCableForSearchInTitle(String param, String url) {
+    static List<String> getCollectionsParamForSearchInTitle(String param, String url) {
         //определяем коллекцию с названием одного и того же кабеля
         List<String> listWithCable = null;
-        boolean b = Constants.listForCableAllLength.contains(param);
-
-        if (b) {
+        if (Constants.listForCableAllLength.contains(param)) {
             listWithCable = Constants.listForCableAllLength;
         } else if (Constants.listForAllTypeConnect.contains(param)) {
             listWithCable = Constants.listForAllTypeConnect;
-        } else {
-            System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
+        } else if (Constants.listForSeriesCover.contains(param)) {
+            listWithCable = Constants.listForSeriesCover;
+        } else if (Constants.listForTypeGlass.contains(param)) {
+            listWithCable = Constants.listForTypeGlass;
+        }
+        else {
+            System.out.println("Уточнить параметр поиска для ссылки \"" + url + "\"");
         }
         return listWithCable;
     }

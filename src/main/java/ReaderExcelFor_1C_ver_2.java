@@ -1,154 +1,26 @@
-import javafx.concurrent.Task;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import java.io.File;
-import java.util.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
-public class TaskReadExcelForWildberies extends Task<Map> {
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-    private int countReadsRows;
-    private int countReadsRows_1C;
+public class ReaderExcelFor_1C_ver_2 {
 
-    public TaskReadExcelForWildberies(List<File> files) {
-        this.files = files;
+    UnifierDataFromExcelFiles unifierDataFromExcelFiles;
+
+    public ReaderExcelFor_1C_ver_2(UnifierDataFromExcelFiles unifierDataFromExcelFiles){
+        this.unifierDataFromExcelFiles = unifierDataFromExcelFiles;
     }
 
-    private final List<File> files;
-
-    public Map<String, ResultProduct> readWorkbook(List<File> files) {
+    void getDataFromBase_1C(Sheet sheet_1C, int marketPlaceFlag){
+        int i = 1;
         try {
-            Map<String, ResultProduct> resultProductHashMap = new LinkedHashMap<>();
-            Map<String, Supplier> supplierSpecPriceHashMapWithKeyCode_1C = new HashMap<>();
-            Map<String, Integer> mapCountForMyProductName = new HashMap<>();
+            System.out.println("считываем информацию с базы 1C");
 
-            //читаем файл отчёта Wildberies и файл 1С
-            Workbook workbookWildberies = new XSSFWorkbook(files.get(0));
-            Workbook workbook_1C = new XSSFWorkbook(files.get(1));
-
-            //получаем страницы
-            Sheet sheetWildberies = workbookWildberies.getSheetAt(0);
-            Sheet sheet_1C = workbook_1C.getSheetAt(0);
-
-            //проверяем, правильно ли мы прочитали файлы
-            if (!checkFileWildberies(sheetWildberies) || !checkFile_1C(sheet_1C)){
-                Sheet sheetBuff = sheet_1C;
-                sheet_1C = sheetWildberies;
-                sheetWildberies = sheetBuff;
-                if (!checkFileWildberies(sheetWildberies) || !checkFile_1C(sheet_1C)){
-                    System.out.println("ошибка чтения файлов Excel. Проверьте правильность написания названий столбцов, и их очерёдность\n" +
-                            "");
-                    resultProductHashMap.put("Ошибка чтения файло Excel", null);
-                    return resultProductHashMap;
-                }
-            }
-
-            //считаем кол-во строк в файлах для работы ProgressBar
-            int countRowsInWildberies = sheetWildberies.getLastRowNum();
-            int countRowsIn_1C = sheet_1C.getLastRowNum();
-            int countFull = countRowsInWildberies + countRowsIn_1C;
-            int i = 1;
-
-            //считываем информацию с отчёта Wildberies
-            System.out.println("считываем информацию с отчёта Wildberies");
-            Iterator rowIterator = sheetWildberies.rowIterator();
-            while (rowIterator.hasNext()) {
-
-                //получаем строку
-                Row row = (Row) rowIterator.next();
-                if (row.getRowNum() == 0 ){
-                    continue;
-                }
-
-                //получаем бренд
-                Cell cell = row.getCell(0);
-                String brand = cell.getRichStringCellValue().getString();
-
-                //получаем категорию товара(Предмет)
-                cell = row.getCell(1);
-                String category = cell.getRichStringCellValue().getString();
-
-                //получаем артикул поставщика (code_1C)!!!
-                cell = row.getCell(3);
-                String buffStr = cell.getRichStringCellValue().getString();
-                String code_1C = "-";
-                if (buffStr.length() == 24) {
-                    code_1C = buffStr.substring(13);
-                } else if (buffStr.length() == 22 && (buffStr.startsWith("AA-") || buffStr.startsWith("RD-"))){
-                    code_1C = buffStr.substring(11);
-                } else if (buffStr.startsWith("AA-") || buffStr.startsWith("RD-")){
-                    code_1C = buffStr.substring(0, 11);
-                }
-
-                //получаем артикл wildberies
-                cell = row.getCell(4);
-                int code = (int) cell.getNumericCellValue();
-                if (code == 0){
-                    continue;
-                }
-                String myVendorCodeWildberies = String.valueOf(code);
-
-                //получаем розничную цену до скидки
-                cell = row.getCell(11);
-                int myPriceU = (int) (cell.getNumericCellValue() * 100);
-
-                //получаем базоваю скидку
-                cell = row.getCell(13);
-                int myBasicSale = (int) cell.getNumericCellValue();
-
-                //получаем розничную цену с базовой скидкой
-                int myBasicPriceU = (int) Math.round(((1 - (double) myBasicSale/100) * myPriceU));
-
-                //получаем промо-скидку
-                cell = row.getCell(16);
-                int myPromoSale = (int) cell.getNumericCellValue();
-
-                //получаем розничную цену с базовой и промо-скидкой
-                int myPromoPriceU = (int) Math.round(((1 - (double) myPromoSale/100) * myBasicPriceU));
-
-                resultProductHashMap.put(myVendorCodeWildberies, new ResultProduct(
-                        0,
-                        brand,
-                        category,
-                        "-",
-                        "-",
-                        0,
-                        null,
-                        code_1C,
-                        "-",
-                        myVendorCodeWildberies,
-
-                        0,
-                        0,
-                        0,
-                        0,
-
-                        "-",//для Ozon(сразу формируем поисковый запрос)
-                        0,
-                        myPriceU,
-                        myBasicSale,
-                        myBasicPriceU,
-                        myPromoSale,
-                        myPromoPriceU,
-                        0,
-                        0,
-                        0,
-                        0
-                ));
-
-                this.updateProgress(i, countFull);
-                countReadsRows = i;
-                i++;
-            }
-            System.out.println("Кол-во строк - " + countReadsRows);
-            System.out.println();
-
-//считываем информацию с отчёта 1C
-            System.out.println("считываем информацию с отчёта 1C");
-
-            String wb = "WB";
-            String ozon = "Ozon";
-
-            rowIterator = sheet_1C.rowIterator();
+            Iterator rowIterator = sheet_1C.rowIterator();
+            TaskReadExcelForOzon.countReadsRows_1C = 1;
             while (rowIterator.hasNext()){
                 List<String> arrayParams = new ArrayList<>();
                 //получаем строку
@@ -157,17 +29,15 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                     continue;
                 }
 
-                countReadsRows_1C++;
-
                 //получаем код товара по 1С
                 Cell cell = row.getCell(1);
-                if (cell.getRichStringCellValue().getString().equals("") || cell == null) {
+                if (cell.getRichStringCellValue().getString().equals("")) {
                     System.out.println("Пустая ячейка в базе 1С для строки " + row.getRowNum());
                     break;
                 }
                 String code_1C = cell.getRichStringCellValue().getString();
 
-                //получаем бренд
+                //получаем brand
                 cell = row.getCell(2);
                 String brand = cell.getRichStringCellValue().getString().toLowerCase().trim();
 
@@ -187,9 +57,13 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 } catch (Exception ignored) {
                 }
 
-                //получаем наименование продукта и сразу пытаемся получить поисковый запрос
+                //получаем наименование продукта
                 cell = row.getCell(3);
                 String myNomenclature = cell.getRichStringCellValue().getString().toLowerCase().trim();
+
+                //анализируем номенклатуру на дополнительные характеристики поиска аналогов
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Анализ номенклатуры и формирование поискового запроса ////////////////////////////////////
                 //FM-трансмиттер Borofone, BC16, пластик, цвет: чёрный
@@ -200,6 +74,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 String productType = "-";
                 for (String s: Constants.listForCategoryBy_1C){
                     if (buff1[0]
+                            .trim()
                             .toLowerCase()
                             .trim()
                             .startsWith(s.toLowerCase())){
@@ -257,34 +132,22 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         break;
 
                     //для кабелей - длина
-                    case Constants.PRODUCT_TYPE_1C_48:
-                    case Constants.PRODUCT_TYPE_1C_49:
-                    case Constants.PRODUCT_TYPE_1C_50:
-                    case Constants.PRODUCT_TYPE_1C_61:
-                        //case Constants.PRODUCT_TYPE_1C_62:
-                    case Constants.PRODUCT_TYPE_1C_63:
-                    case Constants.PRODUCT_TYPE_1C_64:
-                    case Constants.PRODUCT_TYPE_1C_65:
-                    case Constants.PRODUCT_TYPE_1C_66:
-                    case Constants.PRODUCT_TYPE_1C_166:
-                    case Constants.PRODUCT_TYPE_1C_67:
-                    case Constants.PRODUCT_TYPE_1C_68:
-                    case Constants.PRODUCT_TYPE_1C_69:
-                    case Constants.PRODUCT_TYPE_1C_70:
-                        for (String type : Constants.listForCableAllLength){
-                            if (myNomenclature.replaceAll(",", "").contains(type)) {
-                                if (type.contains("1.0")){
-                                    arrayParams.add("1 м");
-                                } else if (type.contains("2.0")){
-                                    arrayParams.add("2 м");
-                                } else if (type.contains("3.0")){
-                                    arrayParams.add("3 м");
-                                } else {
-                                    arrayParams.add(type);
-                                }
-                            }
-                        }
-                        break;
+                    //case Constants.PRODUCT_TYPE_1C_48:
+//                    case Constants.PRODUCT_TYPE_1C_49:
+//                    case Constants.PRODUCT_TYPE_1C_50:
+//                    case Constants.PRODUCT_TYPE_1C_61:
+//                        //case Constants.PRODUCT_TYPE_1C_62:
+//                    case Constants.PRODUCT_TYPE_1C_63:
+//                    case Constants.PRODUCT_TYPE_1C_64:
+//                    case Constants.PRODUCT_TYPE_1C_65:
+//                    case Constants.PRODUCT_TYPE_1C_66:
+//                    case Constants.PRODUCT_TYPE_1C_166:
+//                    case Constants.PRODUCT_TYPE_1C_67:
+////                    case Constants.PRODUCT_TYPE_1C_68:
+////                    case Constants.PRODUCT_TYPE_1C_69:
+////                    case Constants.PRODUCT_TYPE_1C_70:
+//                        addedParamForCableLenght(arrayParams, myNomenclature);
+//                        break;
 
                     //для защитных стекол -  его тип
                     case Constants.PRODUCT_TYPE_1C_139:
@@ -297,34 +160,35 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //если модель сразу за брендом после запятой
-                String model ="-";
-                if (buff1[1].startsWith(",")){
-                    String[] buff2 = buff1[1].trim().split(",", 3);
-                    model = buff2[1].trim();
-                } else {
-                    //если запятой нет
-                    String[] buff2 = buff1[1].trim().split(",", 2);
-                    model = buff2[0];
+                String model = null;
+                try {
+                    model = "-";
+                    if (buff1[1].startsWith(",")){
+                        String[] buff2 = buff1[1].trim().split(",", 3);
+                        model = buff2[1].trim();
+                    } else {
+                        //если запятой нет
+                        String[] buff2 = buff1[1].trim().split(",", 2);
+                        model = buff2[0];
+                    }
+                } catch (Exception ignored) {
+                    System.out.println(Constants.getRedString("Ошибка поиска наименования модели(не нашёл имя бренда)"));
                 }
 
                 //получаем поисковый запрос
                 String querySearch = "-";
                 if (!brand.isEmpty() || !model.isEmpty()) {
-                    switch (productType){
+                    switch (productType) {
                         //для маски - маска одноразовая 50 шт
                         case Constants.PRODUCT_TYPE_1C_78:
                             querySearch = productType + " " + model + " " + arrayParams.get(0);
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
                             System.out.println("arrayParams = " + arrayParams.toString());
-                            if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
-                                System.out.println();
-                            } else {
-                                System.out.println("querySearch = " + querySearch + "     " + ozon);
-                                System.out.println();
-                            }
+
+                            System.out.println("querySearch = " + querySearch);
+
                             break;
                         //для этих типов в поисковом запросе указываем только бренд и модель
                         case Constants.PRODUCT_TYPE_1C_1:
@@ -363,7 +227,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_36:
                         case Constants.PRODUCT_TYPE_1C_37:
 
-                        //case Constants.PRODUCT_TYPE_1C_39:
+                            //case Constants.PRODUCT_TYPE_1C_39:
 
                         case Constants.PRODUCT_TYPE_1C_41:
                         case Constants.PRODUCT_TYPE_1C_42:
@@ -379,8 +243,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_58:
                         case Constants.PRODUCT_TYPE_1C_59:
                         case Constants.PRODUCT_TYPE_1C_60:
-                        case Constants.PRODUCT_TYPE_1C_62:
-                        case Constants.PRODUCT_TYPE_1C_67:
+
                         case Constants.PRODUCT_TYPE_1C_72:
                         case Constants.PRODUCT_TYPE_1C_73:
                         case Constants.PRODUCT_TYPE_1C_74:
@@ -396,8 +259,8 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_89:
                         case Constants.PRODUCT_TYPE_1C_90:
                         case Constants.PRODUCT_TYPE_1C_91:
-                        case Constants.PRODUCT_TYPE_1C_92:
-                        case Constants.PRODUCT_TYPE_1C_93:
+//                        case Constants.PRODUCT_TYPE_1C_92:
+
                         case Constants.PRODUCT_TYPE_1C_94:
                         case Constants.PRODUCT_TYPE_1C_96:
                         case Constants.PRODUCT_TYPE_1C_97:
@@ -438,7 +301,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
 
                         case Constants.PRODUCT_TYPE_1C_134:
                         case Constants.PRODUCT_TYPE_1C_135:
-                        case Constants.PRODUCT_TYPE_1C_136:
+//                        case Constants.PRODUCT_TYPE_1C_136:
                         case Constants.PRODUCT_TYPE_1C_137:
                         case Constants.PRODUCT_TYPE_1C_138:
                         case Constants.PRODUCT_TYPE_1C_139:
@@ -468,56 +331,88 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                         case Constants.PRODUCT_TYPE_1C_164:
                         case Constants.PRODUCT_TYPE_1C_39:
                         case Constants.PRODUCT_TYPE_1C_40:
-                        case Constants.PRODUCT_TYPE_1C_49:
-                        case Constants.PRODUCT_TYPE_1C_50:
-                        case Constants.PRODUCT_TYPE_1C_61:
                         case Constants.PRODUCT_TYPE_1C_132:
+                        case Constants.PRODUCT_TYPE_1C_169:
+                        case Constants.PRODUCT_TYPE_1C_170:
 
                             querySearch = brand + " " + model;
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
                             System.out.println("arrayParams = " + arrayParams.toString());
-                            if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
-                                System.out.println();
-                            } else {
-                                System.out.println("querySearch = " + querySearch + "     " + ozon);
-                                System.out.println();
-                            }
+
+                            System.out.println("querySearch = " + querySearch);
+
+                            break;
+
+                        case Constants.PRODUCT_TYPE_1C_93:
+                        case Constants.PRODUCT_TYPE_1C_136:
+                        case Constants.PRODUCT_TYPE_1C_167:
+                        case Constants.PRODUCT_TYPE_1C_168:
+                        case Constants.PRODUCT_TYPE_1C_92:
+                            String series = "-";
+                            Constants.addedParamForSeriesCover(arrayParams, myNomenclature);
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+
                             break;
 
                         //для этих кабелей в поисковом запросе указываем бренд, модель тип коннектора и длину
+                        case Constants.PRODUCT_TYPE_1C_49:
+                            String connect = "-";
+                            connect = "type-c - type-c";
+                            arrayParams.add(connect);
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+                            break;
+                        case Constants.PRODUCT_TYPE_1C_50:
+                        case Constants.PRODUCT_TYPE_1C_62:
+                            connect = "type-c - apple";
+                            arrayParams.add(connect);
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println("productType = " + productType);
+                            System.out.println("model = " + model);
+                            System.out.println("arrayParams = " + arrayParams.toString());
+                            break;
+                        case Constants.PRODUCT_TYPE_1C_61:
+                            connect = "aux";
+                            arrayParams.add(connect);
+                            break;
                         case Constants.PRODUCT_TYPE_1C_63:
                         case Constants.PRODUCT_TYPE_1C_64:
                         case Constants.PRODUCT_TYPE_1C_65:
                         case Constants.PRODUCT_TYPE_1C_66:
+                        case Constants.PRODUCT_TYPE_1C_67:
                         case Constants.PRODUCT_TYPE_1C_166:
-                            String connect = "-";
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_63) || productType.equals(Constants.PRODUCT_TYPE_1C_64)){
+
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_63)
+                                    || productType.equals(Constants.PRODUCT_TYPE_1C_64)
+                                    ||  productType.equals(Constants.PRODUCT_TYPE_1C_62)
+                                    ||  productType.equals(Constants.PRODUCT_TYPE_1C_50)) {
                                 connect = "apple";
                                 arrayParams.add(connect);
                             }
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_65)){
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_65) || productType.equals(Constants.PRODUCT_TYPE_1C_49)) {
                                 connect = "type-c";
                                 arrayParams.add(connect);
                             }
-                            if (productType.equals(Constants.PRODUCT_TYPE_1C_66) || productType.equals(Constants.PRODUCT_TYPE_1C_166)){
+                            if (productType.equals(Constants.PRODUCT_TYPE_1C_66) || productType.equals(Constants.PRODUCT_TYPE_1C_166)) {
                                 connect = "micro";
                                 arrayParams.add(connect);
                             }
-                            querySearch = brand + " " + model + " " + connect;
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            Constants.addedParamForCableLenght(arrayParams, myNomenclature);
+                            //querySearch = brand + " " + model + " " + connect;
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
                             System.out.println("arrayParams = " + arrayParams.toString());
-                            if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
-                                System.out.println();
-                            } else {
-                                System.out.println("querySearch = " + querySearch + "     " + ozon);
-                                System.out.println();
-                            }
+
+                            //System.out.println("querySearch = " + querySearch);
+
                             break;
 //                        case Constants.PRODUCT_TYPE_1C_48:
 //                            querySearch = myBrand + " " + model + " 3 в 1 " + params;
@@ -531,17 +426,13 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                             //productType = "Кабель USB 2 в 1";
                             arrayParams.add("2 в 1");
                             querySearch = brand + " " + model + " 2 в 1";
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
                             System.out.println("arrayParams = " + arrayParams.toString());
-                            if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
-                                System.out.println();
-                            } else {
-                                System.out.println("querySearch = " + querySearch + "     " + ozon);
-                                System.out.println();
-                            }
+
+                            System.out.println("querySearch = " + querySearch);
+
                             break;
                         case Constants.PRODUCT_TYPE_1C_48:
                         case Constants.PRODUCT_TYPE_1C_69:
@@ -549,79 +440,64 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                             //productType = "Кабель USB 3 в 1";
                             arrayParams.add("3 в 1");
                             querySearch = brand + " " + model + " 3 в 1";
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
                             System.out.println("arrayParams = " + arrayParams.toString());
-                            if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
-                                System.out.println();
-                            } else {
-                                System.out.println("querySearch = " + querySearch + "     " + ozon);
-                                System.out.println();
-                            }
+
+                            System.out.println("querySearch = " + querySearch);
+
                             break;
                         case Constants.PRODUCT_TYPE_1C_70:
                             //productType = "Кабель USB 4 в 1";
                             arrayParams.add("4 в 1");
                             querySearch = brand + " " + model + " 4 в 1";
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
                             System.out.println("arrayParams = " + arrayParams.toString());
-                            if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
-                                System.out.println();
-                            } else {
-                                System.out.println("querySearch = " + querySearch + "     " + ozon);
-                                System.out.println();
-                            }
+
+                            System.out.println("querySearch = " + querySearch);
+
                             break;
                         case "Новая категория":
                             querySearch = "-";
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature + " - новая категория");
-                            if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
-                                System.out.println();
-                            } else {
-                                System.out.println("querySearch = " + querySearch + "     " + ozon);
-                                System.out.println();
-                            }
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature + " - новая категория");
+
+                            System.out.println("querySearch = " + querySearch);
+
                             break;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         default:
                             querySearch = brand + " " + model;
-                            System.out.println(countReadsRows_1C + " - myNomenclature = " + myNomenclature);
+                            System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
                             System.out.println("arrayParams = " + arrayParams.toString());
-                            if (commission != 0){
-                                System.out.println("querySearch = " + querySearch + "     " + wb + "/" + ozon);
-                                System.out.println();
-                            } else {
-                                System.out.println("querySearch = " + querySearch + "     " + ozon);
-                                System.out.println();
-                            }
+
+                            System.out.println("querySearch = " + querySearch);
+
                     }
-                }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                if (mapCountForMyProductName.size() != 0){
-                    if (!mapCountForMyProductName.containsKey(brand + " " + model)){
-                        mapCountForMyProductName.put(brand + " " + model, 1);
+                }
+                if (UnifierDataFromExcelFiles.mapCountForMyProductName.size() != 0){
+                    if (!UnifierDataFromExcelFiles.mapCountForMyProductName.containsKey(brand + " " + model)){
+                        UnifierDataFromExcelFiles.mapCountForMyProductName.put(brand + " " + model, 1);
                     } else {
-                        int count = mapCountForMyProductName.get(brand + " " + model);
+                        int count = UnifierDataFromExcelFiles.mapCountForMyProductName.get(brand + " " + model);
                         count++;
-                        mapCountForMyProductName.put(brand + " " + model, count);
+                        UnifierDataFromExcelFiles.mapCountForMyProductName.put(brand + " " + model, count);
                     }
                 } else {
-                    mapCountForMyProductName.put(brand + " " + model, 1);
+                    UnifierDataFromExcelFiles.mapCountForMyProductName.put(brand + " " + model, 1);
                 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 //получаем спец-цену
-                cell = row.getCell(5);
                 int specPrice_1C = 0;
                 try {
+                    cell = row.getCell(5);
                     specPrice_1C = (int) cell.getNumericCellValue() * 100;
                 } catch (Exception ignored) {
                     //e.printStackTrace();
@@ -629,94 +505,45 @@ public class TaskReadExcelForWildberies extends Task<Map> {
 
                 String specQuery = "-";
                 try {
-                    cell = row.getCell(9);
+                    if (marketPlaceFlag == 1){
+                        cell = row.getCell(8);
+                    } else if (marketPlaceFlag == 2){
+                        cell = row.getCell(9);
+                    }
                     specQuery = cell.getRichStringCellValue().getString();
                     System.out.println("для кода 1С = " + code_1C + " запрос по-умолчанию заменяется на спец QUERY = " + specQuery);
                     System.out.println();
                 } catch (Exception ignored) {
-                    System.out.println();
+                    System.out.println(ignored.getMessage());
+                }
+
+                if (marketPlaceFlag == 1){
+                    UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,  specQuery, specPrice_1C));
+                } else if (marketPlaceFlag == 2){
+                    UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, specQuery, specPrice_1C, commission, delivery));
                 }
 
 
-
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, specQuery, specPrice_1C, commission, delivery));
                 //увеличиваем ProgressBar
-                this.updateProgress(i, countFull);
+//                unifierDataFromExcelFiles.updateProgress(i, UnifierDataFromExcelFiles.countFull);
+                UnifierDataFromExcelFiles.countReadsRows_1C++;
                 i++;
             }
-            System.out.println("Кол-во строк - " + countReadsRows_1C);
-
-            //пытаемся привязать specPrice_1C и productName к ResultProduct
-            for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
-                String key = entry.getKey();
-                String code_1C = entry.getValue().getCode_1C();
-                Supplier supplier = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
-                if (supplier != null){
-                    entry.getValue().setIsFind(1);
-                    entry.getValue().setSpecPrice(supplier.getSpecPrice());
-                    entry.getValue().setMyBrand(supplier.getMyBrand());
-                    entry.getValue().setMyProductModel(supplier.getMyProductModel());
-                    entry.getValue().setArrayListParams((ArrayList<String>) supplier.getArrayListParams());
-                    entry.getValue().setMyNomenclature_1C(supplier.getNomenclature());
-                    entry.getValue().setSpecQuerySearchForWildberiesOrOzon(supplier.getSpecQuerySearch());
-                    entry.getValue().setProductType(supplier.getProductType());
-
-                    entry.getValue().setMyCommissionForOzonOrWildberries(supplier.getCommission());
-                    entry.getValue().setMyLastMileForOzonOrWildberries(supplier.getDelivery());
-
-                    String brand = entry.getValue().getMyBrand();
-                    String productModel = entry.getValue().getMyProductModel();
-                    int countProducts = mapCountForMyProductName.get(brand + " " + productModel);
-                    entry.getValue().setCountMyProductModel(countProducts);
-                    System.out.println("Для " + brand + " " + productModel + " кол-во совпадений - " + countProducts);
-                } else entry.getValue().setSpecPrice(0);
-            }
-            return resultProductHashMap;
-        }
-        catch (Exception e) {
-            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + countReadsRows);
-            System.out.println("ошибка при чтении файла Excel. Смотри строку - " + (countReadsRows_1C + 1));
-            return null;
-        }
-    }
-
-    private boolean checkFileWildberies(Sheet sheet){
-        Row headRow = sheet.getRow(0);
-        boolean checkBrand = false;
-        boolean checkCategory = false;
-        boolean checkCode_1C = false;
-        boolean checkVendorCode = false;
-        boolean checkPriceU = false;
-        boolean checkBasicSale = false;
-        boolean checkPromoSale = false;
-        try {
-            checkBrand = headRow.getCell(0).getRichStringCellValue().getString().equals(Constants.BRAND_NAME_IN_FILE_WILDBERIES);
-            checkCategory = headRow.getCell(1).getRichStringCellValue().getString().equals(Constants.CATEGORY_NAME_IN_FILE_WILDBERIES);
-            checkCode_1C = headRow.getCell(3).getRichStringCellValue().getString().equals(Constants.CODE_1C_IN_FILE_WILDBERIES);
-            checkVendorCode = headRow.getCell(4).getRichStringCellValue().getString().equals(Constants.VENDOR_CODE_IN_FILE_WILDBERIES);
-            checkPriceU = headRow.getCell(11).getRichStringCellValue().getString().equals(Constants.PRICE_U_IN_FILE_WILDBERIES);
-            checkBasicSale = headRow.getCell(13).getRichStringCellValue().getString().equals(Constants.BASIC_SALE_IN_FILE_WILDBERIES);
-            checkPromoSale = headRow.getCell(16).getRichStringCellValue().getString().equals(Constants.PROMO_SALE_IN_FILE_WILDBERIES);
-            return checkBrand & checkCategory & checkCode_1C & checkVendorCode & checkPriceU & checkBasicSale & checkPromoSale;
+            System.out.println("Кол-во строк в базе 1С - " + UnifierDataFromExcelFiles.countReadsRows_1C);
         } catch (Exception e) {
-            return false;
+            System.out.println("ошибка при чтении файла Excel с базой 1C. Смотри строку - " + UnifierDataFromExcelFiles.countReadsRows_1C);
         }
     }
 
-    private boolean checkFile_1C(Sheet sheet){
+    boolean checkFile_1C(Sheet sheet){
         Row headRow = sheet.getRow(0);
         try {
             boolean checkCode_1C = headRow.getCell(1).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.CODE_1C);
-            boolean checkProductName = headRow.getCell(3).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.NOMENCLATURE_1C.toLowerCase());
-            boolean checkSpecPrice = headRow.getCell(5).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.SPEC_PRICE_1C.toLowerCase());
-            return checkCode_1C  & checkProductName & checkSpecPrice;
+            boolean checkProductName = headRow.getCell(3).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.NOMENCLATURE_1C);
+            boolean checkSpecPrice = headRow.getCell(5).getRichStringCellValue().getString().toLowerCase().trim().equals(Constants.SPEC_PRICE_1C);
+            return checkCode_1C & checkProductName & checkProductName & checkSpecPrice;
         } catch (Exception e) {
             return false;
         }
-    }
-
-    @Override
-    protected Map call() throws Exception {
-        return this.readWorkbook(files);
     }
 }

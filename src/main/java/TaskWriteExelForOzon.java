@@ -195,6 +195,13 @@ public class TaskWriteExelForOzon extends Task<File> {
         styleRedCell.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         styleRedCell.setFont(font2);
 
+        //настройка стиля для голубой ячейки
+        CellStyle styleBlueCell = workbook.createCellStyle();
+        styleBlueCell.setWrapText(true);
+        styleBlueCell.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        styleBlueCell.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        styleBlueCell.setFont(font2);
+
         //настройка стиля для зелёной ячейки
         CellStyle styleGreenCell = workbook.createCellStyle();
         styleGreenCell.setWrapText(true);
@@ -220,7 +227,7 @@ public class TaskWriteExelForOzon extends Task<File> {
 
                 boolean isMy = false;
                 try {
-                    isMy = productArrayList.get(i).getCompetitorName().equals(Constants.MY_SELLER);
+                    isMy = productArrayList.get(i).getCompetitorName().equals(Constants.MY_SELLER) || productArrayList.get(i).getCompetitorName().equals(Constants.MY_SELLER_2);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -231,7 +238,12 @@ public class TaskWriteExelForOzon extends Task<File> {
                 Cell cell = row.createCell(0);
                 System.out.println(productArrayList.get(i).getMyBrand());
                 cell.setCellValue(productArrayList.get(i).getMyBrand());
-                cell.setCellStyle(style);
+                if (productArrayList.get(i).getMyBrand().equals("xivi") || productArrayList.get(i).getMyBrand().equals("mietubl")){
+                    cell.setCellStyle(styleBlueCell);//настройка для игнорируемых брендов "xivi" и "mietubl"
+                } else {
+                    cell.setCellStyle(style);
+                }
+
 
                 //тип товара
                 cell = row.createCell(1);

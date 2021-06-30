@@ -63,9 +63,6 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
             sheet_1C = workbook_1C.getSheetAt(0);
         }
 
-
-
-
         //проверяем, правильно ли мы прочитали файлы
         System.out.println("проверяем, правильно ли мы прочитали файлы");
         if (!readerExcel.checkExcelFile(sheetReport) || !readerExcelFor_1C.checkFile_1C(sheet_1C)) {
@@ -89,7 +86,7 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
 
 
         readerExcel.getDataFromExcelFile(sheetReport);
-        readerExcelFor_1C.getDataFromBase_1C(sheet_1C);
+        readerExcelFor_1C.getDataFromBase_1C(sheet_1C, marketPlaceFlag);
 
 //пытаемся привязать specPrice_1C и productName к ResultProduct
         for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
@@ -97,14 +94,20 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
             String code_1C = entry.getValue().getCode_1C();
             Supplier supplier1 = supplierSpecPriceHashMapWithKeyCode_1C.get(code_1C);
             if (supplier1 != null){
-                entry.getValue().setIsFind(1);
-                entry.getValue().setSpecPrice(supplier1.getSpecPrice());
-                entry.getValue().setMyBrand(supplier1.getMyBrand());
-                entry.getValue().setProductType(supplier1.getProductType());
-                entry.getValue().setMyNomenclature_1C(supplier1.getNomenclature());
-                entry.getValue().setMyProductModel(supplier1.getMyProductModel());
-                entry.getValue().setArrayListParams((ArrayList<String>) supplier1.getArrayListParams());
-                entry.getValue().setSpecQuerySearchForWildberiesOrOzon(supplier1.getSpecQuerySearch());
+
+                entry.getValue().setIsFind(1);//
+                entry.getValue().setSpecPrice(supplier1.getSpecPrice());//
+                entry.getValue().setMyBrand(supplier1.getMyBrand());//
+                entry.getValue().setMyProductModel(supplier1.getMyProductModel());//
+                entry.getValue().setArrayListParams((ArrayList<String>) supplier1.getArrayListParams());//
+                entry.getValue().setMyNomenclature_1C(supplier1.getNomenclature());//
+                entry.getValue().setSpecQuerySearchForWildberiesOrOzon(supplier1.getSpecQuerySearch());//
+                entry.getValue().setProductType(supplier1.getProductType());//
+
+                if (marketPlaceFlag == 2){
+                    entry.getValue().setMyCommissionForOzonOrWildberries(supplier1.getCommission());
+                    entry.getValue().setMyLastMileForOzonOrWildberries(supplier1.getDelivery());
+                }
 
                 String brand = entry.getValue().getMyBrand();
                 String productModel = entry.getValue().getMyProductModel();
