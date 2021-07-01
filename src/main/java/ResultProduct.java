@@ -2,6 +2,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,7 +13,7 @@ public class ResultProduct extends Product{
     private String productType;
     private String myProductModel;
     private int countMyProductModel;
-    private ArrayList<String> arrayListParams;
+    private ArrayList<List<String>> arrayListParams;
     private String code_1C;
     private String myNomenclature_1C;
     private String myVendorCodeForWildberiesOrOzon;
@@ -72,7 +73,7 @@ public class ResultProduct extends Product{
             String productType,
             String myProductModel,
             int countMyProductModel,
-            ArrayList<String> arrayListParams,
+            ArrayList<List<String>> arrayListParams,
             String code_1C,
             String myNomenclature_1C,
             String myVendorCodeForWildberiesOrOzon,
@@ -157,7 +158,7 @@ public class ResultProduct extends Product{
             String productType,
             String myProductModel,
             int countMyProductModel,
-            ArrayList<String> arrayListParams,
+            ArrayList<List<String>> arrayListParams,
             String code_1C,
             String myNomenclature_1C,
             String myVendorCodeForWildberiesOrOzon,

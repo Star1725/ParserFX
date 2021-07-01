@@ -2,9 +2,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class ReaderExcelFor_1C_ver_2 {
 
@@ -22,7 +20,7 @@ public class ReaderExcelFor_1C_ver_2 {
             Iterator rowIterator = sheet_1C.rowIterator();
             TaskReadExcelForOzon.countReadsRows_1C = 1;
             while (rowIterator.hasNext()){
-                List<String> arrayParams = new ArrayList<>();
+                List<List<String>> arrayParams = new ArrayList<>();
                 //получаем строку
                 Row row = (Row) rowIterator.next();
                 if (row.getRowNum() == 0 ){
@@ -43,14 +41,14 @@ public class ReaderExcelFor_1C_ver_2 {
 
                 //получаем комиссию
                 double commission = 0;
-                cell = row.getCell(6);
+                cell = row.getCell(7);
                 try {
                     commission = cell.getNumericCellValue();
                 } catch (Exception ignored) {
                 }
 
                 //получаем доставку
-                cell = row.getCell(7);
+                cell = row.getCell(8);
                 int delivery = 0;
                 try {
                     delivery = (int) cell.getNumericCellValue();
@@ -61,8 +59,28 @@ public class ReaderExcelFor_1C_ver_2 {
                 cell = row.getCell(3);
                 String myNomenclature = cell.getRichStringCellValue().getString().toLowerCase().trim();
 
-                //анализируем номенклатуру на дополнительные характеристики поиска аналогов
+                //получаем дополнительный параметр поиска
+                cell = row.getCell(4);
+                String additionalParameter = cell.getRichStringCellValue().getString().toLowerCase().trim();
 
+                //анализируем дополнительный параметр и номенклатуру на дополнительные характеристики поиска аналогов
+                List<String> arrayListAdditionalParams = new ArrayList<>(Arrays.asList(additionalParameter.split(",")));
+
+                if (arrayListAdditionalParams.contains(Constants.WITHOUT_CABLE.toLowerCase())){
+                    arrayParams.add(
+                            new ArrayList<>(Collections.singleton(Constants.WITHOUT_CABLE.toLowerCase()))
+                    );
+                } else if (arrayListAdditionalParams.contains(Constants.CABLE_3IN1.toLowerCase())){
+                    arrayParams.add(Constants.listForConnector_3in1);
+                } else if (arrayListAdditionalParams.contains(Constants.CABLE_TYPE_C.toLowerCase())){
+                    arrayParams.add(Constants.listForConnector_Type_C);
+                } else if (arrayListAdditionalParams.contains(Constants.CABLE_APPLE_8PIN.toLowerCase())){
+                    arrayParams.add(Constants.listForConnector_Apple_8PIN);
+                } else if (arrayListAdditionalParams.contains(Constants.CABLE_MICRO_USB.toLowerCase())){
+                    arrayParams.add(Constants.listForConnector_Micro_USB);
+                } else if (arrayListAdditionalParams.contains(Constants.MASK.toLowerCase())){                           //для масок
+                    arrayParams.add(arrayListAdditionalParams);
+                }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Анализ номенклатуры и формирование поискового запроса ////////////////////////////////////
@@ -497,7 +515,7 @@ public class ReaderExcelFor_1C_ver_2 {
                 //получаем спец-цену
                 int specPrice_1C = 0;
                 try {
-                    cell = row.getCell(5);
+                    cell = row.getCell(6);
                     specPrice_1C = (int) cell.getNumericCellValue() * 100;
                 } catch (Exception ignored) {
                     //e.printStackTrace();
@@ -506,9 +524,9 @@ public class ReaderExcelFor_1C_ver_2 {
                 String specQuery = "-";
                 try {
                     if (marketPlaceFlag == 1){
-                        cell = row.getCell(8);
-                    } else if (marketPlaceFlag == 2){
                         cell = row.getCell(9);
+                    } else if (marketPlaceFlag == 2){
+                        cell = row.getCell(10);
                     }
                     specQuery = cell.getRichStringCellValue().getString();
                     System.out.println("для кода 1С = " + code_1C + " запрос по-умолчанию заменяется на спец QUERY = " + specQuery);

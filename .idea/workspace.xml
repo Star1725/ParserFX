@@ -25,24 +25,24 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="commit">
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="большой коммит (для парсинга ozon вернуться сюда)">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ParserOzon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ParserOzon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ReaderExcelFor_1C.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ReaderExcelFor_1C.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ReaderExcelFor_1C_ver_2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ReaderExcelFor_1C_ver_2.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ResultProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ResultProduct.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/TaskReadExcelForOzon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskReadExcelForOzon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/TaskWriteExelForOzon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskWriteExelForOzon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/TaskWriteExelForWildberries.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaskWriteExelForWildberries.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Supplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Supplier.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Constants.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$3.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main$MyCall.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main$MyCall.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ParserWildBer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ParserWildBer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Product.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Product.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/ResultProduct.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ResultProduct.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/TaskWriteExel.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample.fxml" afterDir="false" />
     </list>
     <list id="1019f6b8-5348-4ab5-b739-b8eb41122888" name="Revert &quot;версия 1.1&quot;" comment="Revert &quot;версия 1.1&quot;&#10;&#10;This reverts commit 1e6a163f" />
     <list id="7c07d6c2-34ea-49e6-96c6-03e9eb23df85" name="релизная версия 1.0.3 - отрабатывает все категории" comment="" />
@@ -95,6 +95,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -273,48 +274,6 @@
       <workItem from="1612417882211" duration="7448000" />
       <workItem from="1612426946807" duration="127000" />
       <workItem from="1612435079850" duration="104895000" />
-    </task>
-    <task id="LOCAL-00001" summary="рабочая версия проекта с поиском по имени бренда и модели">
-      <created>1611651534255</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1611651534255</updated>
-    </task>
-    <task id="LOCAL-00002" summary="1-й">
-      <created>1611653701070</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1611653701070</updated>
-    </task>
-    <task id="LOCAL-00003" summary="получаем страницы товаров, цены на которые анализируем">
-      <created>1611686219081</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1611686219081</updated>
-    </task>
-    <task id="LOCAL-00004" summary="работает. По некоторым позициям выводится отризательный процент">
-      <created>1612417616031</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1612417616032</updated>
-    </task>
-    <task id="LOCAL-00005" summary="удалось получить json для каталога">
-      <created>1612436940267</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1612436940267</updated>
-    </task>
-    <task id="LOCAL-00006" summary="все работает. Вопрос к бренду USAMS - в titele для названия модели нужно искать либо USAMS либо US">
-      <created>1612526518525</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1612526518525</updated>
     </task>
     <task id="LOCAL-00007" summary="все работает&#10;- необходимо реализовать работу progressBar при анализе запросов">
       <created>1612823408786</created>
@@ -575,7 +534,91 @@
       <option name="project" value="LOCAL" />
       <updated>1615654114835</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="для работы парсера ozon нужно закоммитить TO-DO">
+      <created>1618553101638</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1618553101638</updated>
+    </task>
+    <task id="LOCAL-00045" summary="устранение ошибок при работе алгоритма">
+      <created>1618747357236</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1618747357236</updated>
+    </task>
+    <task id="LOCAL-00046" summary="разбераемся с ozon">
+      <created>1618809419341</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1618809419341</updated>
+    </task>
+    <task id="LOCAL-00047" summary="разбираюсь с загрузкой картинок с ozon. С Сервера скачивает, но почему-то в excel не записывает">
+      <created>1618996352153</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1618996352153</updated>
+    </task>
+    <task id="LOCAL-00048" summary="добавил загрузку картинок для ozon">
+      <created>1619360474229</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1619360474229</updated>
+    </task>
+    <task id="LOCAL-00049" summary="доработка парсера">
+      <created>1619782130671</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1619782130671</updated>
+    </task>
+    <task id="LOCAL-00050" summary="оптимизация проекта">
+      <created>1619951775399</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1619951775399</updated>
+    </task>
+    <task id="LOCAL-00051" summary="оптимизация проекта">
+      <created>1619952688006</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1619952688006</updated>
+    </task>
+    <task id="LOCAL-00052" summary="дальнейшая доработка и оптимизация парсера">
+      <created>1620161215936</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1620161215936</updated>
+    </task>
+    <task id="LOCAL-00053" summary="дальнейшая оптимизация">
+      <created>1620760345310</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1620760345310</updated>
+    </task>
+    <task id="LOCAL-00054" summary="commit">
+      <created>1620848404230</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1620848404230</updated>
+    </task>
+    <task id="LOCAL-00055" summary="большой коммит (для парсинга ozon вернуться сюда)">
+      <created>1625052439035</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1625052439035</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -610,16 +653,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
-    <MESSAGE value="версия 1.1" />
-    <MESSAGE value="зафеншуить продукт" />
-    <MESSAGE value="вроде достаю все хотелки, не могу проверить, wildberies не отвечает" />
-    <MESSAGE value="пока банят" />
-    <MESSAGE value="использую другую библиотеку HtmlUnit. Пока разбираюсь как достать данные по каждому товару" />
-    <MESSAGE value="добавили новых категорий" />
-    <MESSAGE value="мержим мастера в specPrice" />
-    <MESSAGE value="рабочий" />
-    <MESSAGE value="какя-то проблема" />
-    <MESSAGE value="доработал класс чтиния Excel" />
     <MESSAGE value="доработка ошибок" />
     <MESSAGE value="доработана обработка артикула поставщика, чтобы он соответствовал форме в отчёте 1С" />
     <MESSAGE value="доработал стратегию на повышение" />
@@ -634,206 +667,199 @@
     <MESSAGE value="проблема с термометрами, пока в ручном режиме if (!myBrand.equals(&quot;Aiqura&quot;))" />
     <MESSAGE value="переделываем - поисковый запрос будет из файла 1С" />
     <MESSAGE value="доработка" />
+    <MESSAGE value="для работы парсера ozon нужно закоммитить TO-DO" />
+    <MESSAGE value="устранение ошибок при работе алгоритма" />
+    <MESSAGE value="разбераемся с ozon" />
+    <MESSAGE value="разбираюсь с загрузкой картинок с ozon. С Сервера скачивает, но почему-то в excel не записывает" />
+    <MESSAGE value="добавил загрузку картинок для ozon" />
+    <MESSAGE value="доработка парсера" />
+    <MESSAGE value="оптимизация проекта" />
+    <MESSAGE value="дальнейшая доработка и оптимизация парсера" />
+    <MESSAGE value="дальнейшая оптимизация" />
     <MESSAGE value="commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="commit" />
+    <MESSAGE value="большой коммит (для парсинга ozon вернуться сюда)" />
+    <option name="LAST_COMMIT_MESSAGE" value="большой коммит (для парсинга ozon вернуться сюда)" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="464" y="9" key="#Java" timestamp="1614855674152">
+    <state x="675" y="177" key="#com.intellij.ide.util.MemberChooser" timestamp="1620751424335">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="464" y="9" key="#Java/0.0.1739.939@0.0.1739.939" timestamp="1614855674152" />
-    <state x="564" y="74" key="#Main" timestamp="1614856100197">
+    <state x="675" y="177" key="#com.intellij.ide.util.MemberChooser/0.0.1739.939@0.0.1739.939" timestamp="1620751424335" />
+    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1620139077966">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="564" y="74" key="#Main/0.0.1739.939@0.0.1739.939" timestamp="1614856100197" />
-    <state x="755" y="333" width="544" height="273" key="#Notifications" timestamp="1614280603354">
+    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1739.939@0.0.1739.939" timestamp="1620139077966" />
+    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2" timestamp="1625052436960">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="755" y="333" width="544" height="273" key="#Notifications/0.0.1739.939@0.0.1739.939" timestamp="1614280603354" />
-    <state x="675" y="177" key="#com.intellij.ide.util.MemberChooser" timestamp="1615709321597">
+    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2/0.0.1739.939@0.0.1739.939" timestamp="1625052436960" />
+    <state width="534" height="466" key="DebuggerActiveHint" timestamp="1621353862843">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="675" y="177" key="#com.intellij.ide.util.MemberChooser/0.0.1739.939@0.0.1739.939" timestamp="1615709321597" />
-    <state x="599" y="260" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1614856096548">
+    <state width="534" height="466" key="DebuggerActiveHint/0.0.1739.939@0.0.1739.939" timestamp="1621353862843" />
+    <state width="669" height="494" key="GridCell.Tab.0.bottom" timestamp="1625052492148">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="599" y="260" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1739.939@0.0.1739.939" timestamp="1614856096548" />
-    <state x="653" y="335" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1615448567909">
+    <state width="669" height="494" key="GridCell.Tab.0.bottom/0.0.1739.939@0.0.1739.939" timestamp="1625052492148" />
+    <state width="669" height="494" key="GridCell.Tab.0.center" timestamp="1625052492148">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="653" y="335" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1739.939@0.0.1739.939" timestamp="1615448567909" />
-    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1615530647297">
+    <state width="669" height="494" key="GridCell.Tab.0.center/0.0.1739.939@0.0.1739.939" timestamp="1625052492148" />
+    <state width="669" height="494" key="GridCell.Tab.0.left" timestamp="1625052492148">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1739.939@0.0.1739.939" timestamp="1615530647297" />
-    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2" timestamp="1615654113946">
+    <state width="669" height="494" key="GridCell.Tab.0.left/0.0.1739.939@0.0.1739.939" timestamp="1625052492148" />
+    <state width="669" height="494" key="GridCell.Tab.0.right" timestamp="1625052492148">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="168" y="41" width="1401" height="825" key="CommitChangelistDialog2/0.0.1739.939@0.0.1739.939" timestamp="1615654113946" />
-    <state width="534" height="466" key="DebuggerActiveHint" timestamp="1614213235691">
+    <state width="669" height="494" key="GridCell.Tab.0.right/0.0.1739.939@0.0.1739.939" timestamp="1625052492148" />
+    <state width="669" height="494" key="GridCell.Tab.1.bottom" timestamp="1625052492148">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="534" height="466" key="DebuggerActiveHint/0.0.1739.939@0.0.1739.939" timestamp="1614213235691" />
-    <state x="97" y="131" width="1553" height="754" key="DiffContextDialog" timestamp="1615470387618">
+    <state width="669" height="494" key="GridCell.Tab.1.bottom/0.0.1739.939@0.0.1739.939" timestamp="1625052492148" />
+    <state width="669" height="494" key="GridCell.Tab.1.center" timestamp="1625052492148">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="97" y="131" width="1553" height="754" key="DiffContextDialog/0.0.1739.939@0.0.1739.939" timestamp="1615470387618" />
-    <state x="650" y="225" key="FileChooserDialogImpl" timestamp="1615286036063">
+    <state width="669" height="494" key="GridCell.Tab.1.center/0.0.1739.939@0.0.1739.939" timestamp="1625052492148" />
+    <state width="669" height="494" key="GridCell.Tab.1.left" timestamp="1625052492148">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="650" y="225" key="FileChooserDialogImpl/0.0.1739.939@0.0.1739.939" timestamp="1615286036063" />
-    <state x="749" y="368" key="Github.ShareDialog" timestamp="1613639192275">
+    <state width="669" height="494" key="GridCell.Tab.1.left/0.0.1739.939@0.0.1739.939" timestamp="1625052492148" />
+    <state width="669" height="494" key="GridCell.Tab.1.right" timestamp="1625052492148">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state x="749" y="368" key="Github.ShareDialog/0.0.1739.939@0.0.1739.939" timestamp="1613639192275" />
-    <state width="1696" height="338" key="GridCell.Tab.0.bottom" timestamp="1615949510103">
+    <state width="669" height="494" key="GridCell.Tab.1.right/0.0.1739.939@0.0.1739.939" timestamp="1625052492148" />
+    <state x="1023" y="216" key="ReplaceDuplicatesPrompt" timestamp="1623138457598">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="1696" height="859" key="GridCell.Tab.0.bottom/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="338" key="GridCell.Tab.0.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615949510103" />
-    <state width="1696" height="338" key="GridCell.Tab.0.center" timestamp="1615949510102">
+    <state x="1023" y="216" key="ReplaceDuplicatesPrompt/0.0.1739.939@0.0.1739.939" timestamp="1623138457598" />
+    <state x="462" y="203" key="Vcs.Push.Dialog.v2" timestamp="1625052546297">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="1696" height="859" key="GridCell.Tab.0.center/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="338" key="GridCell.Tab.0.center/0.0.1739.939@0.0.1739.939" timestamp="1615949510102" />
-    <state width="1696" height="338" key="GridCell.Tab.0.left" timestamp="1615949510102">
+    <state x="462" y="203" key="Vcs.Push.Dialog.v2/0.0.1739.939@0.0.1739.939" timestamp="1625052546297" />
+    <state width="876" height="477" key="XDebugger.FullValuePopup" timestamp="1624247220626">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="1696" height="859" key="GridCell.Tab.0.left/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="338" key="GridCell.Tab.0.left/0.0.1739.939@0.0.1739.939" timestamp="1615949510102" />
-    <state width="1696" height="338" key="GridCell.Tab.0.right" timestamp="1615949510103">
+    <state width="876" height="477" key="XDebugger.FullValuePopup/0.0.1739.939@0.0.1739.939" timestamp="1624247220626" />
+    <state x="679" y="384" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1620147362903">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="1696" height="859" key="GridCell.Tab.0.right/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="338" key="GridCell.Tab.0.right/0.0.1739.939@0.0.1739.939" timestamp="1615949510103" />
-    <state width="1696" height="192" key="GridCell.Tab.1.bottom" timestamp="1615921775121">
+    <state x="679" y="384" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1739.939@0.0.1739.939" timestamp="1620147362903" />
+    <state x="910" y="200" key="extract.method.dialog" timestamp="1623190333137">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="1696" height="859" key="GridCell.Tab.1.bottom/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="192" key="GridCell.Tab.1.bottom/0.0.1739.939@0.0.1739.939" timestamp="1615921775121" />
-    <state width="1696" height="192" key="GridCell.Tab.1.center" timestamp="1615921775121">
+    <state x="910" y="200" key="extract.method.dialog/0.0.1739.939@0.0.1739.939" timestamp="1623190333137" />
+    <state x="582" y="69" width="575" height="801" key="find.popup" timestamp="1624828675874">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="1696" height="859" key="GridCell.Tab.1.center/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="192" key="GridCell.Tab.1.center/0.0.1739.939@0.0.1739.939" timestamp="1615921775121" />
-    <state width="1696" height="192" key="GridCell.Tab.1.left" timestamp="1615921775121">
+    <state x="582" y="69" width="575" height="801" key="find.popup/0.0.1739.939@0.0.1739.939" timestamp="1624828675874" />
+    <state x="527" y="216" key="run.anything.popup" timestamp="1624992703921">
       <screen x="0" y="0" width="1739" height="939" />
     </state>
-    <state width="1696" height="859" key="GridCell.Tab.1.left/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="192" key="GridCell.Tab.1.left/0.0.1739.939@0.0.1739.939" timestamp="1615921775121" />
-    <state width="1696" height="192" key="GridCell.Tab.1.right" timestamp="1615921775121">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state width="1696" height="859" key="GridCell.Tab.1.right/0.0.1739.939/1920.0.1739.939@1920.0.1739.939" timestamp="1614323697207" />
-    <state width="1696" height="192" key="GridCell.Tab.1.right/0.0.1739.939@0.0.1739.939" timestamp="1615921775121" />
-    <state x="226" y="20" key="MergeDialog" timestamp="1615285983415">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="226" y="20" key="MergeDialog/0.0.1739.939@0.0.1739.939" timestamp="1615285983415" />
-    <state x="509" y="232" key="MultipleFileMergeDialog" timestamp="1614346419429">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="509" y="232" key="MultipleFileMergeDialog/0.0.1739.939@0.0.1739.939" timestamp="1614346419429" />
-    <state x="685" y="404" key="ReplaceDuplicatesPrompt" timestamp="1614415499593">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="685" y="404" key="ReplaceDuplicatesPrompt/0.0.1739.939@0.0.1739.939" timestamp="1614415499593" />
-    <state x="665" y="191" key="RollbackChangesDialog" timestamp="1614349344280">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="665" y="191" key="RollbackChangesDialog/0.0.1739.939@0.0.1739.939" timestamp="1614349344280" />
-    <state width="254" height="198" key="RunAnythingAction_Filter_Popup" timestamp="1613904786311">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state width="254" height="198" key="RunAnythingAction_Filter_Popup/0.0.1739.939@0.0.1739.939" timestamp="1613904786311" />
-    <state x="720" y="385" key="VCS.ChangelistChooser" timestamp="1615383946830">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="720" y="385" key="VCS.ChangelistChooser/0.0.1739.939@0.0.1739.939" timestamp="1615383946830" />
-    <state x="462" y="203" key="Vcs.Push.Dialog.v2" timestamp="1615708326427">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="462" y="203" key="Vcs.Push.Dialog.v2/0.0.1739.939@0.0.1739.939" timestamp="1615708326427" />
-    <state x="598" y="204" key="VcsDiffUtil.ChangesDialog" timestamp="1614282386720">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="598" y="204" key="VcsDiffUtil.ChangesDialog/0.0.1739.939@0.0.1739.939" timestamp="1614282386720" />
-    <state width="1275" height="477" key="XDebugger.FullValuePopup" timestamp="1615920532309">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state width="1275" height="477" key="XDebugger.FullValuePopup/0.0.1739.939@0.0.1739.939" timestamp="1615920532309" />
-    <state x="641" y="277" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1614183629698">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="641" y="277" key="com.intellij.testIntegration.createTest.CreateTestDialog/0.0.1739.939@0.0.1739.939" timestamp="1614183629698" />
-    <state x="910" y="200" key="extract.method.dialog" timestamp="1614437095358">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="910" y="200" key="extract.method.dialog/0.0.1739.939@0.0.1739.939" timestamp="1614437095358" />
-    <state x="582" y="69" width="575" height="801" key="find.popup" timestamp="1615448386460">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="582" y="69" width="575" height="801" key="find.popup/0.0.1739.939@0.0.1739.939" timestamp="1615448386460" />
-    <state x="652" y="183" key="git4idea.branch.GitSmartOperationDialog" timestamp="1615286056703">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="652" y="183" key="git4idea.branch.GitSmartOperationDialog/0.0.1739.939@0.0.1739.939" timestamp="1615286056703" />
-    <state x="77" y="105" width="1553" height="688" key="git4idea.log.GitShowExternalLogAction" timestamp="1615287123407">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="77" y="105" width="1553" height="688" key="git4idea.log.GitShowExternalLogAction/0.0.1739.939@0.0.1739.939" timestamp="1615287123407" />
-    <state x="527" y="216" key="run.anything.popup" timestamp="1615467860022">
-      <screen x="0" y="0" width="1739" height="939" />
-    </state>
-    <state x="527" y="216" key="run.anything.popup/0.0.1739.939@0.0.1739.939" timestamp="1615467860022" />
+    <state x="527" y="216" key="run.anything.popup/0.0.1739.939@0.0.1739.939" timestamp="1624992703921" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserOzon.java</url>
-          <line>22</line>
-          <option name="timeStamp" value="234" />
+          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
+          <line>733</line>
+          <option name="timeStamp" value="504" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java</url>
-          <line>155</line>
-          <option name="timeStamp" value="241" />
+          <url>file://$PROJECT_DIR$/src/main/java/ParserWildBer.java</url>
+          <line>133</line>
+          <option name="timeStamp" value="506" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java</url>
-          <line>26</line>
-          <option name="timeStamp" value="243" />
+          <url>file://$PROJECT_DIR$/src/main/java/LowerProductFinder.java</url>
+          <line>140</line>
+          <option name="timeStamp" value="511" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/TaskReadExcelForWildberies.java</url>
-          <line>141</line>
-          <option name="timeStamp" value="244" />
+          <url>file://$PROJECT_DIR$/src/main/java/LowerProductFinder.java</url>
+          <line>164</line>
+          <option name="timeStamp" value="523" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserOzon.java</url>
-          <line>348</line>
-          <option name="timeStamp" value="252" />
+          <url>file://$PROJECT_DIR$/src/main/java/LowerProductFinder.java</url>
+          <line>532</line>
+          <option name="timeStamp" value="524" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/LowerProductFinder.java</url>
+          <line>134</line>
+          <option name="timeStamp" value="530" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ReaderExcelFor_1C.java</url>
+          <line>522</line>
+          <option name="timeStamp" value="541" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserHtmlForWildberries.java</url>
+          <line>227</line>
+          <option name="timeStamp" value="569" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/LowerProductFinder.java</url>
+          <line>474</line>
+          <option name="timeStamp" value="571" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserHTMLForOzon.java</url>
+          <line>768</line>
+          <option name="timeStamp" value="573" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserHTMLForOzon.java</url>
+          <line>252</line>
+          <option name="timeStamp" value="575" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserHTMLForOzon.java</url>
+          <line>222</line>
+          <option name="timeStamp" value="577" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserHTMLForOzon.java</url>
+          <line>228</line>
+          <option name="timeStamp" value="578" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserHTMLForOzon.java</url>
+          <line>196</line>
+          <option name="timeStamp" value="579" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserHTMLForOzon.java</url>
+          <line>403</line>
+          <option name="timeStamp" value="581" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ParserHTMLForOzon.java</url>
+          <line>134</line>
+          <option name="timeStamp" value="582" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaskWriteExelForOzon.java</url>
-          <line>430</line>
-          <option name="timeStamp" value="271" />
+          <line>365</line>
+          <option name="timeStamp" value="583" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/Main.java</url>
-          <line>297</line>
-          <option name="timeStamp" value="279" />
+          <url>file://$PROJECT_DIR$/src/main/java/SupplierHtmlPage.java</url>
+          <line>191</line>
+          <option name="timeStamp" value="596" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/TaskWriteExelForOzon.java</url>
-          <line>342</line>
-          <option name="timeStamp" value="280" />
+          <url>file://$PROJECT_DIR$/src/main/java/SupplierHtmlPage.java</url>
+          <line>151</line>
+          <option name="timeStamp" value="598" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/ParserOzon.java</url>
-          <line>242</line>
-          <option name="timeStamp" value="281" />
+          <url>file://$PROJECT_DIR$/src/main/java/LowerProductFinder.java</url>
+          <line>261</line>
+          <option name="timeStamp" value="605" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

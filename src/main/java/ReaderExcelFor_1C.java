@@ -23,7 +23,7 @@ public class ReaderExcelFor_1C {
             Iterator rowIterator = sheet_1C.rowIterator();
             TaskReadExcelForOzon.countReadsRows_1C = 1;
             while (rowIterator.hasNext()){
-                List<String> arrayParams = new ArrayList<>();
+                List<List<String>> arrayParams = new ArrayList<>();
                 //получаем строку
                 Row row = (Row) rowIterator.next();
                 if (row.getRowNum() == 0 ){

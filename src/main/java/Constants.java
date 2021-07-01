@@ -281,11 +281,11 @@ public class Constants {
     public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
     public static final ArrayList<String> listForTypeGlass_Super_D = new ArrayList<>();
     public static final ArrayList<String> listForCharging = new ArrayList<>();
-    public static final ArrayList<String> listForChargingApple = new ArrayList<>();
-    public static final ArrayList<String> listForChargingMicro = new ArrayList<>();
-    public static final ArrayList<String> listForChargingType = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_Apple_8PIN = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_Micro_USB = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_Type_C = new ArrayList<>();
     public static final ArrayList<String> listForCharging_2in1 = new ArrayList<>();
-    public static final ArrayList<String> listForCharging_3in1 = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_3in1 = new ArrayList<>();
     public static final ArrayList<String> listForCharging_4in1 = new ArrayList<>();
     public static final ArrayList<String> listForBugs = new ArrayList<>();
     public static final ArrayList<String> listForHeadset = new ArrayList<>();
@@ -298,8 +298,56 @@ public class Constants {
     public static final ArrayList<String> listForSeriesCover = new ArrayList<>();
     public static final ArrayList<String> listForCable_AUX = new ArrayList<>();
 
+    //for ver. 2.0/additionalParameter//////////////////////////////////////////////////////////////////////////////
+    public static final String WITHOUT_CABLE = "без кабеля";
+    public static final String CABLE_3IN1 = "3in1";
+    public static final String CABLE_TYPE_C = "с кабелем Type-C";
+    public static final String CABLE_APPLE_8PIN = "с кабелем Apple 8 pin";
+    public static final String CABLE_MICRO_USB = "с кабелем Micro USB";
+    public static final String MASK = "маска";
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     static {
+        //for ver. 2.0/additionalParameter//////////////////////////////////////////////////////////////////////////////
+        listForConnector_Apple_8PIN.add("apple 8 pin");
+        listForConnector_Apple_8PIN.add("apple");
+        listForConnector_Apple_8PIN.add("8 pin");
+        listForConnector_Apple_8PIN.add("lightning");
+        listForConnector_Apple_8PIN.add("iphone");
+        listForConnector_Apple_8PIN.add("для айфона");
+
+        listForConnector_Micro_USB.add("микро");
+        listForConnector_Micro_USB.add("micro");
+
+        listForConnector_Type_C.add("type-c");
+        listForConnector_Type_C.add("type");
+
+        listForConnector_3in1.add("3 в 1");
+        listForConnector_3in1.add("3в1");
+        listForConnector_3in1.add("3-в-1");
+        listForConnector_3in1.add("3 in 1");
+        listForConnector_3in1.add("3-in-1");
+        listForConnector_3in1.add("3-in-");
+        listForConnector_3in1.add("3in1");
+        listForConnector_3in1.add("lightning+micro+type-c");
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        listForCharging.add("микро");
+        listForCharging.add("micro");
+        listForCharging.add("apple 8 pin");
+        listForCharging.add("apple");
+        listForCharging.add("8 pin");
+        listForCharging.add("lightning");
+        listForCharging.add("lighting");
+        listForCharging.add("iphone");
+        listForCharging.add("type");
+
         listForHeadset.add("apple");
         listForHeadset.add("lightning");
         //listForHeadset.add("8");
@@ -573,28 +621,9 @@ public class Constants {
         listForTypeGlass_Super_D.add("super d");
         listForTypeGlass_Super_D.add("super-d");
 
-        listForCharging.add("микро");
-        listForCharging.add("micro");
-        listForCharging.add("apple 8 pin");
-        listForCharging.add("apple");
-        listForCharging.add("8 pin");
-        listForCharging.add("lightning");
-        listForCharging.add("lighting");
-        listForCharging.add("iphone");
-        listForCharging.add("type");
 
-        listForChargingMicro.add("микро");
-        listForChargingMicro.add("micro");
 
-        listForChargingApple.add("apple 8 pin");
-        listForChargingApple.add("apple");
-        listForChargingApple.add("8 pin");
-        listForChargingApple.add("lightning");
-        listForChargingApple.add("iphone");
-        listForChargingApple.add("для айфона");
 
-        listForChargingType.add("type-c");
-        listForChargingType.add("type");
 
         listForCharging_2in1.add("2 в 1");
         listForCharging_2in1.add("2в1");
@@ -603,14 +632,6 @@ public class Constants {
         listForCharging_2in1.add("2-in-");
         listForCharging_2in1.add("2in1");
 
-        listForCharging_3in1.add("3 в 1");
-        listForCharging_3in1.add("3в1");
-        listForCharging_3in1.add("3-в-1");
-        listForCharging_3in1.add("3 in 1");
-        listForCharging_3in1.add("3-in-1");
-        listForCharging_3in1.add("3-in-");
-        listForCharging_3in1.add("3in1");
-        listForCharging_3in1.add("lightning+micro+type-c");
 
         listForCharging_4in1.add("4 в 1");
         listForCharging_4in1.add("4в1");
@@ -832,19 +853,50 @@ public class Constants {
         listForCategoryBy_1C.add(PRODUCT_TYPE_1C_170);
     }
 
+    //for ver. 2.0/additionalParameter//////////////////////////////////////////////////////////////////////////////
+    static boolean checkTitleDescriptionAndParamsForConnectorType(String description) {
+        boolean isCheck = false;
+
+        for (String connType: listForConnector_Apple_8PIN){
+            if (description.toLowerCase().contains(connType)){
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForConnector_Micro_USB){
+            if (isCheck == true){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)){
+                isCheck = true;
+            }
+        }
+        for (String connType: listForConnector_Type_C){
+            if (isCheck == true){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)){
+                isCheck = true;
+            }
+        }
+
+        return isCheck;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     static List<String> getCollectionsParam(List<String> arrayParams, String url) {
         //определяем коллекцию с названием одного и того же кабеля
         List<String> listWithCable = null;
         if (arrayParams.size() == 1){
             String param = arrayParams.get(0);
-            boolean b = Constants.listForChargingMicro.contains(param);
+            boolean b = Constants.listForConnector_Micro_USB.contains(param);
 
             if (b){
-                listWithCable = Constants.listForChargingMicro;
-            } else if (Constants.listForChargingApple.contains(param)){
-                listWithCable = Constants.listForChargingApple;
-            } else if (Constants.listForChargingType.contains(param)){
-                listWithCable = Constants.listForChargingType;
+                listWithCable = Constants.listForConnector_Micro_USB;
+            } else if (Constants.listForConnector_Apple_8PIN.contains(param)){
+                listWithCable = Constants.listForConnector_Apple_8PIN;
+            } else if (Constants.listForConnector_Type_C.contains(param)){
+                listWithCable = Constants.listForConnector_Type_C;
             } else {
                 System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
             }
@@ -857,18 +909,18 @@ public class Constants {
     static List<String> getCollectionsParamCable(String param, String url) {
         //определяем коллекцию с названием одного и того же кабеля
         List<String> listWithCable = null;
-        boolean b = Constants.listForChargingMicro.contains(param);
+        boolean b = Constants.listForConnector_Micro_USB.contains(param);
 
         if (b) {
-            listWithCable = Constants.listForChargingMicro;
-        } else if (Constants.listForChargingApple.contains(param)) {
-            listWithCable = Constants.listForChargingApple;
-        } else if (Constants.listForChargingType.contains(param)) {
-            listWithCable = Constants.listForChargingType;
+            listWithCable = Constants.listForConnector_Micro_USB;
+        } else if (Constants.listForConnector_Apple_8PIN.contains(param)) {
+            listWithCable = Constants.listForConnector_Apple_8PIN;
+        } else if (Constants.listForConnector_Type_C.contains(param)) {
+            listWithCable = Constants.listForConnector_Type_C;
         } else if (Constants.listForCharging_2in1.contains(param)) {
             listWithCable = Constants.listForCharging_2in1;
-        } else if (Constants.listForCharging_3in1.contains(param)) {
-            listWithCable = Constants.listForCharging_3in1;
+        } else if (Constants.listForConnector_3in1.contains(param)) {
+            listWithCable = Constants.listForConnector_3in1;
         } else if (Constants.listForCharging_4in1.contains(param)) {
             listWithCable = Constants.listForCharging_4in1;
         } else if (Constants.listForCable_0_2m.contains(param)) {

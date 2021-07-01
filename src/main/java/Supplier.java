@@ -13,13 +13,13 @@ public class Supplier {
     private String productType;
     private String nomenclature;
     private String myProductModel;
-    private List<String> arrayListParams;
+    private List<List<String>> arrayListParams;
     private String specQuerySearch;
     private int specPrice;
     private double commission;
     private int delivery;
 
-    public Supplier(String code_1C, String myBrand, String productType, String nomenclature, String myProductModel, List<String> arrayListParams, String specQuerySearch, int specPrice) {
+    public Supplier(String code_1C, String myBrand, String productType, String nomenclature, String myProductModel, List<List<String>> arrayListParams, String specQuerySearch, int specPrice) {
         this.code_1C = code_1C;
         this.myBrand = myBrand;
         this.productType = productType;
