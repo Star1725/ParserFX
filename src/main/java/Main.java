@@ -259,7 +259,7 @@ public class Main extends Application implements Controller.ActionInController {
                 String productType = entry.getValue().getProductType();
                 String specQuerySearchForWildberiesOrOzon = entry.getValue().getSpecQuerySearchForWildberiesOrOzon();
                 String myProductModel = entry.getValue().getMyProductModel();
-                List<String> arrayParams = entry.getValue().getArrayListParams();
+                List<List<String>> arrayParams = entry.getValue().getArrayListParams();
 
                 myCalls.add(new MyCall(marketplaceFlag, key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, specQuerySearchForWildberiesOrOzon, webClient, lock));
             }
@@ -533,13 +533,13 @@ public class Main extends Application implements Controller.ActionInController {
         String brand;
         String productType;
         String productModel;
-        List<String> arrayParams;
+        List<List<String>> arrayParams;
         String specQuerySearch;
         Set myVendorCodes;
         WebClient webClient;
         Lock lock;
 
-        public MyCall(int marketplaceFlag, String key, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
+        public MyCall(int marketplaceFlag, String key, String category, String brand, String productType, String productModel, List<List<String>> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
             this.key = key;
             this.category = category;
             this.brand = brand;

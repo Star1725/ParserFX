@@ -35,12 +35,12 @@ public class Product {
     private String competitorName;
 
     public int getCompetitorLowerPriceU(){
-        if (this.competitorPromoPriceU != 0){
-            return competitorPromoPriceU;
+        if (this.competitorPriceU != 0){
+            return competitorPriceU;
         } else if (this.competitorBasicPriceU != 0){
             return competitorBasicPriceU;
         } else {
-            return competitorPriceU;
+            return competitorPromoPriceU;
         }
     }
 

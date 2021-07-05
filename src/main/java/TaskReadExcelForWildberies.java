@@ -288,12 +288,12 @@ public class TaskReadExcelForWildberies extends Task<Map> {
 
                     //для защитных стекол -  его тип
                     case Constants.PRODUCT_TYPE_1C_139:
-                        for (String type : Constants.listForTypeGlass){
-                            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(type.toLowerCase())) {
-                                arrayParams.add(type.toLowerCase());
-                            }
-                        }
-                        break;
+//                        for (String type : Constants.listForTypeProtectiveGlass){
+//                            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(type.toLowerCase())) {
+//                                arrayParams.add(type.toLowerCase());
+//                            }
+//                        }
+//                        break;
                 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //если модель сразу за брендом после запятой
@@ -639,7 +639,7 @@ public class TaskReadExcelForWildberies extends Task<Map> {
 
 
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, specQuery, specPrice_1C, commission, delivery));
+//                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, specQuery, specPrice_1C, commission, delivery));
                 //увеличиваем ProgressBar
                 this.updateProgress(i, countFull);
                 i++;
@@ -656,10 +656,10 @@ public class TaskReadExcelForWildberies extends Task<Map> {
                     entry.getValue().setSpecPrice(supplier.getSpecPrice());
                     entry.getValue().setMyBrand(supplier.getMyBrand());
                     entry.getValue().setMyProductModel(supplier.getMyProductModel());
-                    entry.getValue().setArrayListParams((ArrayList<String>) supplier.getArrayListParams());
+//                    entry.getValue().setArrayListParams((ArrayList<String>) supplier.getArrayListParams());
                     entry.getValue().setMyNomenclature_1C(supplier.getNomenclature());
                     entry.getValue().setSpecQuerySearchForWildberiesOrOzon(supplier.getSpecQuerySearch());
-                    entry.getValue().setProductType(supplier.getProductType());
+//                    entry.getValue().setProductType(supplier.getProductType());
 
                     entry.getValue().setMyCommissionForOzonOrWildberries(supplier.getCommission());
                     entry.getValue().setMyLastMileForOzonOrWildberries(supplier.getDelivery());

@@ -91,9 +91,9 @@ public class ReaderExcelFor_1C {
                         int start = myNomenclature.indexOf('(');
                         int stop = myNomenclature.indexOf(')');
                         if (start == -1 || stop == -1){
-                            arrayParams.add("одноразовая трехслойная не медицинская");
+                            //arrayParams.add("одноразовая трехслойная не медицинская");
                         } else {
-                            arrayParams.add(myNomenclature.substring(start + 1, stop) + " шт");
+                            //arrayParams.add(myNomenclature.substring(start + 1, stop) + " шт");
                         }
                         break;
 
@@ -115,11 +115,11 @@ public class ReaderExcelFor_1C {
                             for (String type: Constants.listForCharging){
                                 if (buffParams[1].toLowerCase().contains(type)){
                                     if (arrayParams.size() == 0){
-                                        arrayParams.add(type);
+                                        //arrayParams.add(type);
                                     } else {
                                         for (int q = 0; q < arrayParams.size(); q++){
                                             if (!arrayParams.get(q).contains(type)){
-                                                arrayParams.add(type);
+                                                //arrayParams.add(type);
                                             }
                                         }
                                     }
@@ -148,11 +148,11 @@ public class ReaderExcelFor_1C {
 
                     //для защитных стекол -  его тип
                     case Constants.PRODUCT_TYPE_1C_139:
-                        for (String type : Constants.listForTypeGlass){
-                            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(type.toLowerCase())) {
-                                arrayParams.add(type.toLowerCase());
-                            }
-                        }
+//                        for (String type : Constants.listForTypeProtectiveGlass){
+//                            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(type.toLowerCase())) {
+//                                arrayParams.add(type.toLowerCase());
+//                            }
+//                        }
                         break;
                 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -348,7 +348,7 @@ public class ReaderExcelFor_1C {
                         case Constants.PRODUCT_TYPE_1C_168:
                         case Constants.PRODUCT_TYPE_1C_92:
                             String series = "-";
-                            Constants.addedParamForSeriesCover(arrayParams, myNomenclature);
+                            //Constants.addedParamForSeriesCover(arrayParams, myNomenclature);
                             System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
@@ -360,7 +360,7 @@ public class ReaderExcelFor_1C {
                         case Constants.PRODUCT_TYPE_1C_49:
                             String connect = "-";
                             connect = "type-c - type-c";
-                            arrayParams.add(connect);
+                            //arrayParams.add(connect);
                             System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
@@ -369,7 +369,7 @@ public class ReaderExcelFor_1C {
                         case Constants.PRODUCT_TYPE_1C_50:
                         case Constants.PRODUCT_TYPE_1C_62:
                             connect = "type-c - apple";
-                            arrayParams.add(connect);
+                            //arrayParams.add(connect);
                             System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
                             System.out.println("model = " + model);
@@ -377,7 +377,7 @@ public class ReaderExcelFor_1C {
                             break;
                         case Constants.PRODUCT_TYPE_1C_61:
                             connect = "aux";
-                            arrayParams.add(connect);
+                            //arrayParams.add(connect);
                             break;
                         case Constants.PRODUCT_TYPE_1C_63:
                         case Constants.PRODUCT_TYPE_1C_64:
@@ -391,17 +391,17 @@ public class ReaderExcelFor_1C {
                                     ||  productType.equals(Constants.PRODUCT_TYPE_1C_62)
                                     ||  productType.equals(Constants.PRODUCT_TYPE_1C_50)) {
                                 connect = "apple";
-                                arrayParams.add(connect);
+                                //arrayParams.add(connect);
                             }
                             if (productType.equals(Constants.PRODUCT_TYPE_1C_65) || productType.equals(Constants.PRODUCT_TYPE_1C_49)) {
                                 connect = "type-c";
-                                arrayParams.add(connect);
+                                //arrayParams.add(connect);
                             }
                             if (productType.equals(Constants.PRODUCT_TYPE_1C_66) || productType.equals(Constants.PRODUCT_TYPE_1C_166)) {
                                 connect = "micro";
-                                arrayParams.add(connect);
+                                //arrayParams.add(connect);
                             }
-                            Constants.addedParamForCableLenght(arrayParams, myNomenclature);
+                            //Constants.addedParamForCableLenght(arrayParams, myNomenclature);
                             //querySearch = brand + " " + model + " " + connect;
                             System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
@@ -421,7 +421,7 @@ public class ReaderExcelFor_1C {
                         //для этих типов в поисковом запросе тип немного видоизменяем
                         case Constants.PRODUCT_TYPE_1C_68:
                             //productType = "Кабель USB 2 в 1";
-                            arrayParams.add("2 в 1");
+                            //arrayParams.add("2 в 1");
                             querySearch = brand + " " + model + " 2 в 1";
                             System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
@@ -435,7 +435,7 @@ public class ReaderExcelFor_1C {
                         case Constants.PRODUCT_TYPE_1C_69:
                         case Constants.PRODUCT_TYPE_1C_85:
                             //productType = "Кабель USB 3 в 1";
-                            arrayParams.add("3 в 1");
+                           // arrayParams.add("3 в 1");
                             querySearch = brand + " " + model + " 3 в 1";
                             System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
@@ -447,7 +447,7 @@ public class ReaderExcelFor_1C {
                             break;
                         case Constants.PRODUCT_TYPE_1C_70:
                             //productType = "Кабель USB 4 в 1";
-                            arrayParams.add("4 в 1");
+                            //arrayParams.add("4 в 1");
                             querySearch = brand + " " + model + " 4 в 1";
                             System.out.println(UnifierDataFromExcelFiles.countReadsRows_1C + " - myNomenclature = " + myNomenclature);
                             System.out.println("productType = " + productType);
@@ -514,11 +514,11 @@ public class ReaderExcelFor_1C {
                     System.out.println(ignored.getMessage());
                 }
 
-                if (marketPlaceFlag == 1){
-                    UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,  specQuery, specPrice_1C));
-                } else if (marketPlaceFlag == 2){
-                    UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, specQuery, specPrice_1C, commission, delivery));
-                }
+//                if (marketPlaceFlag == 1){
+//                    UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,  specQuery, specPrice_1C));
+//                } else if (marketPlaceFlag == 2){
+//                    UnifierDataFromExcelFiles.supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams, specQuery, specPrice_1C, commission, delivery));
+//                }
 
 
                 //увеличиваем ProgressBar

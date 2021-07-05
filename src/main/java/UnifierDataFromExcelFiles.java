@@ -26,7 +26,8 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
     static Map<String, Integer> mapCountForMyProductName = new HashMap<>();
 
     ReaderExcel readerExcel;
-    ReaderExcelFor_1C readerExcelFor_1C = new ReaderExcelFor_1C(this);
+//    ReaderExcelFor_1C readerExcelFor_1C = new ReaderExcelFor_1C(this);
+    ReaderExcelFor_1C_ver_2 ReaderExcelFor_1C_ver_2 = new ReaderExcelFor_1C_ver_2(this);
 
     public UnifierDataFromExcelFiles(List<File> files, int marketPlaceFlag) {
         this.files = files;
@@ -65,11 +66,11 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
 
         //проверяем, правильно ли мы прочитали файлы
         System.out.println("проверяем, правильно ли мы прочитали файлы");
-        if (!readerExcel.checkExcelFile(sheetReport) || !readerExcelFor_1C.checkFile_1C(sheet_1C)) {
+        if (!readerExcel.checkExcelFile(sheetReport) || !ReaderExcelFor_1C_ver_2.checkFile_1C(sheet_1C)) {
             Sheet sheetBuff = sheet_1C;
             sheet_1C = sheetReport;
             sheetReport = sheetBuff;
-            if (!readerExcel.checkExcelFile(sheetReport) || !readerExcelFor_1C.checkFile_1C(sheet_1C)) {
+            if (!readerExcel.checkExcelFile(sheetReport) || !ReaderExcelFor_1C_ver_2.checkFile_1C(sheet_1C)) {
                 System.out.println("ошибка чтения файлов Excel. Проверьте правильность написания названий столбцов, и их очерёдность\n" + "");
                 resultProductHashMap.put("Ошибка чтения файла Excel с остатками Ozon", null);
                 return resultProductHashMap;
@@ -86,7 +87,7 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
 
 
         readerExcel.getDataFromExcelFile(sheetReport);
-        readerExcelFor_1C.getDataFromBase_1C(sheet_1C, marketPlaceFlag);
+        ReaderExcelFor_1C_ver_2.getDataFromBase_1C(sheet_1C, marketPlaceFlag);
 
 //пытаемся привязать specPrice_1C и productName к ResultProduct
         for (Map.Entry<String, ResultProduct> entry : resultProductHashMap.entrySet()) {
@@ -99,10 +100,9 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
                 entry.getValue().setSpecPrice(supplier1.getSpecPrice());//
                 entry.getValue().setMyBrand(supplier1.getMyBrand());//
                 entry.getValue().setMyProductModel(supplier1.getMyProductModel());//
-                entry.getValue().setArrayListParams((ArrayList<String>) supplier1.getArrayListParams());//
+                entry.getValue().setArrayListParams((ArrayList<List<String>>) supplier1.getArrayListParams());//
                 entry.getValue().setMyNomenclature_1C(supplier1.getNomenclature());//
                 entry.getValue().setSpecQuerySearchForWildberiesOrOzon(supplier1.getSpecQuerySearch());//
-                entry.getValue().setProductType(supplier1.getProductType());//
 
                 if (marketPlaceFlag == 2){
                     entry.getValue().setMyCommissionForOzonOrWildberries(supplier1.getCommission());

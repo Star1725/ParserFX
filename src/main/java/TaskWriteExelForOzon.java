@@ -297,8 +297,11 @@ public class TaskWriteExelForOzon extends Task<File> {
                         cell.setCellValue("Дополнит. парам. поиска \n\r не найдены");
                     } else {
                         String result = "";
-                        for (String s: productArrayList.get(i).getArrayListParams()){
-                            result = result + s + " ";
+                        for (List<String> stringList: productArrayList.get(i).getArrayListParams()){
+                            for (String param: stringList){
+                                result = result + param + " ";
+                            }
+                            result = result + "\n\r";
                         }
                         cell.setCellValue(result);
                     }

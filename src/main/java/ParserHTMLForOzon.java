@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class ParserHTMLForOzon {
 
-    static List<Product> getCatalogFromFPageForHtmlUnit(String url, String productType, String brand, String model, List<String> arrayParams) {
+    static List<Product> getCatalogFromFPageForHtmlUnit(String url, String productType, String brand, String model, List<List<String>> arrayParams) {
         List<Product> productList = new ArrayList<>();
         HtmlPage page = null;
         String stringPage = null;
@@ -493,10 +493,10 @@ public class ParserHTMLForOzon {
                                         List<String> listWithCableParam_1;
                                         List<String> listWithCableParam_2 = null;
                                         if (arrayParams.size() == 1) {
-                                            listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), brand + model);
+                                            listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0).get(0), brand + model);
                                         } else {
-                                            listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), brand + model);
-                                            listWithCableParam_2 = Constants.getCollectionsParamCable(arrayParams.get(1), brand + model);
+                                            listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0).get(0), brand + model);
+                                            listWithCableParam_2 = Constants.getCollectionsParamCable(arrayParams.get(1).get(0), brand + model);
                                         }
                                         int check1 = 0;
                                         int check2 = 10;
@@ -550,8 +550,8 @@ public class ParserHTMLForOzon {
                                     System.out.println("Тип продукта - " + productType);
                                     try {
                                         if (arrayParams.size() == 1) {
-                                            if (!description.contains(arrayParams.get(0))) {
-                                                System.out.println("не прошёл, тук как нет доп. параметра поиска = " + Constants.getRedString(arrayParams.get(0)));
+                                            if (!description.contains(arrayParams.get(0).get(0))) {
+                                                System.out.println("не прошёл, тук как нет доп. параметра поиска = " + Constants.getRedString(arrayParams.get(0).get(0)));
                                                 continue;
                                             }
                                         }

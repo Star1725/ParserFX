@@ -33,7 +33,7 @@ public class LowerProductFinder {
         loggerLowerProductFinder.addHandler(Main.fileHandler);
     }
 
-    public Product getProduct(int marketplaceFlag, String myVendorCodeFromRequest, String category, String brand, String productType, String productModel, List<String> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
+    public Product getProduct(int marketplaceFlag, String myVendorCodeFromRequest, String category, String brand, String productType, String productModel, List<List<String>> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
         List<Product> productList;
 
         if (specQuerySearch.equals("-") || specQuerySearch.equals("")) {
@@ -241,7 +241,7 @@ public class LowerProductFinder {
         return product;
     }
 
-    private static List<Product> getCatalogProducts(int marketplaceFlag, String query, String productType, String brand, String model, List<String> arrayParams) {
+    private static List<Product> getCatalogProducts(int marketplaceFlag, String query, String productType, String brand, String model, List<List<String>> arrayParams) {
         List<Product> productList = null;
         String url = "-";
         url = getUrlForSearchQuery(query, marketplaceFlag);
@@ -284,7 +284,7 @@ public class LowerProductFinder {
         return url;
     }
 
-    private static Product getProductWithLowerPrice(int marketPlaceFlag, List<Product> productList, Set myVendorCodes, String myVendorCodeFromRequest, String productType, String brand, String productModel, List<String> arrayParams) {
+    private static Product getProductWithLowerPrice(int marketPlaceFlag, List<Product> productList, Set myVendorCodes, String myVendorCodeFromRequest, String productType, String brand, String productModel, List<List<String>> arrayParams) {
 
         boolean myProductIsLower = true;
 
@@ -293,299 +293,132 @@ public class LowerProductFinder {
 
         if (productList.size() == 0) {
             return null;
-        } else if (productList.size() == 1){
+        } else if (productList.size() == 1) {
             return productList.get(0);
         } else {
             Product product = null;
             productList.sort(comparing(Product::getCompetitorLowerPriceU));
 
-            switch (productType){
-                case Constants.PRODUCT_TYPE_1C_10:
-                case Constants.PRODUCT_TYPE_1C_39:
-                case Constants.PRODUCT_TYPE_1C_40:
-                case Constants.PRODUCT_TYPE_1C_132:
-                    try {
-                        if (productModel != null){
-                            //если в запросе только бренд и модель, то нам нужен первый product, в описании которого только модель
-                            if (arrayParams.size() == 0){
-                                for (Product p : productList) {
-                                    String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                    if (nomenclature.toLowerCase().contains(productModel + ",")
-                                            || nomenclature.toLowerCase().contains(productModel + " ")
-                                            || nomenclature.toLowerCase().contains("(" + productModel + ")")
-                                            || nomenclature.toLowerCase().contains(", " + productModel + "")
-                                            || nomenclature.toLowerCase().contains(" " + productModel + "")) {
-                                        int check = 0;
-                                        for (String s : Constants.listForCharging) {
-                                            if (nomenclature.contains(s.toLowerCase())) {
-                                                check++;
-                                                break;
-                                            }
-                                        }
-                                        if (check == 0) {
-                                            if (myVendorCodes.contains(p.getCompetitorVendorCode()) || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase()) || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                                if (myProductIsLower) {
-                                                    product = p;
-                                                    myProductIsLower = false;
-                                                }
-                                            } else {
-                                                product = p;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            //если в запросе бренд, модель и кабель то нам нужен первый product, в описании которого наш param
-                            else {
-                                //определяем коллекцию с разными названиями нашего param
-                                List<String> listWithCable = Constants.getCollectionsParam(arrayParams, brand + productModel);
-                                for (Product p : productList) {
-                                    String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                    if (nomenclature.toLowerCase().contains(productModel + ",")
-                                            || nomenclature.toLowerCase().contains(productModel + " ")
-                                            || nomenclature.toLowerCase().contains("(" + productModel + ")")
-                                            || nomenclature.toLowerCase().contains(", " + productModel + "")
-                                            || nomenclature.toLowerCase().contains(" " + productModel + "")) {
-                                        int check = 0;
-                                        for (String s : listWithCable) {
-                                            if (nomenclature.contains(s)) {
-                                                if (myVendorCodes.contains(p.getCompetitorVendorCode())
-                                                        || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase())
-                                                        || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                                    if (myProductIsLower) {
-                                                        product = p;
-                                                        myProductIsLower = false;
-                                                    }
-                                                } else {
-                                                    product = p;
-                                                    check++;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        if (check != 0) {
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
-                    }
-                    break;
-
-                case Constants.PRODUCT_TYPE_1C_48:
-                case Constants.PRODUCT_TYPE_1C_49:
-                case Constants.PRODUCT_TYPE_1C_50:
-                case Constants.PRODUCT_TYPE_1C_61:
-                case Constants.PRODUCT_TYPE_1C_62:
-                case Constants.PRODUCT_TYPE_1C_63:
-                case Constants.PRODUCT_TYPE_1C_64:
-                case Constants.PRODUCT_TYPE_1C_65:
-                case Constants.PRODUCT_TYPE_1C_66:
-                case Constants.PRODUCT_TYPE_1C_166:
-                case Constants.PRODUCT_TYPE_1C_67:
-                case Constants.PRODUCT_TYPE_1C_68:
-                case Constants.PRODUCT_TYPE_1C_69:
-                case Constants.PRODUCT_TYPE_1C_70:
-                    try {
-                        if (productModel != null){
-                            //определяем коллекцию с разными названиями нашего param
-                            if (arrayParams.size() == 1){
-                                listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), brand + productModel);
-                            } else {
-                                listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), brand + productModel);
-                                listWithCableParam_2 = Constants.getCollectionsParamCable(arrayParams.get(1), brand + productModel);
-                            }
-
-                            for (Product p : productList) {
-                                String nomenclature = p.getCompetitorProductName().toLowerCase();
-                                if (nomenclature.toLowerCase().contains(productModel + ",")
-                                        || nomenclature.toLowerCase().contains(productModel + " ")
-                                        || nomenclature.toLowerCase().contains("(" + productModel + ")")
-                                        || nomenclature.toLowerCase().contains(", " + productModel + "")
-                                        || nomenclature.toLowerCase().contains(" " + productModel + "")) {
-                                    int check = 0;
-                                    for (String s1 : listWithCableParam_1) {
-                                        if (nomenclature.contains(s1)) {
-                                            if (listWithCableParam_2 != null){
-                                                for (String s2 : listWithCableParam_2) {
-                                                    if (nomenclature.contains(s2)) {
-                                                        if (myVendorCodes.contains(p.getCompetitorVendorCode())
-                                                                || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase())
-                                                                || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                                            if (myProductIsLower) {
-                                                                product = p;
-                                                                myProductIsLower = false;
-                                                            }
-                                                        } else {
-                                                            product = p;
-                                                            check++;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                                if (check != 0) {
-                                                    break;
-                                                }
-                                            } else {
-                                                if (myVendorCodes.contains(p.getCompetitorVendorCode())
-                                                        || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase())
-                                                        || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                                    if (myProductIsLower) {
-                                                        product = p;
-                                                        myProductIsLower = false;
-                                                    }
-                                                } else {
-                                                    product = p;
-                                                    check++;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (check != 0) {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
-                    }
-                    break;
-
-                case Constants.PRODUCT_TYPE_1C_139:
-                    try {
-                        if (productModel != null){
-                            if (arrayParams.size() == 1){
-                                listWithCableParam_1 = Constants.getCollectionsParamCable(arrayParams.get(0), brand + productModel);
-                                //
-                                if (listWithCableParam_1 == null){
-                                    listWithCableParam_1 = new ArrayList<>();
-                                    listWithCableParam_1.add(arrayParams.get(0));
-                                }
-                                for (Product p : productList) {
-                                    String nomenclature = p.getCompetitorProductName().replaceAll(",", "").toLowerCase();
-                                    //
-                                    int check = 0;
-                                    for (String param: listWithCableParam_1){
-                                        if (nomenclature.contains(param)) {
-                                            if (myVendorCodes.contains(p.getCompetitorVendorCode())
-                                                    || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase())
-                                                    || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                                if (myProductIsLower) {
-                                                    product = p;
-                                                    myProductIsLower = false;
-                                                }
-                                            } else {
-                                                product = p;
-                                                check++;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (check != 0) {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
-                    }
-                    break;
-                case Constants.PRODUCT_TYPE_1C_93:
-                case Constants.PRODUCT_TYPE_1C_136:
-                case Constants.PRODUCT_TYPE_1C_167:
-                case Constants.PRODUCT_TYPE_1C_168:
-                case Constants.PRODUCT_TYPE_1C_92:
-                    try {
-                        if (productModel != null){
-                            if (arrayParams.size() == 1) {
-
-                                for (Product p : productList) {
-                                    String nomenclature = p.getCompetitorProductName().replaceAll(",", "").toLowerCase();
-
-                                    if (nomenclature.contains(arrayParams.get(0))) {
-                                        if (myVendorCodes.contains(p.getCompetitorVendorCode())
-                                                || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase())
-                                                || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                            if (myProductIsLower) {
-                                                product = p;
-                                                myProductIsLower = false;
-                                            }
-                                        } else {
-                                            product = p;
-                                            break;
-                                        }
-                                    }
-
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Ошибка при обработке списка аналогов на поиск по параметру");
-                    }
-                    break;
-                default:
-                    boolean isFindAnalogProduct = false;
-                    boolean isNotFindMyProduct = true;
-                    for (Product p : productList) {
-                        //исключаем мои продукты кроме первого
-                        if (isNotFindMyProduct && ( myVendorCodes.contains(p.getCompetitorVendorCode())
-                                || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase())
-                                || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())))
-                                 {
-                            product = p;
-                            isNotFindMyProduct = false;
+            boolean isFindAnalogProduct = false;
+            boolean isNotFindMyProduct = true;
+            boolean isFindMyParams = false;
+            int countFind = 0;
+            for (Product p : productList) {
+                //исключаем мои продукты кроме первого
+                if (isNotFindMyProduct && (myVendorCodes.contains(p.getCompetitorVendorCode())
+                        || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase())
+                        || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase()))) {
+                    product = p;
+                    isNotFindMyProduct = false;
+                } else {
+                    String titleFromPageProduct = "-";
+                    String descriptionAndParams = "-";
+                    String sellerName = "-";
+                    if (marketPlaceFlag == 1) {//для Ozon
+                        //////////////////////////////////////////////////
+                    } else if (marketPlaceFlag == 2) {//для WB
+                        //если нет дополнительных параметров поиска, то заходим на каждую страницу, и анализируем заголовок,
+                        // описание и характеристики продукта на наличие названия нашей модели
+                        if (arrayParams.size() == 0) {
+                            Page pageProduct = SupplierHtmlPage.getWildberriesPageFromPlaywright(p.getCompetitorRefForPage());
+                            titleFromPageProduct = ParserHtmlForWildberries.getTitleFromPageProduct(pageProduct);
+                            descriptionAndParams = ParserHtmlForWildberries.getDescriptionAndParam(pageProduct);
+                            sellerName = ParserHtmlForWildberries.getSellerName(pageProduct);
+                            pageProduct.close();
+                            p.setCompetitorName(sellerName);
                         } else {
-                            String descriptionAndParams = "-";
-                            String sellerName = "-";
-                            if (marketPlaceFlag == 1){//для Ozon
-                                //////////////////////////////////////////////////
-                            } else if (marketPlaceFlag == 2) {//для WB
-                                Page pageProduct = SupplierHtmlPage.getWildberriesPageFromPlaywright(p.getCompetitorRefForPage());
-                                descriptionAndParams = ParserHtmlForWildberries.getDescriptionAndParam(pageProduct);
-                                sellerName = ParserHtmlForWildberries.getSellerName(pageProduct);
-                            }
-
-                            if (descriptionAndParams.toLowerCase().contains(productModel + ",")
-                                    || descriptionAndParams.toLowerCase().contains(productModel + " ")
-                                    || descriptionAndParams.toLowerCase().contains("(" + productModel + ")")
-                                    || descriptionAndParams.toLowerCase().contains(", " + productModel + "")
-                                    || descriptionAndParams.toLowerCase().contains(" " + productModel + "")){
-
-                            }
-
-                            if (p.getCompetitorProductName().toLowerCase().contains(productModel)){
-                                product = p;
-                                isFindAnalogProduct = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!isFindAnalogProduct){
-                        for (Product p : productList) {
-                            //исключаем мои продукты
-                            if (myVendorCodes.contains(p.getCompetitorVendorCode())
-                                    || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase())
-                                    || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
-                                if (myProductIsLower) {
-                                    product = p;
-                                    myProductIsLower = false;
+                            if (arrayParams.get(0).contains("без кабеля")) {
+                                if (Constants.checkTitleDescriptionAndParamsForConnectorType(p.getCompetitorProductName())) {
+                                    break;
+                                } else {
+                                    Page pageProduct = SupplierHtmlPage.getWildberriesPageFromPlaywright(p.getCompetitorRefForPage());
+                                    titleFromPageProduct = ParserHtmlForWildberries.getTitleFromPageProduct(pageProduct);
+                                    descriptionAndParams = ParserHtmlForWildberries.getDescriptionAndParam(pageProduct);
+                                    sellerName = ParserHtmlForWildberries.getSellerName(pageProduct);
+                                    pageProduct.close();
+                                    if (Constants.checkTitleDescriptionAndParamsForConnectorType(titleFromPageProduct + " " + descriptionAndParams)) {
+                                        break;
+                                    }
                                 }
                             } else {
-                                product = p;
-                                break;
+                                if (Constants.checkTitleDescriptionAndParamsForConnectorType(p.getCompetitorProductName())
+                                    || Constants.checkTitleDescriptionAndParamsForLengthType(p.getCompetitorProductName())
+                                    || Constants.checkTitleDescriptionAndParamsForTypeProtectiveGlass(p.getCompetitorProductName())
+                                    || Constants.checkTitleDescriptionAndParamsForTypeTypeSeriesCover(p.getCompetitorProductName())){
+                                    countFind = getCountFindConcurrence(arrayParams, countFind, p.getCompetitorProductName());
+                                    if (!(arrayParams.size() == countFind)){
+                                        break;
+                                    }
+                                } else {
+                                    Page pageProduct = SupplierHtmlPage.getWildberriesPageFromPlaywright(p.getCompetitorRefForPage());
+                                    titleFromPageProduct = ParserHtmlForWildberries.getTitleFromPageProduct(pageProduct);
+                                    descriptionAndParams = ParserHtmlForWildberries.getDescriptionAndParam(pageProduct);
+                                    loggerLowerProductFinder.info("На странице товара - " + p.getCompetitorRefForPage() + " получили описание:\n" +
+                                            descriptionAndParams);
+                                    sellerName = ParserHtmlForWildberries.getSellerName(pageProduct);
+                                    pageProduct.close();
+                                    countFind = getCountFindConcurrence(arrayParams, countFind, titleFromPageProduct + " " + descriptionAndParams);
+                                    if (!(arrayParams.size() == countFind)){
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
+                    //проверяем наличие названия модели в заголовоке ,описание и характеристиках продукта
+                    isFindAnalogProduct = isFindAnalogProductFromModel(productModel, isFindAnalogProduct, titleFromPageProduct + " " + descriptionAndParams);
+
+                    if (isFindAnalogProduct){
+                        product = p;
+                        p.setCompetitorName(sellerName);
+                        break;
+                    }
+                }
+            }
+            //если мы не нашли аналог, то возвращаем первый продукт из списка аналогов
+            if (!isFindAnalogProduct) {
+                for (Product p : productList) {
+                    //исключаем мои продукты
+                    if (myVendorCodes.contains(p.getCompetitorVendorCode())
+                            || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER.toLowerCase())
+                            || p.getCompetitorName().toLowerCase().equals(Constants.MY_SELLER_2.toLowerCase())) {
+                        if (myProductIsLower) {
+                            product = p;
+                            myProductIsLower = false;
+                        }
+                    } else {
+                        product = p;
+                        break;
+                    }
+                }
             }
             return product;
         }
+    }
+
+    private static int getCountFindConcurrence(List<List<String>> arrayParams, int countFind, String textForAnalise) {
+        boolean isFindMyParams;
+        for (List<String> paramsList: arrayParams){
+            for (String param: paramsList){
+                if (textForAnalise.contains(param)){
+                    isFindMyParams = true;
+                    countFind++;
+                    break;
+                }
+            }
+        }
+        return countFind;
+    }
+
+    private static boolean isFindAnalogProductFromModel(String productModel, boolean isFindAnalogProduct, String textForAnalise) {
+        if (textForAnalise.toLowerCase().contains(productModel + ",")
+                || textForAnalise.toLowerCase().contains(productModel + " ")
+                || textForAnalise.toLowerCase().contains("(" + productModel + ")")
+                || textForAnalise.toLowerCase().contains(", " + productModel + "")
+                || textForAnalise.toLowerCase().contains(" " + productModel + "")) {
+            isFindAnalogProduct = true;
+        }
+        return isFindAnalogProduct;
     }
 
     private static String getString(String s, String queryUTF8, String s2) {

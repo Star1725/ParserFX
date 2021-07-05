@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Constants {
@@ -268,25 +269,9 @@ public class Constants {
 
 
     public static final ArrayList<String> listForCable = new ArrayList<>();
-    public static final ArrayList<String> listForCable_0_2m = new ArrayList<>();
-    public static final ArrayList<String> listForCable_0_25m = new ArrayList<>();
-    public static final ArrayList<String> listForCable_1m = new ArrayList<>();
-    public static final ArrayList<String> listForCable_1_2m = new ArrayList<>();
-    public static final ArrayList<String> listForCable_1_4m = new ArrayList<>();
-    public static final ArrayList<String> listForCable_1_6m = new ArrayList<>();
-    public static final ArrayList<String> listForCable_1_8m = new ArrayList<>();
-    public static final ArrayList<String> listForCable_2m = new ArrayList<>();
-    public static final ArrayList<String> listForCable_3m = new ArrayList<>();
-    //public static final ArrayList<String> listForLength = new ArrayList<>();
-    public static final ArrayList<String> listForTypeGlass = new ArrayList<>();
-    public static final ArrayList<String> listForTypeGlass_Super_D = new ArrayList<>();
+
     public static final ArrayList<String> listForCharging = new ArrayList<>();
-    public static final ArrayList<String> listForConnector_Apple_8PIN = new ArrayList<>();
-    public static final ArrayList<String> listForConnector_Micro_USB = new ArrayList<>();
-    public static final ArrayList<String> listForConnector_Type_C = new ArrayList<>();
-    public static final ArrayList<String> listForCharging_2in1 = new ArrayList<>();
-    public static final ArrayList<String> listForConnector_3in1 = new ArrayList<>();
-    public static final ArrayList<String> listForCharging_4in1 = new ArrayList<>();
+
     public static final ArrayList<String> listForBugs = new ArrayList<>();
     public static final ArrayList<String> listForHeadset = new ArrayList<>();
     public static final ArrayList<String> listForBrands = new ArrayList<>();
@@ -299,21 +284,26 @@ public class Constants {
     public static final ArrayList<String> listForCable_AUX = new ArrayList<>();
 
     //for ver. 2.0/additionalParameter//////////////////////////////////////////////////////////////////////////////
-    public static final String WITHOUT_CABLE = "без кабеля";
-    public static final String CABLE_3IN1 = "3in1";
-    public static final String CABLE_TYPE_C = "с кабелем Type-C";
-    public static final String CABLE_APPLE_8PIN = "с кабелем Apple 8 pin";
-    public static final String CABLE_MICRO_USB = "с кабелем Micro USB";
-    public static final String MASK = "маска";
+    //для зарядок и кабелей
+    public static final ArrayList<String> listForConnector_Type_C_to_Apple_8pin = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_Type_C_to_Type_C = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_Apple_8PIN = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_Micro_USB = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_Type_C = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_4in1 = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_3in1 = new ArrayList<>();
+    public static final ArrayList<String> listForConnector_2in1 = new ArrayList<>();
 
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+    public static final ArrayList<String> listForCable_0_2m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_0_25m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1_2m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1_4m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1_6m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_1_8m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_2m = new ArrayList<>();
+    public static final ArrayList<String> listForCable_3m = new ArrayList<>();
     static {
-        //for ver. 2.0/additionalParameter//////////////////////////////////////////////////////////////////////////////
         listForConnector_Apple_8PIN.add("apple 8 pin");
         listForConnector_Apple_8PIN.add("apple");
         listForConnector_Apple_8PIN.add("8 pin");
@@ -323,20 +313,521 @@ public class Constants {
 
         listForConnector_Micro_USB.add("микро");
         listForConnector_Micro_USB.add("micro");
+        listForConnector_Micro_USB.add("микроusb");
+        listForConnector_Micro_USB.add("microusb");
+        listForConnector_Micro_USB.add("микро usb");
+        listForConnector_Micro_USB.add("micro usb");
 
         listForConnector_Type_C.add("type-c");
         listForConnector_Type_C.add("type");
 
+        listForConnector_4in1.add("4 в 1");
+        listForConnector_4in1.add("4в1");
+        listForConnector_4in1.add("4 in 1");
+        listForConnector_4in1.add("4-in-1");
+        listForConnector_4in1.add("4in1");
+
         listForConnector_3in1.add("3 в 1");
         listForConnector_3in1.add("3в1");
         listForConnector_3in1.add("3-в-1");
-        listForConnector_3in1.add("3 in 1");
-        listForConnector_3in1.add("3-in-1");
-        listForConnector_3in1.add("3-in-");
-        listForConnector_3in1.add("3in1");
+        listForConnector_3in1.add("3 in");
+        listForConnector_3in1.add("3-in");
+        listForConnector_3in1.add("3in");
         listForConnector_3in1.add("lightning+micro+type-c");
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        listForConnector_2in1.add("2 в 1");
+        listForConnector_2in1.add("2в1");
+        listForConnector_2in1.add("2 in 1");
+        listForConnector_2in1.add("2-in-1");
+        listForConnector_2in1.add("2-in-");
+        listForConnector_2in1.add("2in1");
+
+        listForConnector_Type_C_to_Apple_8pin.add("type-c - apple 8 pin");
+        listForConnector_Type_C_to_Apple_8pin.add("type-c to apple 8 pin");
+        listForConnector_Type_C_to_Apple_8pin.add("type-c to apple");
+        listForConnector_Type_C_to_Apple_8pin.add("type-c - apple");
+        listForConnector_Type_C_to_Apple_8pin.add("type-c - lightning");
+        listForConnector_Type_C_to_Apple_8pin.add("type-c to lightning");
+        listForConnector_Type_C_to_Apple_8pin.add("type-c - 8 pin");
+        listForConnector_Type_C_to_Apple_8pin.add("type-c to 8 pin");
+        listForConnector_Type_C_to_Apple_8pin.add("apple 8 pin - type-c");
+        listForConnector_Type_C_to_Apple_8pin.add("apple 8 pin to type-c");
+        listForConnector_Type_C_to_Apple_8pin.add("apple - type-c");
+        listForConnector_Type_C_to_Apple_8pin.add("apple to type-c");
+        listForConnector_Type_C_to_Apple_8pin.add("lightning - type-c");
+        listForConnector_Type_C_to_Apple_8pin.add("lightning to type-c");
+
+        listForConnector_Type_C_to_Type_C.add("type-c - type-c");
+        listForConnector_Type_C_to_Type_C.add("type-c to type-c");
+
+        listForCable_0_2m.add("20 см");
+        listForCable_0_2m.add("0.2м");
+        listForCable_0_2m.add("0.2 м");
+        listForCable_0_2m.add("0.2m");
+        listForCable_0_2m.add("0.2 m");
+        listForCable_0_2m.add("0,2м");
+        listForCable_0_2m.add("0,2 м");
+        listForCable_0_2m.add("0,2m");
+        listForCable_0_2m.add("0,2 m");
+
+        listForCable_0_25m.add("25 см");
+        listForCable_0_25m.add("0.25 м");
+        listForCable_0_25m.add("0.25m");
+        listForCable_0_25m.add("0.25 m");
+        listForCable_0_25m.add("0,25м");
+        listForCable_0_25m.add("0,25 м");
+        listForCable_0_25m.add("0,25m");
+        listForCable_0_25m.add("0,25 m");
+
+        listForCable_1m.add("100 см");
+        listForCable_1m.add("1м");
+        listForCable_1m.add("1 м");
+        listForCable_1m.add("1m");
+        listForCable_1m.add("1 m");
+        listForCable_1m.add("1.0м");
+        listForCable_1m.add("1.0 м");
+        listForCable_1m.add("1.0m");
+        listForCable_1m.add("1.0 m");
+        listForCable_1m.add("1,0м");
+        listForCable_1m.add("1,0 м");
+        listForCable_1m.add("1,0m");
+        listForCable_1m.add("1,0 m");
+
+        listForCable_1_2m.add("120 см");
+        listForCable_1_2m.add("1.2м");
+        listForCable_1_2m.add("1.2 м");
+        listForCable_1_2m.add("1.2m");
+        listForCable_1_2m.add("1.2 m");
+        listForCable_1_2m.add("1,2м");
+        listForCable_1_2m.add("1,2 м");
+        listForCable_1_2m.add("1,2m");
+        listForCable_1_2m.add("1,2 m");
+        listForCable_1_2m.add("1.2");
+        listForCable_1_2m.add("1,2");
+
+        listForCable_1_4m.add("140 см");
+        listForCable_1_4m.add("1.4м");
+        listForCable_1_4m.add("1.4 м");
+        listForCable_1_4m.add("1.4m");
+        listForCable_1_4m.add("1.4 m");
+        listForCable_1_4m.add("1,4м");
+        listForCable_1_4m.add("1,4 м");
+        listForCable_1_4m.add("1,4m");
+        listForCable_1_4m.add("1,4 m");
+
+        listForCable_1_6m.add("160 см");
+        listForCable_1_6m.add("1.6м");
+        listForCable_1_6m.add("1.6 м");
+        listForCable_1_6m.add("1.6m");
+        listForCable_1_6m.add("1.6 m");
+        listForCable_1_6m.add("1,6м");
+        listForCable_1_6m.add("1,6 м");
+        listForCable_1_6m.add("1,6m");
+        listForCable_1_6m.add("1,6 m");
+
+        listForCable_1_8m.add("180 см");
+        listForCable_1_8m.add("1.8м");
+        listForCable_1_8m.add("1.8 м");
+        listForCable_1_8m.add("1.8m");
+        listForCable_1_8m.add("1.8 m");
+        listForCable_1_8m.add("1,8м");
+        listForCable_1_8m.add("1,8 м");
+        listForCable_1_8m.add("1,8m");
+        listForCable_1_8m.add("1,8 m");
+
+        listForCable_2m.add("200 см");
+        listForCable_2m.add("2м");
+        listForCable_2m.add("2 м");
+        listForCable_2m.add("2m");
+        listForCable_2m.add("2 m");
+        listForCable_2m.add("2.0м");
+        listForCable_2m.add("2.0 м");
+        listForCable_2m.add("2.0m");
+        listForCable_2m.add("2.0 m");
+        listForCable_2m.add("2,0м");
+        listForCable_2m.add("2,0 м");
+        listForCable_2m.add("2,0m");
+        listForCable_2m.add("2,0 m");
+
+        listForCable_3m.add("300 см");
+        listForCable_3m.add("3м");
+        listForCable_3m.add("3 м");
+        listForCable_3m.add("3m");
+        listForCable_3m.add("3 m");
+        listForCable_3m.add("3.0м");
+        listForCable_3m.add("3.0 м");
+        listForCable_3m.add("3.0m");
+        listForCable_3m.add("3.0 m");
+        listForCable_3m.add("3,0м");
+        listForCable_3m.add("3,0 м");
+        listForCable_3m.add("3,0m");
+        listForCable_3m.add("3,0 m");
+    }
+
+    static boolean checkTitleDescriptionAndParamsForConnectorType(String description) {
+        boolean isCheck = false;
+
+        for (String connType: listForConnector_Type_C_to_Apple_8pin){
+            if (description.toLowerCase().contains(connType)){
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForConnector_Type_C_to_Type_C){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)){
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForConnector_Apple_8PIN){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)){
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForConnector_Micro_USB){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForConnector_Type_C){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForConnector_4in1){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForConnector_3in1){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForConnector_2in1){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        return isCheck;
+    }
+
+    static boolean checkTitleDescriptionAndParamsForLengthType(String description) {
+        boolean isCheck = false;
+
+        for (String connType: listForCable_0_2m){
+            if (description.toLowerCase().contains(connType)){
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForCable_0_25m){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)){
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForCable_1m){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)){
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForCable_1_2m){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForCable_1_4m){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForCable_1_6m){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForCable_1_8m){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForCable_2m){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType: listForCable_3m){
+            if (isCheck){
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        return isCheck;
+    }
+
+    //для защитных стекол
+    public static final ArrayList<String> listForTypeProtectiveGlass_eye_protection = new ArrayList<>();
+    public static final ArrayList<String> listForTypeProtectiveGlass_5d = new ArrayList<>();
+    public static final ArrayList<String> listForTypeProtectiveGlass_2_5d = new ArrayList<>();
+    public static final ArrayList<String> listForTypeProtectiveGlass_11d = new ArrayList<>();
+    public static final ArrayList<String> listForTypeProtectiveGlass_superd = new ArrayList<>();
+    public static final ArrayList<String> listForTypeProtectiveGlass_privacy = new ArrayList<>();
+    static {
+        listForTypeProtectiveGlass_eye_protection.add("eye protection");
+        listForTypeProtectiveGlass_eye_protection.add("eye");
+        listForTypeProtectiveGlass_5d.add(" 5d");
+        listForTypeProtectiveGlass_11d.add(" 11d");
+        listForTypeProtectiveGlass_2_5d.add(" 2.5d");
+        listForTypeProtectiveGlass_superd.add("superd");
+        listForTypeProtectiveGlass_superd.add("super d");
+        listForTypeProtectiveGlass_superd.add("super-d");
+        listForTypeProtectiveGlass_privacy.add("privacy");
+    }
+    static boolean checkTitleDescriptionAndParamsForTypeProtectiveGlass(String description) {
+        boolean isCheck = false;
+
+        for (String connType : listForTypeProtectiveGlass_eye_protection) {
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeProtectiveGlass_5d) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeProtectiveGlass_2_5d) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeProtectiveGlass_11d) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeProtectiveGlass_superd) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeProtectiveGlass_privacy) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        return isCheck;
+    }
+
+    //для чехлов
+    public static final ArrayList<String> listForTypeSeriesCover_Fellwell_series = new ArrayList<>();
+    public static final ArrayList<String> listForTypeSeriesCover_Pure_series = new ArrayList<>();
+    public static final ArrayList<String> listForTypeSeriesCover_Silicon_case = new ArrayList<>();
+    public static final ArrayList<String> listForTypeSeriesCover_Delicate_shadow = new ArrayList<>();
+    public static final ArrayList<String> listForTypeSeriesCover_Fascination_series = new ArrayList<>();
+    public static final ArrayList<String> listForTypeSeriesCover_Gentle_series = new ArrayList<>();
+    public static final ArrayList<String> listForTypeSeriesCover_Minni_series = new ArrayList<>();
+    public static final ArrayList<String> listForTypeSeriesCover_Kingdom_series = new ArrayList<>();
+    public static final ArrayList<String> listForTypeSeriesCover_Light_series = new ArrayList<>();
+    public static final ArrayList<String> listForTypeSeriesCover_Thin_series = new ArrayList<>();
+    static{
+        listForTypeSeriesCover_Fellwell_series.add("fellwell series");
+        listForTypeSeriesCover_Pure_series.add("pure series");
+        listForTypeSeriesCover_Silicon_case.add("silicon case");
+        listForTypeSeriesCover_Delicate_shadow.add("delicate shadow");
+        listForTypeSeriesCover_Fascination_series.add("fascination series");
+        listForTypeSeriesCover_Gentle_series.add("gentle series");
+        listForTypeSeriesCover_Minni_series.add("minni series");
+        listForTypeSeriesCover_Kingdom_series.add("kingdom series");
+        listForTypeSeriesCover_Light_series.add("light series");
+        listForTypeSeriesCover_Thin_series.add("thin series");
+    }
+    static boolean checkTitleDescriptionAndParamsForTypeTypeSeriesCover(String description) {
+        boolean isCheck = false;
+
+        for (String connType : listForTypeSeriesCover_Fellwell_series) {
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeSeriesCover_Pure_series) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeSeriesCover_Silicon_case) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeSeriesCover_Delicate_shadow) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeSeriesCover_Fascination_series) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeSeriesCover_Gentle_series) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeSeriesCover_Minni_series) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeSeriesCover_Kingdom_series) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeSeriesCover_Light_series) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        for (String connType : listForTypeSeriesCover_Thin_series) {
+            if (isCheck) {
+                break;
+            }
+            if (description.toLowerCase().contains(connType)) {
+                isCheck = true;
+                break;
+            }
+        }
+        return isCheck;
+    }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+    static {
 
         listForCharging.add("микро");
         listForCharging.add("micro");
@@ -459,20 +950,8 @@ public class Constants {
         listForCableAllLength.add("3,0m");
         listForCableAllLength.add("3,0 m");
 
-        listForAllTypeConnect.add("type-c - apple 8 pin");
-        listForAllTypeConnect.add("type-c to apple 8 pin");
-        listForAllTypeConnect.add("type-c to apple");
-        listForAllTypeConnect.add("type-c - apple");
-        listForAllTypeConnect.add("type-c - lightning");
-        listForAllTypeConnect.add("type-c to lightning");
-        listForAllTypeConnect.add("type-c - 8 pin");
-        listForAllTypeConnect.add("type-c to 8 pin");
-        listForAllTypeConnect.add("apple 8 pin - type-c");
-        listForAllTypeConnect.add("apple 8 pin to type-c");
-        listForAllTypeConnect.add("lightning - type-c");
-        listForAllTypeConnect.add("lightning to type-c");
-        listForAllTypeConnect.add("type-c - type-c");
-        listForAllTypeConnect.add("type-c to type-c");
+
+
         listForAllTypeConnect.add("микро");
         listForAllTypeConnect.add("micro");
         listForAllTypeConnect.add("apple 8 pin");
@@ -503,157 +982,6 @@ public class Constants {
         listForAllTypeConnect.add("4 in 1");
         listForAllTypeConnect.add("4-in-1");
         listForAllTypeConnect.add("4in1");
-
-        listForCable_0_2m.add("20 см");
-        listForCable_0_2m.add("0.2м");
-        listForCable_0_2m.add("0.2 м");
-        listForCable_0_2m.add("0.2m");
-        listForCable_0_2m.add("0.2 m");
-        listForCable_0_2m.add("0,2м");
-        listForCable_0_2m.add("0,2 м");
-        listForCable_0_2m.add("0,2m");
-        listForCable_0_2m.add("0,2 m");
-
-        listForCable_0_25m.add("25 см");
-        listForCable_0_25m.add("0.25 м");
-        listForCable_0_25m.add("0.25m");
-        listForCable_0_25m.add("0.25 m");
-        listForCable_0_25m.add("0,25м");
-        listForCable_0_25m.add("0,25 м");
-        listForCable_0_25m.add("0,25m");
-        listForCable_0_25m.add("0,25 m");
-
-        listForCable_1m.add("100 см");
-        listForCable_1m.add("1м");
-        listForCable_1m.add("1 м");
-        listForCable_1m.add("1m");
-        listForCable_1m.add("1 m");
-        listForCable_1m.add("1.0м");
-        listForCable_1m.add("1.0 м");
-        listForCable_1m.add("1.0m");
-        listForCable_1m.add("1.0 m");
-        listForCable_1m.add("1,0м");
-        listForCable_1m.add("1,0 м");
-        listForCable_1m.add("1,0m");
-        listForCable_1m.add("1,0 m");
-
-        listForCable_1_2m.add("120 см");
-        listForCable_1_2m.add("1.2м");
-        listForCable_1_2m.add("1.2 м");
-        listForCable_1_2m.add("1.2m");
-        listForCable_1_2m.add("1.2 m");
-        listForCable_1_2m.add("1,2м");
-        listForCable_1_2m.add("1,2 м");
-        listForCable_1_2m.add("1,2m");
-        listForCable_1_2m.add("1,2 m");
-        listForCable_1_2m.add("1.2");
-        listForCable_1_2m.add("1,2");
-
-        listForCable_1_4m.add("140 см");
-        listForCable_1_4m.add("1.4м");
-        listForCable_1_4m.add("1.4 м");
-        listForCable_1_4m.add("1.4m");
-        listForCable_1_4m.add("1.4 m");
-        listForCable_1_4m.add("1,4м");
-        listForCable_1_4m.add("1,4 м");
-        listForCable_1_4m.add("1,4m");
-        listForCable_1_4m.add("1,4 m");
-
-        listForCable_1_6m.add("160 см");
-        listForCable_1_6m.add("1.6м");
-        listForCable_1_6m.add("1.6 м");
-        listForCable_1_6m.add("1.6m");
-        listForCable_1_6m.add("1.6 m");
-        listForCable_1_6m.add("1,6м");
-        listForCable_1_6m.add("1,6 м");
-        listForCable_1_6m.add("1,6m");
-        listForCable_1_6m.add("1,6 m");
-
-        listForCable_1_8m.add("180 см");
-        listForCable_1_8m.add("1.8м");
-        listForCable_1_8m.add("1.8 м");
-        listForCable_1_8m.add("1.8m");
-        listForCable_1_8m.add("1.8 m");
-        listForCable_1_8m.add("1,8м");
-        listForCable_1_8m.add("1,8 м");
-        listForCable_1_8m.add("1,8m");
-        listForCable_1_8m.add("1,8 m");
-
-        listForCable_2m.add("200 см");
-        listForCable_2m.add("2м");
-        listForCable_2m.add("2 м");
-        listForCable_2m.add("2m");
-        listForCable_2m.add("2 m");
-        listForCable_2m.add("2.0м");
-        listForCable_2m.add("2.0 м");
-        listForCable_2m.add("2.0m");
-        listForCable_2m.add("2.0 m");
-        listForCable_2m.add("2,0м");
-        listForCable_2m.add("2,0 м");
-        listForCable_2m.add("2,0m");
-        listForCable_2m.add("2,0 m");
-
-        listForCable_3m.add("300 см");
-        listForCable_3m.add("3м");
-        listForCable_3m.add("3 м");
-        listForCable_3m.add("3m");
-        listForCable_3m.add("3 m");
-        listForCable_3m.add("3.0м");
-        listForCable_3m.add("3.0 м");
-        listForCable_3m.add("3.0m");
-        listForCable_3m.add("3.0 m");
-        listForCable_3m.add("3,0м");
-        listForCable_3m.add("3,0 м");
-        listForCable_3m.add("3,0m");
-        listForCable_3m.add("3,0 m");
-
-        listForTypeGlass.add("eye protection");
-        listForTypeGlass.add(" 5d");
-        listForTypeGlass.add("11d");
-        listForTypeGlass.add("2.5d");
-        listForTypeGlass.add("superd");
-        listForTypeGlass.add("super d");
-        listForTypeGlass.add("super-d");
-        listForTypeGlass.add("eye");
-        listForTypeGlass.add("privacy");
-
-        listForTypeGlass_Super_D.add("superd");
-        listForTypeGlass_Super_D.add("super d");
-        listForTypeGlass_Super_D.add("super-d");
-
-
-
-
-
-        listForCharging_2in1.add("2 в 1");
-        listForCharging_2in1.add("2в1");
-        listForCharging_2in1.add("2 in 1");
-        listForCharging_2in1.add("2-in-1");
-        listForCharging_2in1.add("2-in-");
-        listForCharging_2in1.add("2in1");
-
-
-        listForCharging_4in1.add("4 в 1");
-        listForCharging_4in1.add("4в1");
-        listForCharging_4in1.add("4 in 1");
-        listForCharging_4in1.add("4-in-1");
-        listForCharging_4in1.add("4in1");
-
-        listForCable_Type_C_to_Type_C.add("type-c - type-c");
-        listForCable_Type_C_to_Type_C.add("type-c to type-c");
-
-        listForCable_Type_C_to_Apple.add("type-c - apple 8 pin");
-        listForCable_Type_C_to_Apple.add("type-c to apple 8 pin");
-        listForCable_Type_C_to_Apple.add("type-c - apple");
-        listForCable_Type_C_to_Apple.add("type-c to apple");
-        listForCable_Type_C_to_Apple.add("type-c - lightning");
-        listForCable_Type_C_to_Apple.add("type-c to lightning");
-        listForCable_Type_C_to_Apple.add("type-c - 8 pin");
-        listForCable_Type_C_to_Apple.add("type-c to 8 pin");
-        listForCable_Type_C_to_Apple.add("apple 8 pin - type-c");
-        listForCable_Type_C_to_Apple.add("apple 8 pin to type-c");
-        listForCable_Type_C_to_Apple.add("lightning - type-c");
-        listForCable_Type_C_to_Apple.add("lightning to type-c");
 
         listForCable_AUX.add("aux");
         listForCable_AUX.add("аудио кабель");
@@ -854,41 +1182,135 @@ public class Constants {
     }
 
     //for ver. 2.0/additionalParameter//////////////////////////////////////////////////////////////////////////////
-    static boolean checkTitleDescriptionAndParamsForConnectorType(String description) {
-        boolean isCheck = false;
 
-        for (String connType: listForConnector_Apple_8PIN){
-            if (description.toLowerCase().contains(connType)){
-                isCheck = true;
-                break;
-            }
+
+    static List<String> getCollectionsParamsForProduct(String param, String url) {
+        //для различных типов коннекторов
+        List<String> listWithParam = null;
+        boolean b = Constants.listForConnector_Micro_USB.contains(param.toLowerCase());
+        if (b) {
+            listWithParam = Constants.listForConnector_Micro_USB;
         }
-        for (String connType: listForConnector_Micro_USB){
-            if (isCheck == true){
-                break;
-            }
-            if (description.toLowerCase().contains(connType)){
-                isCheck = true;
-            }
+        else if (Constants.listForCable_Type_C_to_Type_C.contains(param)) {
+            listWithParam = Constants.listForCable_Type_C_to_Type_C;
+        } else if (Constants.listForCable_Type_C_to_Apple.contains(param)) {
+            listWithParam = Constants.listForCable_Type_C_to_Apple;
         }
-        for (String connType: listForConnector_Type_C){
-            if (isCheck == true){
-                break;
-            }
-            if (description.toLowerCase().contains(connType)){
-                isCheck = true;
-            }
+        else if (Constants.listForConnector_Apple_8PIN.contains(param)) {
+            listWithParam = Constants.listForConnector_Apple_8PIN;
+        } else if (Constants.listForConnector_Type_C.contains(param)) {
+            listWithParam = Constants.listForConnector_Type_C;
+        } else if (Constants.listForConnector_2in1.contains(param)) {
+            listWithParam = Constants.listForConnector_2in1;
+        } else if (Constants.listForConnector_3in1.contains(param)) {
+            listWithParam = Constants.listForConnector_3in1;
+        } else if (Constants.listForConnector_4in1.contains(param)) {
+            listWithParam = Constants.listForConnector_4in1;
+        }  else if (Constants.listForCable_AUX.contains(param)) {
+            listWithParam = Constants.listForCable_AUX;
         }
 
-        return isCheck;
+        //для различных длинн кабеля
+        else if (Constants.listForCable_0_2m.contains(param)) {
+            listWithParam = Constants.listForCable_0_2m;
+        } else if (Constants.listForCable_0_25m.contains(param)) {
+            listWithParam = Constants.listForCable_0_25m;
+        } else if (Constants.listForCable_1m.contains(param)) {
+            listWithParam = Constants.listForCable_1m;
+        } else if (Constants.listForCable_1_2m.contains(param)) {
+            listWithParam = Constants.listForCable_1_2m;
+        } else if (Constants.listForCable_1_4m.contains(param)) {
+            listWithParam = Constants.listForCable_1_4m;
+        } else if (Constants.listForCable_1_6m.contains(param)) {
+            listWithParam = Constants.listForCable_1_6m;
+        } else if (Constants.listForCable_1_8m.contains(param)) {
+            listWithParam = Constants.listForCable_1_8m;
+        } else if (Constants.listForCable_2m.contains(param)) {
+            listWithParam = Constants.listForCable_2m;
+        } else if (Constants.listForCable_3m.contains(param)) {
+            listWithParam = Constants.listForCable_3m;
+        }
+
+        //для различных защитных стекол
+        else if (Constants.listForTypeProtectiveGlass_eye_protection.contains(param)) {
+            listWithParam = Constants.listForTypeProtectiveGlass_eye_protection;
+        }
+        else if (Constants.listForTypeProtectiveGlass_5d.contains(param)) {
+            listWithParam = Constants.listForTypeProtectiveGlass_5d;
+        }
+        else if (Constants.listForTypeProtectiveGlass_2_5d.contains(param)) {
+            listWithParam = Constants.listForTypeProtectiveGlass_2_5d;
+        }
+        else if (Constants.listForTypeProtectiveGlass_11d.contains(param)) {
+            listWithParam = Constants.listForTypeProtectiveGlass_11d;
+        }
+        else if (Constants.listForTypeProtectiveGlass_superd.contains(param)) {
+            listWithParam = Constants.listForTypeProtectiveGlass_superd;
+        }
+        else if (Constants.listForTypeProtectiveGlass_privacy.contains(param)) {
+            listWithParam = Constants.listForTypeProtectiveGlass_privacy;
+        }
+
+        //если нет такой коллекции, то возвращаем коллекцию с одним этим параметром
+        else {
+            listWithParam = new ArrayList<>(Collections.singleton(param));
+        }
+        return listWithParam;
+    }
+
+    static List<String> getCollectionsParamCable(String param, String url) {
+        //определяем коллекцию с названием одного и того же кабеля
+        List<String> listWithParam = null;
+        boolean b = Constants.listForConnector_Micro_USB.contains(param);
+
+        if (b) {
+            listWithParam = Constants.listForConnector_Micro_USB;
+        } else if (Constants.listForConnector_Apple_8PIN.contains(param)) {
+            listWithParam = Constants.listForConnector_Apple_8PIN;
+        } else if (Constants.listForConnector_Type_C.contains(param)) {
+            listWithParam = Constants.listForConnector_Type_C;
+        } else if (Constants.listForConnector_2in1.contains(param)) {
+            listWithParam = Constants.listForConnector_2in1;
+        } else if (Constants.listForConnector_3in1.contains(param)) {
+            listWithParam = Constants.listForConnector_3in1;
+        } else if (Constants.listForConnector_4in1.contains(param)) {
+            listWithParam = Constants.listForConnector_4in1;
+        } else if (Constants.listForCable_0_2m.contains(param)) {
+            listWithParam = Constants.listForCable_0_2m;
+        } else if (Constants.listForCable_0_25m.contains(param)) {
+            listWithParam = Constants.listForCable_0_25m;
+        } else if (Constants.listForCable_1m.contains(param)) {
+            listWithParam = Constants.listForCable_1m;
+        } else if (Constants.listForCable_1_2m.contains(param)) {
+            listWithParam = Constants.listForCable_1_2m;
+        } else if (Constants.listForCable_1_4m.contains(param)) {
+            listWithParam = Constants.listForCable_1_4m;
+        } else if (Constants.listForCable_1_6m.contains(param)) {
+            listWithParam = Constants.listForCable_1_6m;
+        } else if (Constants.listForCable_1_8m.contains(param)) {
+            listWithParam = Constants.listForCable_1_8m;
+        } else if (Constants.listForCable_2m.contains(param)) {
+            listWithParam = Constants.listForCable_2m;
+        } else if (Constants.listForCable_3m.contains(param)) {
+            listWithParam = Constants.listForCable_3m;
+        } else if (Constants.listForCable_Type_C_to_Type_C.contains(param)) {
+            listWithParam = Constants.listForCable_Type_C_to_Type_C;
+        } else if (Constants.listForCable_Type_C_to_Apple.contains(param)) {
+            listWithParam = Constants.listForCable_Type_C_to_Apple;
+        } else if (Constants.listForCable_AUX.contains(param)) {
+            listWithParam = Constants.listForCable_AUX;
+        } else {
+            System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
+        }
+        return listWithParam;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    static List<String> getCollectionsParam(List<String> arrayParams, String url) {
+    static List<String> getCollectionsParam(List<List<String>> arrayParams, String url) {
         //определяем коллекцию с названием одного и того же кабеля
         List<String> listWithCable = null;
         if (arrayParams.size() == 1){
-            String param = arrayParams.get(0);
+            String param = arrayParams.get(0).get(0);
             boolean b = Constants.listForConnector_Micro_USB.contains(param);
 
             if (b){
@@ -904,73 +1326,6 @@ public class Constants {
         } else {
             return  null;
         }
-    }
-
-    static List<String> getCollectionsParamCable(String param, String url) {
-        //определяем коллекцию с названием одного и того же кабеля
-        List<String> listWithCable = null;
-        boolean b = Constants.listForConnector_Micro_USB.contains(param);
-
-        if (b) {
-            listWithCable = Constants.listForConnector_Micro_USB;
-        } else if (Constants.listForConnector_Apple_8PIN.contains(param)) {
-            listWithCable = Constants.listForConnector_Apple_8PIN;
-        } else if (Constants.listForConnector_Type_C.contains(param)) {
-            listWithCable = Constants.listForConnector_Type_C;
-        } else if (Constants.listForCharging_2in1.contains(param)) {
-            listWithCable = Constants.listForCharging_2in1;
-        } else if (Constants.listForConnector_3in1.contains(param)) {
-            listWithCable = Constants.listForConnector_3in1;
-        } else if (Constants.listForCharging_4in1.contains(param)) {
-            listWithCable = Constants.listForCharging_4in1;
-        } else if (Constants.listForCable_0_2m.contains(param)) {
-            listWithCable = Constants.listForCable_0_2m;
-        } else if (Constants.listForCable_0_25m.contains(param)) {
-            listWithCable = Constants.listForCable_0_25m;
-        } else if (Constants.listForCable_1m.contains(param)) {
-            listWithCable = Constants.listForCable_1m;
-        } else if (Constants.listForCable_1_2m.contains(param)) {
-            listWithCable = Constants.listForCable_1_2m;
-        } else if (Constants.listForCable_1_4m.contains(param)) {
-            listWithCable = Constants.listForCable_1_4m;
-        } else if (Constants.listForCable_1_6m.contains(param)) {
-            listWithCable = Constants.listForCable_1_6m;
-        } else if (Constants.listForCable_1_8m.contains(param)) {
-            listWithCable = Constants.listForCable_1_8m;
-        } else if (Constants.listForCable_2m.contains(param)) {
-            listWithCable = Constants.listForCable_2m;
-        } else if (Constants.listForCable_3m.contains(param)) {
-            listWithCable = Constants.listForCable_3m;
-        } else if (Constants.listForCable_Type_C_to_Type_C.contains(param)) {
-            listWithCable = Constants.listForCable_Type_C_to_Type_C;
-        } else if (Constants.listForCable_Type_C_to_Apple.contains(param)) {
-            listWithCable = Constants.listForCable_Type_C_to_Apple;
-        } else if (Constants.listForCable_AUX.contains(param)) {
-            listWithCable = Constants.listForCable_AUX;
-        } else if (Constants.listForTypeGlass_Super_D.contains(param)) {
-            listWithCable = Constants.listForTypeGlass_Super_D;
-        } else {
-            System.out.println("Уточнить параметр кабеля для ссылки \"" + url + "\"");
-        }
-        return listWithCable;
-    }
-
-    static List<String> getCollectionsParamForSearchInTitle(String param, String url) {
-        //определяем коллекцию с названием одного и того же кабеля
-        List<String> listWithCable = null;
-        if (Constants.listForCableAllLength.contains(param)) {
-            listWithCable = Constants.listForCableAllLength;
-        } else if (Constants.listForAllTypeConnect.contains(param)) {
-            listWithCable = Constants.listForAllTypeConnect;
-        } else if (Constants.listForSeriesCover.contains(param)) {
-            listWithCable = Constants.listForSeriesCover;
-        } else if (Constants.listForTypeGlass.contains(param)) {
-            listWithCable = Constants.listForTypeGlass;
-        }
-        else {
-            System.out.println("Уточнить параметр поиска для ссылки \"" + url + "\"");
-        }
-        return listWithCable;
     }
 
     static String getRedString(String s){

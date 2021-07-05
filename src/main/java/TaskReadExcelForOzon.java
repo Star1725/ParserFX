@@ -303,13 +303,13 @@ public class TaskReadExcelForOzon extends Task<Map> {
 //                        break;
 
                     //для защитных стекол -  его тип
-                    case Constants.PRODUCT_TYPE_1C_139:
-                        for (String type : Constants.listForTypeGlass){
-                            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(type.toLowerCase())) {
-                                arrayParams.add(type.toLowerCase());
-                            }
-                        }
-                        break;
+//                    case Constants.PRODUCT_TYPE_1C_139:
+//                        for (String type : Constants.listForTypeProtectiveGlass){
+//                            if (myNomenclature.replaceAll(",", "").toLowerCase().contains(type.toLowerCase())) {
+//                                arrayParams.add(type.toLowerCase());
+//                            }
+//                        }
+//                        break;
                 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //если модель сразу за брендом после запятой
@@ -656,7 +656,7 @@ public class TaskReadExcelForOzon extends Task<Map> {
                     System.out.println();
                 }
 
-                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,  specQuery, specPrice_1C));
+//                supplierSpecPriceHashMapWithKeyCode_1C.put(code_1C, new Supplier(code_1C, brand, productType, myNomenclature, model, arrayParams,  specQuery, specPrice_1C));
                 //увеличиваем ProgressBar
                 this.updateProgress(i, countFull);
                 countReadsRows_1C++;
@@ -678,10 +678,10 @@ public class TaskReadExcelForOzon extends Task<Map> {
                 entry.getValue().setIsFind(1);
                 entry.getValue().setSpecPrice(supplier1.getSpecPrice());
                 entry.getValue().setMyBrand(supplier1.getMyBrand());
-                entry.getValue().setProductType(supplier1.getProductType());
+//                entry.getValue().setProductType(supplier1.getProductType());
                 entry.getValue().setMyNomenclature_1C(supplier1.getNomenclature());
                 entry.getValue().setMyProductModel(supplier1.getMyProductModel());
-                entry.getValue().setArrayListParams((ArrayList<String>) supplier1.getArrayListParams());
+//                entry.getValue().setArrayListParams((ArrayList<String>) supplier1.getArrayListParams());
                 entry.getValue().setSpecQuerySearchForWildberiesOrOzon(supplier1.getSpecQuerySearch());
 
                 String brand = entry.getValue().getMyBrand();

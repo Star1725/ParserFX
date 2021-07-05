@@ -43,7 +43,7 @@ public class ParserHtmlForWildberries {
         boolean resultQueryIsNotValid = true;
         while (resultQueryIsNotValid) {
             try {
-                contentElement_sellerName = page.querySelector("css=div[class=card-add-info]");
+                contentElement_sellerName = page.querySelector("css=div[class=seller]");
                 sellerName =  contentElement_sellerName.innerText();
                 resultQueryIsNotValid = false;
             } catch (Exception ignored) {
@@ -81,6 +81,22 @@ public class ParserHtmlForWildberries {
         }
     }
 
+    static String getTitleFromPageProduct(Page page) {
+        String titleFromPageProduct = null;
+        ElementHandle contentElement_titleFromPageProduct;
+        boolean resultQueryIsNotValid = true;
+        while (resultQueryIsNotValid) {
+            try {
+                contentElement_titleFromPageProduct = page.querySelector("css=div[class=first-horizontal]");
+                titleFromPageProduct = contentElement_titleFromPageProduct.innerText();
+                resultQueryIsNotValid = false;
+            } catch (Exception ignored) {
+                continue;
+            }
+        }
+        return titleFromPageProduct;
+    }
+
     static String getDescriptionAndParam(Page page) {
         String descriptionAndParams = null;
         ElementHandle contentElement_descriptionAndParams;
@@ -97,7 +113,7 @@ public class ParserHtmlForWildberries {
         return descriptionAndParams;
     }
 
-    static List<Product> getCatalogProductsForRequestPage(String myBrand, String model, List<String> arrayParams, String url){
+    static List<Product> getCatalogProductsForRequestPage(String myBrand, String model, List<List<String>> arrayParams, String url){
 
         Page page = null;
         List<Product> productList = null;
@@ -130,6 +146,8 @@ public class ParserHtmlForWildberries {
                 }
             }
         }
+
+        LowerProductFinder.resultSearch = contentElement_searching_results.innerText();
 
         String brandName = "-";
         String vendorCode = "-";
