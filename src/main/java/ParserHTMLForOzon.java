@@ -1,14 +1,19 @@
 import com.gargoylesoftware.htmlunit.html.*;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
-import net.sourceforge.htmlunit.cyberneko.HTMLElements;
-import org.w3c.dom.html.HTMLDListElement;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ParserHTMLForOzon {
+
+    private static final Logger loggerParserHTMLForOzon = Logger.getLogger(ParserHtmlForWildberries.class.getName());
+    static {
+        loggerParserHTMLForOzon.addHandler(Main.fileHandler);
+    }
 
     static List<Product> getCatalogFromFPageForHtmlUnit(String url, String productType, String brand, String model, List<List<String>> arrayParams) {
         List<Product> productList = new ArrayList<>();
@@ -22,7 +27,7 @@ public class ParserHTMLForOzon {
         boolean isNotGetValidPage = true;
         while (isNotGetValidPage){
             //получение страницы поискового запроса с аналогами
-            page = SupplierHtmlPage.getHtmlPage(url);
+            page = SupplierHtmlPage.getOzonPageFromHtmlUnit(url);
 
             if (page == null) {
                 System.out.println("Запрашиваемая страница = null");
@@ -576,7 +581,7 @@ public class ParserHTMLForOzon {
                             String discountedItem = "Уценённый товар";
                             //получение ссылки на продукт
                             String hRefProduct = "https://www.ozon.ru" + itemsCountSearchJavascript.get(i).getFirstChild().getAttributes().getNamedItem("href").getNodeValue();
-                            page = SupplierHtmlPage.getHtmlPage(hRefProduct);
+                            page = SupplierHtmlPage.getOzonPageFromHtmlUnit(hRefProduct);
 
                             String sHRef = page.asXml();
                             if (page == null) {
@@ -880,7 +885,7 @@ public class ParserHTMLForOzon {
                 //если длины нет, то идем на страницу товара и исчем длину там
                 if (!check2){
                     System.out.println("Поиск длинны кабеля на его странице = " + refForProduct);
-                    HtmlPage pageProduct = SupplierHtmlPage.getHtmlPage(refForProduct);
+                    HtmlPage pageProduct = SupplierHtmlPage.getOzonPageFromHtmlUnit(refForProduct);
                     try {
                         List<HtmlElement> dListElement = pageProduct.getByXPath("//dl[@class='db8']");
                         for (HtmlElement db: dListElement){
@@ -905,6 +910,21 @@ public class ParserHTMLForOzon {
             itemProduct = (HtmlElement) itemProduct.getFirstChild();
         }
         return itemProduct.getChildElements();
+    }
+
+    static String getRefMyProductsImage(HtmlPage page) {
+        String refForMyImage = "-";
+        HtmlDivision elementImage = (HtmlDivision) page.getByXPath("//div[@class='a0i7']");
+
+        //ссылка на картинку товара
+//        final HtmlDivision div_class_a0i7 = (HtmlDivision) pageForMyProduct.getByXPath("//div[@class='a0i7']").get(0);
+
+        loggerParserHTMLForOzon.info(Constants.getGreenString(Constants.getYellowString("Получение ссылки на картинку моего товара")));
+
+        refForMyImage = elementImage.getFirstChild().getAttributes().getNamedItem("src").getNodeValue();
+
+        loggerParserHTMLForOzon.info(Constants.getGreenString("Ссылка на картинку моего товара получена!"));
+        return refForMyImage;
     }
 
     private static int getIntegerFromString(String price) {

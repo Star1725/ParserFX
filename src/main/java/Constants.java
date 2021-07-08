@@ -239,7 +239,6 @@ public class Constants {
     //Html элементы страницы моего товара
     public static final String ELEMENT_WITH_SPEC_ACTION_MY_PRODUCT = "div[class=i-spec-action-v1 ]";
     public static final String ELEMENT_WITH_PHOTO_MY_PRODUCT = "img[class=preview-photo j-zoom-preview]";
-    public static final String ELEMENT_WITH_TITLE_MY_PRODUCT = "div[class=brand-and-name j-product-title]";
     public static final String ELEMENT_WITH_PARAMS_MY_PRODUCT = "div[class=params]";
     public static final String ELEMENT_WITH_DESCRIPTION_MY_PRODUCT = "div[class=j-description collapsable-content description-text]";
     //Html элементы страницы поискового запроса аналогов
@@ -319,7 +318,6 @@ public class Constants {
         listForConnector_Micro_USB.add("micro usb");
 
         listForConnector_Type_C.add("type-c");
-        listForConnector_Type_C.add("type");
 
         listForConnector_4in1.add("4 в 1");
         listForConnector_4in1.add("4в1");
@@ -330,9 +328,9 @@ public class Constants {
         listForConnector_3in1.add("3 в 1");
         listForConnector_3in1.add("3в1");
         listForConnector_3in1.add("3-в-1");
-        listForConnector_3in1.add("3 in");
-        listForConnector_3in1.add("3-in");
-        listForConnector_3in1.add("3in");
+        listForConnector_3in1.add("3 in 1");
+        listForConnector_3in1.add("3-in-1");
+        listForConnector_3in1.add("3in1");
         listForConnector_3in1.add("lightning+micro+type-c");
 
         listForConnector_2in1.add("2 в 1");
@@ -371,6 +369,7 @@ public class Constants {
         listForCable_0_2m.add("0,2 m");
 
         listForCable_0_25m.add("25 см");
+        listForCable_0_25m.add("0.25м");
         listForCable_0_25m.add("0.25 м");
         listForCable_0_25m.add("0.25m");
         listForCable_0_25m.add("0.25 m");
@@ -465,6 +464,9 @@ public class Constants {
     }
 
     static boolean checkTitleDescriptionAndParamsForConnectorType(String description) {
+
+        description = replaceNoValidConcurrence(description);
+
         boolean isCheck = false;
 
         for (String connType: listForConnector_Type_C_to_Apple_8pin){
@@ -482,6 +484,7 @@ public class Constants {
                 break;
             }
         }
+
         for (String connType: listForConnector_Apple_8PIN){
             if (isCheck){
                 break;
@@ -814,7 +817,16 @@ public class Constants {
         return isCheck;
     }
 
+    public static String replaceNoValidConcurrence(String textForAnalise){
+        boolean check1 = textForAnalise.contains("Apple Android");
+        boolean check2 = textForAnalise.contains("для зарядки iPhone Lightning");
+        boolean check3 = textForAnalise.contains("зарядка iphone 4,5,6,7,8,Х,11,12");
+        textForAnalise = textForAnalise.replaceAll("Apple Android", " ");
+        textForAnalise = textForAnalise.replaceAll("iPhone Lightning", " ");
+        textForAnalise = textForAnalise.replaceAll("зарядка iphone 4,5,6,7,8,Х,11,12", " ");
 
+        return textForAnalise;
+    }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

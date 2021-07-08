@@ -120,15 +120,15 @@ public class ReaderExcelFor_1C_ver_2 {
                     //e.printStackTrace();
                 }
 
-                //Вся информация о прочитанной позиции
-                loggerReaderExcelFor_1C.info("прочитана " + i + " строка файла \"Спец код\":\n" +
-                        " - бренд = " + brand + "\n" +
-                        " - модель = " + model + "\n" +
-                        " - номенклатура = " + myNomenclature + "\n" +
-                        " - дополнительные параметры поиска:\n");
-                for (List<String> arrayParam: arrayParamsForSearch){
-                    loggerReaderExcelFor_1C.info(arrayParam.toString() + "\n");
-                }
+//                //Вся информация о прочитанной позиции
+//                loggerReaderExcelFor_1C.info("прочитана " + i + " строка файла \"Спец код\":\n" +
+//                        " - бренд = " + brand + "\n" +
+//                        " - модель = " + model + "\n" +
+//                        " - номенклатура = " + myNomenclature + "\n" +
+//                        " - дополнительные параметры поиска:\n");
+//                for (List<String> arrayParam: arrayParamsForSearch){
+//                    loggerReaderExcelFor_1C.info(arrayParam.toString() + "\n");
+//                }
 
                 String specQuery = "-";
                 try {
@@ -137,11 +137,12 @@ public class ReaderExcelFor_1C_ver_2 {
                     } else if (marketPlaceFlag == 2){
                         cell = row.getCell(11);
                     }
-                    specQuery = cell.getRichStringCellValue().getString();
-                    loggerReaderExcelFor_1C.info("для кода 1С = " + code_1C + " запрос по-умолчанию заменяется на спец QUERY = " + specQuery);
-                    loggerReaderExcelFor_1C.info("\n\r");
+                    if (cell != null){
+                        specQuery = cell.getRichStringCellValue().getString();
+                        //                    loggerReaderExcelFor_1C.info("для кода 1С = " + code_1C + " запрос по-умолчанию заменяется на спец QUERY = " + specQuery);
+//                    loggerReaderExcelFor_1C.info("\n\r");
+                    }
                 } catch (Exception ignored) {
-                    loggerReaderExcelFor_1C.info(ignored.getMessage());
                 }
 
                 //получаем поисковый запрос

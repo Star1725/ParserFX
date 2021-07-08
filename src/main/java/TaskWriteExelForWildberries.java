@@ -309,7 +309,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
                     String result = "";
                     for (List<String> stringList: productArrayList.get(i).getArrayListParams()){
                         for (String param: stringList){
-                            result = result + param + " ";
+                            result = result + param + ", ";
                         }
                         result = result + "\n\r";
                     }
@@ -543,7 +543,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             try {
                 imageUrl = productArrayList.get(i).getCompetitorRefForImage();
                 if (!imageUrl.equals("-")){
-                    setImageForCell(imageUrl, 9, i, 0.25, 0.25, competitorVendorCodeWildberries);
+                    setImageForCell(imageUrl, 10, i, 0.25, 0.25, competitorVendorCodeWildberries);
                 }
             } catch (Exception ignored) {
             }
