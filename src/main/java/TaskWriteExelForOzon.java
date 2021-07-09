@@ -1,5 +1,4 @@
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.sun.image.codec.jpeg.JPEGCodec;
 import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -286,7 +285,7 @@ public class TaskWriteExelForOzon extends Task<File> {
 
                 //результат поискового запроса аналогов
                 cell = row.createCell(6);
-                String querySearchAndResult = productArrayList.get(i).getQueryForSearch();
+                String querySearchAndResult = productArrayList.get(i).getResultForSearch();
                 cell.setCellValue(querySearchAndResult);
                 cell.setCellStyle(style);
 

@@ -1,10 +1,8 @@
 import com.gargoylesoftware.htmlunit.*;
 import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.Proxy;
-import com.sun.javafx.binding.StringFormatter;
 import controllers.Controller;
 import javafx.application.Application;
 import javafx.concurrent.WorkerStateEvent;
@@ -52,7 +50,7 @@ public class Main extends Application implements Controller.ActionInController {
     private Controller controller;
     private static double preFld;
 
-    private static Set<String> setMyVendorCodes;
+    public static Set<String> setMyVendorCodes;
 
     private static final Logger loggerMain = Logger.getLogger(Main.class.getName());
     public static Handler fileHandler = null;
@@ -275,7 +273,7 @@ public class Main extends Application implements Controller.ActionInController {
                 String myProductModel = entry.getValue().getMyProductModel();
                 List<List<String>> arrayParams = entry.getValue().getArrayListParams();
 
-                myCalls.add(new MyCall(marketplaceFlag, key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, specQuerySearchForWildberiesOrOzon, webClientHtmlUnit, lock));
+                myCalls.add(new MyCall(marketplaceFlag, key, category, brand, productType, myProductModel, arrayParams, setMyVendorCodes, specQuerySearchForWildberiesOrOzon));
             }
 
             List<Future<Product>> futureList = new ArrayList<>();
@@ -333,7 +331,7 @@ public class Main extends Application implements Controller.ActionInController {
                         competitorRefForPage = product.getCompetitorRefForPage();
                         competitorRefForImage = product.getCompetitorRefForImage();
                         competitorName = product.getCompetitorName();
-                        queryForSearch = product.getQueryForSearch();
+                        queryForSearch = product.getResultForSearch();
                         refUrlForResult = product.getRefUrlForResultSearch();
                         competitorPriceU = product.getCompetitorPriceU();
                         competitorBasicSale = product.getCompetitorBasicSale();
@@ -354,7 +352,7 @@ public class Main extends Application implements Controller.ActionInController {
                         resultProduct.setCompetitorRefForPage(competitorRefForPage);
                         resultProduct.setCompetitorRefForImage(competitorRefForImage);
                         resultProduct.setCompetitorName(competitorName);
-                        resultProduct.setQueryForSearch(queryForSearch);
+                        resultProduct.setResultForSearch(queryForSearch);
                         resultProduct.setRefUrlForResultSearch(refUrlForResult);
                         resultProduct.setCompetitorPriceU(competitorPriceU);
                         resultProduct.setCompetitorBasicSale(competitorBasicSale);
@@ -442,7 +440,7 @@ public class Main extends Application implements Controller.ActionInController {
                         competitorRefForImage = product.getCompetitorRefForImage();
                         competitorName = product.getCompetitorName();
                         competitorSpecAction = product.getCompetitorSpecAction();
-                        queryForSearch = product.getQueryForSearch();
+                        queryForSearch = product.getResultForSearch();
                         refUrlForResult = product.getRefUrlForResultSearch();
                         competitorPriceU = product.getCompetitorPriceU();
                         competitorBasicPriceU = product.getCompetitorBasicPriceU();
@@ -457,7 +455,7 @@ public class Main extends Application implements Controller.ActionInController {
                         resultProduct.setCompetitorRefForPage(competitorRefForPage);
                         resultProduct.setCompetitorRefForImage(competitorRefForImage);
                         resultProduct.setCompetitorName(competitorName);
-                        resultProduct.setQueryForSearch(queryForSearch);
+                        resultProduct.setResultForSearch(queryForSearch);
                         resultProduct.setRefUrlForResultSearch(refUrlForResult);
                         resultProduct.setCompetitorPriceU(competitorPriceU);
                         resultProduct.setCompetitorBasicPriceU(competitorBasicPriceU);
@@ -546,7 +544,7 @@ public class Main extends Application implements Controller.ActionInController {
         WebClient webClient;
         Lock lock;
 
-        public MyCall(int marketplaceFlag, String key, String category, String brand, String productType, String productModel, List<List<String>> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
+        public MyCall(int marketplaceFlag, String key, String category, String brand, String productType, String productModel, List<List<String>> arrayParams, Set myVendorCodes, String specQuerySearch) {
             this.key = key;
             this.brand = brand;
             this.productType = productType;
@@ -564,7 +562,7 @@ public class Main extends Application implements Controller.ActionInController {
         //2 - флаг для Wildberies
         public Product call() throws Exception {
             loggerMain.info(Constants.getYellowString("Запуск задачи lowerProductFinder.getProduct() для маркетплейса = " + marketplace + " артикула = " + key + ", где brand = " + brand + ", productModel = " + productModel));
-            return lowerProductFinder.getProduct(marketplaceFlag, key, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch, webClient, lock);
+            return lowerProductFinder.getProduct(marketplaceFlag, key, brand, productType, productModel, arrayParams, myVendorCodes, specQuerySearch);
         }
     }
 }

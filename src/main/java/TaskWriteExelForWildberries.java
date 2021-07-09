@@ -1,14 +1,10 @@
-import com.sun.image.codec.jpeg.JPEGCodec;
 import javafx.concurrent.Task;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.Jsoup;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 
 public class TaskWriteExelForWildberries extends Task<File> {
@@ -294,7 +290,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             //результат поискового запроса
             cell = row.createCell(6);
             try {
-                cell.setCellValue(productArrayList.get(i).getQueryForSearch());
+                cell.setCellValue(productArrayList.get(i).getResultForSearch());
             } catch (Exception ignored) {
                 cell.setCellValue("-");
             }

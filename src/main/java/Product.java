@@ -14,7 +14,7 @@ public class Product {
     private String myProductName;
     private String mySpecAction;
 
-    private String queryForSearch;
+    private String resultForSearch;
     private String refUrlForResultSearch;
 
     private String competitorBrand;
@@ -44,8 +44,8 @@ public class Product {
         }
     }
 
-    public Product(String queryForSearch, String refUrlForResultSearch) {
-        this.queryForSearch = queryForSearch;
+    public Product(String resultForSearch, String refUrlForResultSearch) {
+        this.resultForSearch = resultForSearch;
         this.refUrlForResultSearch = refUrlForResultSearch;
     }
 }

@@ -1,7 +1,6 @@
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
 import com.microsoft.playwright.ElementHandle;
 import com.microsoft.playwright.Page;
 import org.jsoup.nodes.Document;
@@ -154,7 +153,7 @@ public class ParserHtmlForWildberries {
                     if (tried1 == 0){
                         loggerParserHtmlForWildberries.info("меняем Ip и делаем перезапрос страницы - " + url);
                         try {
-                            SupplierHtmlPage.switchIpForProxy();
+                            SupplierHtmlPage.switchIpForProxyFromPlaywright();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -326,7 +325,7 @@ public class ParserHtmlForWildberries {
             image = (HtmlImage) page.getByXPath("//img[@class='preview-photo j-zoom-preview']").get(0);
             refMyProductImage = "https:" + image.getAttributes().getNamedItem("src").getNodeValue();
         } catch (Exception ignored) {
-            divisionImage = (HtmlDivision) page.getByXPath("//img[@class='preview-photo j-zoom-preview']").get(0);
+            divisionImage = (HtmlDivision) page.getByXPath("//div[@id='imageContainer']").get(0);
             refMyProductImage = "https:" + divisionImage.getFirstChild().getAttributes().getNamedItem("src").getNodeValue();
         }
 

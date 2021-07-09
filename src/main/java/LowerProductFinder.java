@@ -17,9 +17,6 @@ public class LowerProductFinder {
     static String resultSearch = "Для данного запроса ничего не найдено";
     static String myQuery;
 
-    static WebClient webClientForOzon;
-    static Lock lockOzon;
-
     static String myVendorCodeFromRequest;
 
     static int countUseIP_ForOzon;
@@ -34,7 +31,7 @@ public class LowerProductFinder {
         loggerLowerProductFinder.addHandler(Main.fileHandler);
     }
 
-    public Product getProduct(int marketplaceFlag, String myVendorCodeFromRequest, String productBrand, String productType, String productModel, List<List<String>> arrayParams, Set myVendorCodes, String specQuerySearch, WebClient webClient, Lock lock) {
+    public Product getProduct(int marketplaceFlag, String myVendorCodeFromRequest, String productBrand, String productType, String productModel, List<List<String>> arrayParams, Set myVendorCodes, String specQuerySearch) {
         List<Product> productList = null;
 
         if (specQuerySearch.equals("-") || specQuerySearch.equals("")) {
@@ -69,8 +66,6 @@ public class LowerProductFinder {
 
                 "-");
 
-        webClientForOzon = webClient;
-        lockOzon = lock;
         LowerProductFinder.myVendorCodeFromRequest = myVendorCodeFromRequest;
 
         if (productBrand.toLowerCase().equals("xivi")){
@@ -183,11 +178,12 @@ public class LowerProductFinder {
 
         //если наш кеш содержит ключ myQuery, то берём productList из кеша
         if (resultMapForQueries.containsKey(myQuery)) {
+            loggerLowerProductFinder.info(Constants.getYellowString("Для запроса \"" + myQuery + "\" нашли каталог аналогов в КЕШЕ!!!!!! На \"" + Main.marketplace + "\" запрос не осуществляем"));
             productList = resultMapForQueries.get(myQuery);
 
             if (productList.size() != 0) {
 
-                loggerLowerProductFinder.info(Constants.getYellowString("Размер полученного каталога аналогов = " + Constants.getRedString(String.valueOf(productList.size()))) + "\n" +
+                loggerLowerProductFinder.info(Constants.getYellowString("Размер найденного каталога аналогов = " + Constants.getBlueString(String.valueOf(productList.size()))) + "\n" +
                         Constants.getYellowString("Получение аналога с мин. ценой и подходящего по параметрам productModel = " + productModel + " и arrayParams:\n" +
                                 arrayParams.toString()));
 
@@ -200,8 +196,9 @@ public class LowerProductFinder {
             }
         //иначе получаем каталог аналогов с сайта
         } else {
-            loggerLowerProductFinder.info("Получение каталога аналогов для запроса \"" + myQuery + "\" (мой артикул = " + myVendorCodeFromRequest + ")\n" +
-                    "дополнительный параметр поиска - " + arrayParams.toString());
+            loggerLowerProductFinder.info("Получение на сайте " + Constants.getYellowString(Main.marketplace) + " каталога аналогов для запроса " +
+                    Constants.getYellowString("\"" + myQuery + "\" (мой артикул = " + myVendorCodeFromRequest + ")\n" +
+                    "дополнительный параметр поиска - " + arrayParams.toString()));
 
             String url;
             url = getUrlForSearchQuery(myQuery);
@@ -234,11 +231,11 @@ public class LowerProductFinder {
             }
         }
 
-        //устанавливаем результат поискоого запроса аналогов
-        product.setQueryForSearch(resultSearch);
-
-        //устанавливаем ссылку на страницу поискового запроса аналогов
-        product.setRefUrlForResultSearch(refUrlForResult);
+//        //устанавливаем результат поискоого запроса аналогов
+//        product.setResultForSearch(resultSearch);
+//
+//        //устанавливаем ссылку на страницу поискового запроса аналогов
+//        product.setRefUrlForResultSearch(refUrlForResult);
 
         if (marketplaceFlag == 1){
             //устанавливаем ссылку на страницу моего товара
@@ -347,6 +344,7 @@ public class LowerProductFinder {
                         product = p;
                         loggerLowerProductFinder.info(Constants.getGreenString("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Аналог с минимальной ценой найден !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + "\n" +
                                 "С помощью browserPlaywright получаем имя продовца"));
+                        //для ускорения работы пока закоменнтируем получение имени продавца
                         Page page = SupplierHtmlPage.getWBPageFromPlaywright(product.getCompetitorRefForPage());
                         sellerName = ParserHtmlForWildberries.getSellerNameFromPlaywright(page);
                         loggerLowerProductFinder.info(Constants.getGreenString("Продавец - " + sellerName));
