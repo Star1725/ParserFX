@@ -34,15 +34,11 @@ public class Main extends Application implements Controller.ActionInController {
     static WebClient webClientHtmlUnit = null;
 
     static Playwright playwright;
-    static BrowserType chromium;
+    static BrowserType browserType;
     static Browser browserPlaywright;
     static {
         playwright = Playwright.create();
-        chromium = playwright.chromium();
-        browserPlaywright = chromium.launch(new BrowserType.LaunchOptions()
-                .setProxy(new Proxy(Constants.PROXY_HOST + ":" + Constants.PROXY_PORT)
-                        .setUsername(Constants.LOGIN)
-                        .setPassword(Constants.PASSWORD)));
+
     }
 
     public static Lock lock = new ReentrantLock();
@@ -146,11 +142,13 @@ public class Main extends Application implements Controller.ActionInController {
         if (marketPlace.equals(Constants.OZON)){
             marketplace = marketPlace;
             marketplaceFlag = 1;//Ozon
+            browserType = playwright.firefox();
 
         }
         else if (marketPlace.equals(Constants.WILDBERIES)) {
             marketplace = marketPlace;
             marketplaceFlag = 2;//Wildberies
+            browserType = playwright.chromium();
 //            try (Playwright playwright = Playwright.create()) {
 
 //            Authenticator.setDefault(
@@ -176,6 +174,12 @@ public class Main extends Application implements Controller.ActionInController {
 //            webClient.getOptions().setUseInsecureSSL(true);
 //            webClient.getOptions().setTimeout(15000);
         }
+        loggerMain.info("Для marketPlace \"" + marketPlace + "\" установлен тип браузера Playwright - " + browserType.name());
+        browserPlaywright = browserType.launch(new BrowserType.LaunchOptions()
+                .setProxy(new Proxy(Constants.PROXY_HOST + ":" + Constants.PROXY_PORT)
+                        .setUsername(Constants.LOGIN)
+                        .setPassword(Constants.PASSWORD)));
+
         if (step.equals(Constants.RUB)) stepFlag = 1;//рубли
         else if (step.equals(Constants.PERCENT)) stepFlag = 2;//проценты
 
@@ -208,7 +212,15 @@ public class Main extends Application implements Controller.ActionInController {
     }
 
     private static void openFile(File file) {
-        browserPlaywright.close();
+        if (browserPlaywright != null){
+            browserPlaywright.close();
+        }
+        if (playwright != null){
+            playwright.close();
+        }
+        if (webClientHtmlUnit != null){
+            webClientHtmlUnit.close();
+        }
         try {
             desktop.open(file);
         } catch (IOException e) {

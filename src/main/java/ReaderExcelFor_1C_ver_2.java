@@ -48,6 +48,14 @@ public class ReaderExcelFor_1C_ver_2 {
                 cell = row.getCell(2);
                 String brand = cell.getRichStringCellValue().getString().toLowerCase().trim();
 
+                if (brand.toLowerCase().equals("xivi")){
+                    loggerReaderExcelFor_1C.info("Xivi - пропускаем запрос");
+                    continue;
+                } else if (brand.toLowerCase().equals("mietubl")){
+                    loggerReaderExcelFor_1C.info("Mietubl - пропускаем запрос");
+                    continue;
+                }
+
                 //получаем комиссию
                 double commission = 0;
                 cell = row.getCell(7);

@@ -20,7 +20,6 @@ public class SupplierHtmlPage {
 
 //для Ozon
     static HtmlPage getOzonPageFromHtmlUnit(String url) {
-        System.out.println("проверка - lock свободен: " + Main.lock.toString());
         Main.lock.lock();
         HtmlPage page = null;
         boolean isBloking = true;
@@ -95,10 +94,55 @@ public class SupplierHtmlPage {
             } catch (Exception ignored) {
             }
         }
-        System.out.println(Constants.getGreenString("IP №" + LowerProductFinder.countSwitchIP) + ". Страница ozon для запроса \"" + LowerProductFinder.myQuery + "\" получена");
+        loggerSupplierHtmlPage.info(Constants.getGreenString("IP №" + LowerProductFinder.countSwitchIP) + ". Страница ozon получена");
         Main.lock.unlock();
-        System.out.println("проверка - lock свободен: " + Main.lock.toString());
         Main.webClientHtmlUnit.close();
+        return page;
+    }
+
+    public static Page getOzonPageFromPlaywright(String url) {
+
+        loggerSupplierHtmlPage.info("Получение с помощью Playwright страницы для url = " + url);
+
+        final Page page = Main.browserPlaywright.newPage();
+        page.reload(new Page.ReloadOptions().setTimeout(30000));
+
+        boolean isBloking = true;
+        String blocking = "Блокировка сервером";
+        while (isBloking) {
+            try {
+
+                if (LowerProductFinder.countUseIP_ForOzon == 5){
+
+                    loggerSupplierHtmlPage.info("Кол-во использования IP № " + LowerProductFinder.countSwitchIP + " = " + LowerProductFinder.countUseIP_ForOzon + ". Меняем IP");
+
+                    switchIpForProxyFromHtmlUnit();
+                    LowerProductFinder.countUseIP_ForOzon = 0;
+                    LowerProductFinder.countSwitchIP++;
+                }
+
+                page.setDefaultTimeout(25000);
+                loggerSupplierHtmlPage.info(Constants.getYellowString("непосредственное получение страницы через Playwright."));
+                page.navigate(url);
+                loggerSupplierHtmlPage.info(Constants.getYellowString("страница получена!!!!!!!!!!!!!!!!!!!!!"));
+
+                isBloking = false;
+            } catch (Exception ignored) {
+                System.out.println("Проблемы при получении страницы");
+                ignored.printStackTrace();
+                try {
+                    switchIpForProxyFromPlaywright();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        //задержка, что бы javascript прогрузился до конца
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return page;
     }
 
@@ -234,7 +278,7 @@ public class SupplierHtmlPage {
                 pageIsNotOK = false;
             } catch (Exception ignored) {
                 System.out.println("Проблемы при получении страницы");
-                ignored.printStackTrace();
+                //ignored.printStackTrace();
                 try {
                     switchIpForProxyFromPlaywright();
                 } catch (InterruptedException e) {

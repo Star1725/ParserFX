@@ -22,7 +22,7 @@ public class HttpUrlConnectionHandler {
         ids = ids.substring(0, ids.length() - 1);
 
         try {
-            URL uri1 = new URL(Constants.URL_FOR_JSON + ids);
+            URL uri1 = new URL(Constants.URL_FOR_JSON_FOR_WB + ids);
             HttpsURLConnection httpsURLConnection = null;
             httpsURLConnection = (HttpsURLConnection) uri1.openConnection();
             httpsURLConnection.setRequestMethod("GET");

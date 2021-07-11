@@ -204,7 +204,7 @@ public class ParserHtmlForWildberries {
 
         for (ElementHandle elementHandle : contentElementsForRefProduct) {
 
-            loggerParserHtmlForWildberries.info(Constants.getYellowString("<<<<<<<<<<<<<<< " + position + " >>>>>>>>>>>>>>>>"));
+            loggerParserHtmlForWildberries.info(Constants.getYellowString("----------------- " + position + " -----------------"));
 
             ElementHandle elementHandle1 = elementHandle.querySelector("css=a");
             refForPage = Constants.MARKETPLACE_WILDBERRIES_RU + elementHandle1.getAttribute("href");
