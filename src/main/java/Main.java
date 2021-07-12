@@ -212,6 +212,7 @@ public class Main extends Application implements Controller.ActionInController {
     }
 
     private static void openFile(File file) {
+        loggerMain.info(Constants.getYellowString("показываем окно с файлом - " + file.getName()));
         if (browserPlaywright != null){
             browserPlaywright.close();
         }

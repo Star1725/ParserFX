@@ -108,6 +108,7 @@ public class ParserHtmlForWildberries {
         String results = "-";
         ElementHandle contentElement_searching_results_count = null;
         String countResults = "-";
+        int count = 0;
         ElementHandle contentElement_catalog_main_table;
         List<ElementHandle> contentElementsForRefProduct = null;
 
@@ -116,7 +117,7 @@ public class ParserHtmlForWildberries {
         int tried1 = 0;
         int tried2 = 0;
         while (resultQueryIsNotValid) {
-
+        loggerParserHtmlForWildberries.info("Вход в цикл - resultQueryIsNotValid = " + resultQueryIsNotValid);
             if (tried1 == 0){
                 page = SupplierHtmlPage.getWBPageFromPlaywright(url);
                 tried1 = 4;
@@ -128,6 +129,7 @@ public class ParserHtmlForWildberries {
                 results = contentElement_searching_results.innerText();
                 contentElement_searching_results_count = contentElement_searching_results.querySelector("css=span[class=goods-count]");
                 countResults = contentElement_searching_results_count.innerText();
+                count = getIntegerFromString(countResults);
             } catch (Exception ignored) {
                 try {
                     Thread.sleep(1000);
@@ -142,7 +144,7 @@ public class ParserHtmlForWildberries {
             } else {
                 contentElement_catalog_main_table = page.querySelector("css=div[id=catalog-content]");//работает только с div
                 contentElementsForRefProduct = contentElement_catalog_main_table.querySelectorAll("css=div[id=c]");//работает только с div
-                if (contentElementsForRefProduct.size() == 0) {
+                if (count != 0 && contentElementsForRefProduct.size() == 0) {
                     tried1--;
 
                     if (tried2 == 1){

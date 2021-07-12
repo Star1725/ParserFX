@@ -52,10 +52,11 @@ public class ParserHTMLForOzon {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("////////////////////////////////////////Невалидная страница///////////////////////////////////////////");
+                loggerParserHTMLForOzon.info("////////////////////////////////////////Невалидная страница///////////////////////////////////////////");
                 ElementHandle htmlBody = page.querySelector("css=body");
                 String hrefForNewCatalog = htmlBody.innerHTML();
                 System.out.println(hrefForNewCatalog);
+                hrefForNewCatalog = htmlBody.textContent();
                 String[] strBuff = hrefForNewCatalog.split("=", 2);
                 String temp = strBuff[1].substring(strBuff[1].indexOf("\"") + 1, strBuff[1].lastIndexOf("\""));
                 String newUrlForNewCatalog = "https://www.ozon.ru" + temp;
@@ -107,14 +108,21 @@ public class ParserHTMLForOzon {
 
         int position = 1;
 
+        int versionPage = 1;
+
         //обработка аналогов
         loggerParserHTMLForOzon.info(Constants.getYellowString("<<<<<<<<<<<<<<< Аналоги >>>>>>>>>>>>>>>>"));
 
         for (ElementHandle contentElementsForItemAnalog : contentElementsForAnalogs) {
 
+            List<ElementHandle> elementHandleListForVersionPage_2 = null;
+            ElementHandle contentWithDescriptionForVersionPage_2 = null;
+            ElementHandle contentWithPricesAndSellerForVersionPage_2 = null;
+
             loggerParserHTMLForOzon.info(Constants.getYellowString("----------------- " + position + " -----------------"));
 
             if (checkDiscountedItemProduct(position, contentElementsForItemAnalog)){
+                position++;
                 continue;
             }
             String selector = null;
@@ -136,7 +144,7 @@ public class ParserHTMLForOzon {
             try {
                 selector = "css=img";
                 ElementHandle contentElementWithRefForImg = contentElementsForItemAnalog.querySelector(selector);
-                refForImg = "https:" + contentElementWithRefForImg.getAttribute("src");
+                refForImg = contentElementWithRefForImg.getAttribute("src");
             } catch (Exception e) {
                 loggerParserHTMLForOzon.info("Ошибка при парсинге элемента с ссылкой на изображение " + position + "аналога моего товара (элемента \"" + selector + "\")" +
                         " на странице \"OZON\" - " + LowerProductFinder.urlForMyQuery);
@@ -149,8 +157,18 @@ public class ParserHTMLForOzon {
             try {
                 selector = "css=div[class=a0s9]";
                 contentWithPricesDescriptionAndSeller_div = contentElementsForItemAnalog.querySelector(selector);
-                selector = "css=a";
-                contentsWithPricesAndDescription_a = contentWithPricesDescriptionAndSeller_div.querySelectorAll(selector);
+                if (contentWithPricesDescriptionAndSeller_div == null){
+                    selector = "css=div[class=a0t0]";
+                    elementHandleListForVersionPage_2 = contentElementsForItemAnalog.querySelectorAll(selector);
+                    if (elementHandleListForVersionPage_2 != null){
+                        versionPage = 2;
+                        contentWithDescriptionForVersionPage_2 = elementHandleListForVersionPage_2.get(1);
+                        contentWithPricesAndSellerForVersionPage_2 = elementHandleListForVersionPage_2.get(2);
+                    }
+                } else {
+                    selector = "css=a";
+                    contentsWithPricesAndDescription_a = contentWithPricesDescriptionAndSeller_div.querySelectorAll(selector);
+                }
             } catch (Exception e) {
                 loggerParserHTMLForOzon.info("Ошибка при парсинге элемента с ценами, описанием и продавцом " + position + "аналога моего товара (элемента \"" + selector + "\")" +
                         " на странице \"OZON\" - " + LowerProductFinder.urlForMyQuery);
@@ -159,27 +177,43 @@ public class ParserHTMLForOzon {
 
             String prices = null;
             try {
-                selector = "css=div";
-                ElementHandle contentElementsWithPrices = contentsWithPricesAndDescription_a.get(0).querySelector("css=div");
-                prices = contentElementsWithPrices.innerText();
+                if (versionPage == 1) {
+                    selector = "css=div";
+                    ElementHandle contentElementsWithPrices = contentsWithPricesAndDescription_a.get(0).querySelector(selector);
+                    prices = contentElementsWithPrices.innerText();
+                } else if (versionPage == 2){
+                    selector = "css=a";
+                    ElementHandle contentElementsWithPrices = contentWithPricesAndSellerForVersionPage_2.querySelector(selector);
+                    selector = "css=div";
+                    List<ElementHandle> elementHandleList = contentElementsWithPrices.querySelectorAll(selector);
+                    if (elementHandleList.get(0).innerText().contains("%")){
+                        prices = elementHandleList.get(1).innerText();
+                    } else {
+                        prices = elementHandleList.get(0).innerText();
+                    }
+                }
+                loggerParserHTMLForOzon.info("Цены : " + Constants.getYellowString(prices));
+                String[] arrayPrices = prices.split("\n");
+                if (arrayPrices.length == 1) {
+                    competitorPriceU = getIntegerFromString(arrayPrices[0].replace(" ", "").trim()) * 100;
+                    loggerParserHTMLForOzon.info(Constants.getYellowString("competitorPriceU = " + competitorPriceU));
+                } else if (arrayPrices.length == 2) {
+                    competitorPriceU = getIntegerFromString(arrayPrices[0].replace(" ", "").trim()) * 100;
+                    competitorBasicPrice = getIntegerFromString(arrayPrices[1].replace(" ", "").trim()) * 100;
+                    loggerParserHTMLForOzon.info(Constants.getYellowString("competitorPriceU = " + competitorPriceU + ", " + "competitorBasicPrice = " + competitorBasicPrice));
+                }
             } catch (Exception e) {
                 loggerParserHTMLForOzon.info("Ошибка при парсинге элемента с ценами " + position + "аналога моего товара (элемента \"" + selector + "\")" +
                         " на странице \"OZON\" - " + LowerProductFinder.urlForMyQuery);
                 e.printStackTrace();
             }
-            loggerParserHTMLForOzon.info("Цены : " + Constants.getYellowString(prices));
-            String[] arrayPrices = prices.split("\n");
-            if (arrayPrices.length == 1) {
-                competitorPriceU = getIntegerFromString(arrayPrices[0].replace(" ", "").trim()) * 100;
-                loggerParserHTMLForOzon.info(Constants.getYellowString("competitorPriceU = " + competitorPriceU));
-            } else if (arrayPrices.length == 2) {
-                competitorPriceU = getIntegerFromString(arrayPrices[0].replace(" ", "").trim()) * 100;
-                competitorBasicPrice = getIntegerFromString(arrayPrices[1].replace(" ", "").trim()) * 100;
-                loggerParserHTMLForOzon.info(Constants.getYellowString("competitorPriceU = " + competitorPriceU + ", " + "competitorBasicPrice = " + competitorBasicPrice));
-            }
 
             try {
-                productDescription = contentsWithPricesAndDescription_a.get(1).innerText();
+                if (versionPage == 1){
+                    productDescription = contentsWithPricesAndDescription_a.get(1).innerText();
+                } else if (versionPage == 2){
+                    productDescription = contentWithDescriptionForVersionPage_2.innerText();
+                }
             } catch (Exception e) {
                 loggerParserHTMLForOzon.info("Ошибка при парсинге элемента с ценами " + position + "аналога моего товара (элемента \"css=span[class=j4 as3 az a0f2 f-tsBodyL item b3u9]\")" +
                         " на странице \"OZON\" - " + LowerProductFinder.urlForMyQuery);
@@ -189,7 +223,12 @@ public class ParserHTMLForOzon {
 
             try {
                 selector = "text=продавец";
-                ElementHandle contentWithSeller = contentWithPricesDescriptionAndSeller_div.querySelector(selector);
+                ElementHandle contentWithSeller = null;
+                if (versionPage == 1){
+                    contentWithSeller = contentWithPricesDescriptionAndSeller_div.querySelector(selector);
+                } else if (versionPage == 2){
+                    contentWithSeller = contentWithPricesAndSellerForVersionPage_2.querySelector(selector);
+                }
                 String[] buff = contentWithSeller.innerText().split("продавец");
                 sellerName = buff[1];
             } catch (Exception e) {
@@ -1161,4 +1200,41 @@ public class ParserHTMLForOzon {
         return Integer.parseInt(resultPrice.toString());
     }
 
+    public static String checkAndGetLengthInDescriptionAndParam(Object pageProduct, String productDescription) {
+        String selector = null;
+        if (pageProduct instanceof HtmlPage){
+            try {
+                selector = "//dl[@class='db8']";
+                List<HtmlElement> dListElement = ((HtmlPage) pageProduct).getByXPath(selector);
+                for (HtmlElement db: dListElement){
+                    if (db.asText().contains("Длина")){
+                        selector = "dd";
+                        String length = db.getElementsByTagName(selector).get(0).asText();
+                        productDescription = productDescription + " " + length + "м";
+                    }
+                }
+            } catch (Exception e) {
+                loggerParserHTMLForOzon.info("Ошибка при поиске элемента (\"" + selector + "\") с характеристикой длинна аналога моего товара на его странице");
+                e.printStackTrace();
+            }
+        }
+        return productDescription;
+    }
+
+    public static String getParams(Object pageProduct) {
+        String selector = null;
+        String params = null;
+        if (pageProduct instanceof HtmlPage){
+            try {
+                selector = "//div[@class='da4']";
+                HtmlDivision contentParams = (HtmlDivision) ((HtmlPage) pageProduct).getByXPath(selector).get(0);
+                params = contentParams.asText();
+
+            } catch (Exception e) {
+                loggerParserHTMLForOzon.info("Ошибка при парсинге элемента (\"" + selector + "\") с характеристиками  аналога моего товара на его странице");
+                e.printStackTrace();
+            }
+        }
+        return params;
+    }
 }

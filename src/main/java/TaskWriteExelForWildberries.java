@@ -558,7 +558,7 @@ public class TaskWriteExelForWildberries extends Task<File> {
             try {
                 imageUrl = productArrayList.get(i).getCompetitorRefForImage();
                 if (!imageUrl.equals("-")){
-                    setImageForCell(imageUrl, 10, i, 0.25, 0.25, competitorVendorCodeWildberries);
+                    setImageForCell(imageUrl, 13, i, 0.25, 0.25, competitorVendorCodeWildberries);
                 }
             } catch (Exception ignored) {
             }

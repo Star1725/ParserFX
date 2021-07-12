@@ -3,8 +3,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 public class ReaderExcelWildberries implements ReaderExcel{
+
+    private static final Logger loggerReaderExcelWildberries = Logger.getLogger(ReaderExcelFor_1C_ver_2.class.getName());
+
+    static {
+        loggerReaderExcelWildberries.addHandler(Main.fileHandler);
+    }
 
     UnifierDataFromExcelFiles unifierDataFromExcelFiles;
 
@@ -29,7 +36,16 @@ public class ReaderExcelWildberries implements ReaderExcel{
 
             //получаем бренд
             Cell cell = row.getCell(0);
-            String brand = cell.getRichStringCellValue().getString();
+            String brand = cell.getRichStringCellValue().getString().toLowerCase();
+
+//пока пропускаем Xivi и Mietubl!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (brand.toLowerCase().equals("xivi")){
+                loggerReaderExcelWildberries.info("Xivi - пропускаем запрос");
+                continue;
+            } else if (brand.toLowerCase().equals("mietubl")){
+                loggerReaderExcelWildberries.info("Mietubl - пропускаем запрос");
+                continue;
+            }
 
             //получаем категорию товара(Предмет)
             cell = row.getCell(1);

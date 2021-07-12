@@ -102,6 +102,14 @@ public class LowerProductFinder {
             return product;
         }
 
+        if (productBrand.toLowerCase().equals("xivi")){
+            loggerLowerProductFinder.info("Xivi - пропускаем запрос");
+            return product;
+        } else if (productBrand.toLowerCase().equals("mietubl")){
+            loggerLowerProductFinder.info("Mietubl - пропускаем запрос");
+            return product;
+        }
+
         //если наш кеш содержит ключ myQuery, то берём productList из кеша
         if (resultMapForQueries.containsKey(myQuery)) {
             loggerLowerProductFinder.info(Constants.getYellowString("Для запроса \"" + myQuery + "\" нашли каталог аналогов в КЕШЕ!!!!!! На \"" + Main.marketplace + "\" запрос не осуществляем"));
@@ -229,58 +237,54 @@ public class LowerProductFinder {
                     String titleFromPageProduct = "-";
                     String descriptionAndParams = "-";
                     String sellerName = "-";
-                    if (Main.marketplaceFlag == 1) {//для Ozon
-
-
-
-
-                        isFindAnalogProduct = isFindAnalogProductFromModel(productModel, isFindAnalogProduct, titleFromPageProduct + " " + descriptionAndParams);
-                        if (isFindAnalogProduct){
+                    Object pageProduct = null;
+                    //для Ozon
+                    if (Main.marketplaceFlag == 1) {
+                        pageProduct = SupplierHtmlPage.getOzonPageFromHtmlUnit(p.getCompetitorRefForPage());
+                        descriptionAndParams = ParserHTMLForOzon.getParams(pageProduct);
+                        titleFromPageProduct = ParserHTMLForOzon.checkAndGetLengthInDescriptionAndParam(pageProduct, p.getCompetitorProductName());
+                    }
+                    //для WB
+                    else if (Main.marketplaceFlag == 2) {
+//                        Document pageProduct = SupplierHtmlPage.getWBPageFromJsoup(p.getCompetitorRefForPage());
+                        pageProduct = SupplierHtmlPage.getWBPageFromHtmlUnit(p.getCompetitorRefForPage());
+                        titleFromPageProduct = ParserHtmlForWildberries.getTitleFromPageProduct(pageProduct);
+                        descriptionAndParams = ParserHtmlForWildberries.getDescriptionAndParam(pageProduct);
+                    }
+                    loggerLowerProductFinder.info("На странице товара - " + p.getCompetitorRefForPage() + " получили\n заголовок:\n" +
+                            Constants.getYellowString(titleFromPageProduct) + "\n" +
+                            "и описание:\n" + Constants.getYellowString(descriptionAndParams));
+                    if (pageProduct instanceof Page) {
+                        ((Page) pageProduct).close();
+                    }
+                    if (arrayParams.size() != 0) {
+                        if (arrayParams.get(0).contains("без кабеля")) {
+                            if (Constants.checkTitleDescriptionAndParamsForConnectorType(titleFromPageProduct + " " + descriptionAndParams)) {
+                                continue;
+                            }
+                        } else {
                             int countFind = 0;
                             countFind = getCountFindConcurrence(arrayParams, countFind, titleFromPageProduct + " " + descriptionAndParams);
                             if (!(arrayParams.size() == countFind)) {
                                 continue;
                             }
                         }
-                    } else if (Main.marketplaceFlag == 2) {//для WB
-
-//                        Document pageProduct = SupplierHtmlPage.getWBPageFromJsoup(p.getCompetitorRefForPage());
-                        HtmlPage pageProduct = SupplierHtmlPage.getWBPageFromHtmlUnit(p.getCompetitorRefForPage());
-                        titleFromPageProduct = ParserHtmlForWildberries.getTitleFromPageProduct(pageProduct);
-                        descriptionAndParams = ParserHtmlForWildberries.getDescriptionAndParam(pageProduct);
-                        loggerLowerProductFinder.info("На странице товара - " + p.getCompetitorRefForPage() + " получили\n заголовок:\n" +
-                                Constants.getYellowString(titleFromPageProduct) + "\n" +
-                                "и описание:\n" + Constants.getYellowString(descriptionAndParams));
-                        if (pageProduct instanceof Page){
-                            ((Page)pageProduct).close();
-                        }
-                        if (arrayParams.size() != 0) {
-                            if (arrayParams.get(0).contains("без кабеля")) {
-                                if (Constants.checkTitleDescriptionAndParamsForConnectorType(titleFromPageProduct + " " + descriptionAndParams)) {
-                                    continue;
-                                }
-                            } else {
-                                int countFind = 0;
-                                countFind = getCountFindConcurrence(arrayParams, countFind, titleFromPageProduct + " " + descriptionAndParams);
-                                if (!(arrayParams.size() == countFind)) {
-                                    continue;
-                                }
-                            }
-                        }
                     }
+
                     //проверяем наличие названия модели в заголовоке ,описание и характеристиках продукта
-                    isFindAnalogProduct  = isFindAnalogProductFromModel(productModel, isFindAnalogProduct, titleFromPageProduct + " " + descriptionAndParams);
+                    isFindAnalogProduct = isFindAnalogProductFromModel(productModel, isFindAnalogProduct, titleFromPageProduct + " " + descriptionAndParams);
 
                     if (isFindAnalogProduct){
                         product = p;
-                        loggerLowerProductFinder.info(Constants.getGreenString("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Аналог с минимальной ценой найден !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + "\n" +
-                                "С помощью browserPlaywright получаем имя продовца"));
-                        //для ускорения работы пока закоменнтируем получение имени продавца
-                        Page page = SupplierHtmlPage.getWBPageFromPlaywright(product.getCompetitorRefForPage());
-                        sellerName = ParserHtmlForWildberries.getSellerNameFromPlaywright(page);
-                        loggerLowerProductFinder.info(Constants.getGreenString("Продавец - " + sellerName));
-                        product.setCompetitorName(sellerName);
-                        page.close();
+                        loggerLowerProductFinder.info(Constants.getGreenString("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Аналог с минимальной ценой найден !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+                        if (Main.marketplaceFlag == 2){
+                            loggerLowerProductFinder.info(Constants.getGreenString("С помощью browserPlaywright получаем имя продовца"));
+                            Page page = SupplierHtmlPage.getWBPageFromPlaywright(product.getCompetitorRefForPage());
+                            sellerName = ParserHtmlForWildberries.getSellerNameFromPlaywright(page);
+                            loggerLowerProductFinder.info(Constants.getGreenString("Продавец - " + sellerName));
+                            product.setCompetitorName(sellerName);
+                            page.close();
+                        }
                         break;
                     }
                 }
