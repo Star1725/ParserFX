@@ -21,6 +21,7 @@ public class Constants {
 
     public static final String URL_FOR_SWITCH_IP = "https://ltespace.com/api/private/touch?port=" + PROXY_PORT + "&login=" + LOGIN + "&password=" + PASSWORD;
                                                   //https://ltespace.com/api/private/touch?port=18487&login=pttgua83&password=xr791oom
+    //                                              https://ltespace.com/api/private/touch?port=19211&login=f8asf6bz&password=a4f17r9f
 
     //marketplaces
     public static final String WILDBERIES = "Wildberies";
@@ -157,6 +158,7 @@ public class Constants {
         listForConnector_4in1.add("4в1");
         listForConnector_4in1.add("4 in 1");
         listForConnector_4in1.add("4-in-1");
+        listForConnector_4in1.add("4-in-");
         listForConnector_4in1.add("4in1");
 
         listForConnector_3in1.add("3 в 1");
@@ -164,6 +166,7 @@ public class Constants {
         listForConnector_3in1.add("3-в-1");
         listForConnector_3in1.add("3 in 1");
         listForConnector_3in1.add("3-in-1");
+        listForConnector_3in1.add("3-in-");
         listForConnector_3in1.add("3in1");
         listForConnector_3in1.add("lightning+micro+type-c");
 

@@ -238,11 +238,19 @@ public class LowerProductFinder {
                     String descriptionAndParams = "-";
                     String sellerName = "-";
                     Object pageProduct = null;
+
+                    List<String> typeOfCharacteristic = new ArrayList<>();
+                    typeOfCharacteristic.add("Коннектор 1");
+                    typeOfCharacteristic.add("Коннектор 2");
+                    typeOfCharacteristic.add("Длина, м");
                     //для Ozon
                     if (Main.marketplaceFlag == 1) {
-                        pageProduct = SupplierHtmlPage.getOzonPageFromHtmlUnit(p.getCompetitorRefForPage());
-                        descriptionAndParams = ParserHTMLForOzon.getParams(pageProduct);
-                        titleFromPageProduct = ParserHTMLForOzon.checkAndGetLengthInDescriptionAndParam(pageProduct, p.getCompetitorProductName());
+//                        pageProduct = SupplierHtmlPage.getOzonPageFromHtmlUnit(p.getCompetitorRefForPage());
+                        String ref = p.getCompetitorRefForPage().substring(19, p.getCompetitorRefForPage().length() - 1);
+                        descriptionAndParams = HttpUrlConnectionWorkerJSON.getDescriptionsForOzon(ref, typeOfCharacteristic);
+//                        descriptionAndParams = ParserHTMLForOzon.getParams(pageProduct);
+//                        titleFromPageProduct = ParserHTMLForOzon.checkAndGetLengthInDescriptionAndParam(pageProduct, p.getCompetitorProductName());
+                        titleFromPageProduct = p.getCompetitorProductName();
                     }
                     //для WB
                     else if (Main.marketplaceFlag == 2) {

@@ -34,7 +34,7 @@ public class SupplierHtmlPage {
                 try {
                     if (countPageNull == 2){
                         loggerSupplierHtmlPage.info("Кол-во полученных страниц NULL = 2. Меняем IP");
-                        switchIpForProxyFromHtmlUnit();
+                        switchIpForProxyFromPlaywright();
                     }
                     if (LowerProductFinder.countUseIP_ForOzon == 5){
 
@@ -60,11 +60,11 @@ public class SupplierHtmlPage {
                         Main.lock.unlock();
                         return null;
                     }
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
-                    }
+//                    try {
+//                        Thread.sleep(2000);
+//                    } catch (InterruptedException interruptedException) {
+//                        interruptedException.printStackTrace();
+//                    }
                     count--;
 
                     loggerSupplierHtmlPage.info("Осталось попыток: " + count);
@@ -100,7 +100,7 @@ public class SupplierHtmlPage {
         return page;
     }
 
-    public static Page getOzonPageFromPlaywright(String url) {
+    public static Page getOzonPageFromPlaywrightForJavaScript(String url) {
 
         loggerSupplierHtmlPage.info("Получение с помощью Playwright страницы для url = " + url);
 
@@ -131,7 +131,7 @@ public class SupplierHtmlPage {
                 System.out.println("Проблемы при получении страницы");
                 ignored.printStackTrace();
                 try {
-                    switchIpForProxyFromPlaywright();
+                    switchIpForProxyFromHtmlUnit();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -142,6 +142,46 @@ public class SupplierHtmlPage {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        return page;
+    }
+
+    public static Page getOzonPageFromPlaywrightWithoutJavaScript(String url) {
+
+        loggerSupplierHtmlPage.info("Получение с помощью Playwright страницы для url = " + url);
+
+        final Page page = Main.browserPlaywright.newPage();
+        page.reload(new Page.ReloadOptions().setTimeout(30000));
+
+        boolean isBloking = true;
+        String blocking = "Блокировка сервером";
+        while (isBloking) {
+            try {
+
+                if (LowerProductFinder.countUseIP_ForOzon == 5){
+
+                    loggerSupplierHtmlPage.info("Кол-во использования IP № " + LowerProductFinder.countSwitchIP + " = " + LowerProductFinder.countUseIP_ForOzon + ". Меняем IP");
+
+                    switchIpForProxyFromHtmlUnit();
+                    LowerProductFinder.countUseIP_ForOzon = 0;
+                    LowerProductFinder.countSwitchIP++;
+                }
+
+                page.setDefaultTimeout(25000);
+                loggerSupplierHtmlPage.info(Constants.getYellowString("непосредственное получение страницы через Playwright."));
+                page.navigate(url);
+                loggerSupplierHtmlPage.info(Constants.getYellowString("страница получена!!!!!!!!!!!!!!!!!!!!!"));
+
+                isBloking = false;
+            } catch (Exception ignored) {
+                System.out.println("Проблемы при получении страницы");
+                ignored.printStackTrace();
+                try {
+                    switchIpForProxyFromHtmlUnit();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return page;
     }
@@ -205,6 +245,7 @@ public class SupplierHtmlPage {
                     loggerSupplierHtmlPage.info("смена IP успешна");
 
                     Thread.sleep(2000);
+                    page.close();
                     break;
                 }
             } catch (Exception e) {

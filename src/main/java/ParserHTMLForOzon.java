@@ -1,9 +1,6 @@
 import com.gargoylesoftware.htmlunit.html.*;
 import com.microsoft.playwright.ElementHandle;
 import com.microsoft.playwright.Page;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +29,7 @@ public class ParserHTMLForOzon {
         loggerParserHTMLForOzon.info(Constants.getYellowString("IP №" + LowerProductFinder.countSwitchIP + ".Получение страницы ozon для запроса - " + LowerProductFinder.myQuery + ". Артикул Ozon - " + LowerProductFinder.myVendorCodeFromRequest));
         boolean isNotGetValidPage = true;
         while (isNotGetValidPage) {
-            page = SupplierHtmlPage.getOzonPageFromPlaywright(url);
+            page = SupplierHtmlPage.getOzonPageFromPlaywrightForJavaScript(url);
 
             //получаем кол-во найденных аналогов
             try {
@@ -99,6 +96,7 @@ public class ParserHTMLForOzon {
         String vendorCode = "-";
         String productDescription = "-";
         String refForPage = "-";
+        String refForPage2 = "-";
         String refForImg = "-";
         String specAction = "-";
         String sellerName = "-";
@@ -130,6 +128,7 @@ public class ParserHTMLForOzon {
                 selector = "css=a";
                 ElementHandle contentWithRefForPage = contentElementsForItemAnalog.querySelector(selector);
                 refForPage = Constants.MARKETPLACE_OZON_RU + contentWithRefForPage.getAttribute("href");
+                refForPage2 = contentWithRefForPage.getAttribute("href");
             } catch (Exception e) {
                 loggerParserHTMLForOzon.info("Ошибка при парсинге элемента с ссылкой на страницу " + position + "аналога моего товара (элемента \"" + selector + "\")" +
                         " на странице \"OZON\" - " + LowerProductFinder.urlForMyQuery);

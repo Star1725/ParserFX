@@ -1,4 +1,4 @@
-package model;
+package models.modelCatologForWB;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
