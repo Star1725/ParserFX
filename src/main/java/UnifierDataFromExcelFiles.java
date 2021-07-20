@@ -113,13 +113,13 @@ public class UnifierDataFromExcelFiles extends Task<Map>{
                 String productModel = entry.getValue().getMyProductModel();
                 int countProducts = mapCountForMyProductName.get(brand + " " + productModel);
                 entry.getValue().setCountMyProductModel(countProducts);
-                System.out.println("Для " + brand + " " + productModel + " кол-во совпадений - " + countProducts);
+//                System.out.println("Для " + brand + " " + productModel + " кол-во совпадений - " + countProducts);
             } else {
                 entry.getValue().setSpecPrice(0);
             }
         }
-        System.out.println("Добавили в итоговый мап все ResultProducts");
-        System.out.println();
+//        System.out.println("Добавили в итоговый мап все ResultProducts");
+//        System.out.println();
         return resultProductHashMap;
 
     }

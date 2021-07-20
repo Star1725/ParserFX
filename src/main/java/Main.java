@@ -68,8 +68,6 @@ public class Main extends Application implements Controller.ActionInController {
     public static int marketplaceFlag;
     public static String marketplace;
     static int stepFlag;
-    private TaskReadExcelForWildberies taskReadExcelForWildberies;
-    private TaskReadExcelForOzon taskReadExcelForOzon;
 
     private UnifierDataFromExcelFiles unifierDataFromExcelFiles;
 

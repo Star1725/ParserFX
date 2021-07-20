@@ -25,7 +25,6 @@ public class ReaderExcelFor_1C_ver_2 {
 //            System.out.println("считываем информацию с базы 1C");
             loggerReaderExcelFor_1C.info("считываем информацию с базы 1C");
             Iterator rowIterator = sheet_1C.rowIterator();
-            TaskReadExcelForOzon.countReadsRows_1C = 1;
             while (rowIterator.hasNext()){
                 List<List<String>> arrayParamsForSearch = new ArrayList<>();
                 //получаем строку

@@ -19,9 +19,9 @@ public class SupplierHtmlPage {
     }
 
 //для Ozon
-    static HtmlPage getOzonPageFromHtmlUnit(String url) {
+    static com.gargoylesoftware.htmlunit.Page getOzonPageFromHtmlUnit(String url) {
         Main.lock.lock();
-        HtmlPage page = null;
+        com.gargoylesoftware.htmlunit.Page page = null;
         boolean isBloking = true;
         String blocking = "Блокировка сервером";
         while (isBloking) {
@@ -60,11 +60,6 @@ public class SupplierHtmlPage {
                         Main.lock.unlock();
                         return null;
                     }
-//                    try {
-//                        Thread.sleep(2000);
-//                    } catch (InterruptedException interruptedException) {
-//                        interruptedException.printStackTrace();
-//                    }
                     count--;
 
                     loggerSupplierHtmlPage.info("Осталось попыток: " + count);
@@ -82,21 +77,26 @@ public class SupplierHtmlPage {
             }
             //проверка на бан сервером (name="ROBOTS")
             try {
-                DomNodeList<DomElement> metas = page.getElementsByTagName("meta");
-                if (metas.get(0).getAttribute("name").equals("ROBOTS")) {
+                if (page instanceof HtmlPage){
+                    DomNodeList<DomElement> metas = ((HtmlPage)page).getElementsByTagName("meta");
+                    if (metas.get(0).getAttribute("name").equals("ROBOTS")) {
 
-                    loggerSupplierHtmlPage.info(Constants.getRedString(blocking) + ". Попытка смены IP");
+                        loggerSupplierHtmlPage.info(Constants.getRedString(blocking) + ". Попытка смены IP");
 
-                    switchIpForProxyFromHtmlUnit();
+                        switchIpForProxyFromHtmlUnit();
+                    } else {
+                        isBloking = false;
+                    }
                 } else {
                     isBloking = false;
                 }
             } catch (Exception ignored) {
+                ignored.printStackTrace();
             }
         }
-        loggerSupplierHtmlPage.info(Constants.getGreenString("IP №" + LowerProductFinder.countSwitchIP) + ". Страница ozon получена");
+        loggerSupplierHtmlPage.info(Constants.getWhiteString("IP №" + LowerProductFinder.countSwitchIP) + ". Страница ozon получена");
         Main.lock.unlock();
-        Main.webClientHtmlUnit.close();
+        //Main.webClientHtmlUnit.close();
         return page;
     }
 
@@ -105,7 +105,7 @@ public class SupplierHtmlPage {
         loggerSupplierHtmlPage.info("Получение с помощью Playwright страницы для url = " + url);
 
         final Page page = Main.browserPlaywright.newPage();
-        page.reload(new Page.ReloadOptions().setTimeout(30000));
+//        page.reload(new Page.ReloadOptions().setTimeout(30000));
 
         boolean isBloking = true;
         String blocking = "Блокировка сервером";
@@ -151,22 +151,17 @@ public class SupplierHtmlPage {
         loggerSupplierHtmlPage.info("Получение с помощью Playwright страницы для url = " + url);
 
         final Page page = Main.browserPlaywright.newPage();
-        page.reload(new Page.ReloadOptions().setTimeout(30000));
 
         boolean isBloking = true;
         String blocking = "Блокировка сервером";
         while (isBloking) {
             try {
-
                 if (LowerProductFinder.countUseIP_ForOzon == 5){
-
                     loggerSupplierHtmlPage.info("Кол-во использования IP № " + LowerProductFinder.countSwitchIP + " = " + LowerProductFinder.countUseIP_ForOzon + ". Меняем IP");
-
                     switchIpForProxyFromHtmlUnit();
                     LowerProductFinder.countUseIP_ForOzon = 0;
                     LowerProductFinder.countSwitchIP++;
                 }
-
                 page.setDefaultTimeout(25000);
                 loggerSupplierHtmlPage.info(Constants.getYellowString("непосредственное получение страницы через Playwright."));
                 page.navigate(url);
@@ -177,7 +172,42 @@ public class SupplierHtmlPage {
                 System.out.println("Проблемы при получении страницы");
                 ignored.printStackTrace();
                 try {
+                    switchIpForProxyFromPlaywright();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return page;
+    }
+
+    public static Page getWBPageFromPlaywrightWithoutJavaScript(String url) {
+
+        loggerSupplierHtmlPage.info("Получение с помощью Playwright страницы для url = " + url);
+
+        final Page page = Main.browserPlaywright.newPage();
+
+        boolean isBloking = true;
+        String blocking = "Блокировка сервером";
+        while (isBloking) {
+            try {
+                if (LowerProductFinder.countUseIP_ForWB == 30){
+                    loggerSupplierHtmlPage.info("Кол-во использования IP № " + LowerProductFinder.countSwitchIP + " = " + LowerProductFinder.countUseIP_ForOzon + ". Меняем IP");
                     switchIpForProxyFromHtmlUnit();
+                    LowerProductFinder.countUseIP_ForOzon = 0;
+                    LowerProductFinder.countSwitchIP++;
+                }
+                page.setDefaultTimeout(25000);
+                loggerSupplierHtmlPage.info(Constants.getYellowString("непосредственное получение страницы через Playwright."));
+                page.navigate(url);
+                loggerSupplierHtmlPage.info(Constants.getYellowString("страница получена!!!!!!!!!!!!!!!!!!!!!"));
+
+                isBloking = false;
+            } catch (Exception ignored) {
+                System.out.println("Проблемы при получении страницы");
+                ignored.printStackTrace();
+                try {
+                    switchIpForProxyFromPlaywright();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -301,25 +331,29 @@ public class SupplierHtmlPage {
         return page;
     }
 
-    public static Page getWBPageFromPlaywright(String url) {
+    public static Page getWBPageFromPlaywrightForJavaScript(String url) {
 
         loggerSupplierHtmlPage.info("Получение с помощью Playwright страницы для url = " + url);
 
         final Page page = Main.browserPlaywright.newPage();
-//        page.setDefaultTimeout(20000);
-        page.reload(new Page.ReloadOptions().setTimeout(30000));
+        int tried = 0;
         boolean pageIsNotOK = true;
         while (pageIsNotOK) {
             try {
 
-                page.setDefaultTimeout(25000);
+                page.setDefaultTimeout(10000);
                 loggerSupplierHtmlPage.info(Constants.getYellowString("непосредственное получение страницы через Playwright."));
                 page.navigate(url);
-                loggerSupplierHtmlPage.info(Constants.getYellowString("страница получена!!!!!!!!!!!!!!!!!!!!!"));
                 pageIsNotOK = false;
+                loggerSupplierHtmlPage.info(Constants.getYellowString("страница получена!!!!!!!!!!!!!!!!!!!!! pageIsNotOK = " + pageIsNotOK));
+
             } catch (Exception ignored) {
-                System.out.println("Проблемы при получении страницы");
-                //ignored.printStackTrace();
+                tried++;
+                System.out.println("Проблемы при получении страницы. Tried = " + tried);
+                if (tried == 5){
+                    return null;
+                }
+                ignored.printStackTrace();
                 try {
                     switchIpForProxyFromPlaywright();
                 } catch (InterruptedException e) {
@@ -344,7 +378,7 @@ public class SupplierHtmlPage {
         while (page == null){
             try {
                 loggerSupplierHtmlPage.info("Количество использования IP для WB = " + LowerProductFinder.countUseIP_ForWB);
-                if (LowerProductFinder.countUseIP_ForWB == 40){
+                if (LowerProductFinder.countUseIP_ForWB == 20){
                     loggerSupplierHtmlPage.info(Constants.getYellowString("меняем IP для WB"));
                     switchIpForProxyFromHtmlUnit();
                     LowerProductFinder.countUseIP_ForWB = 0;

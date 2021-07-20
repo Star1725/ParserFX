@@ -1,10 +1,9 @@
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.*;
 import com.microsoft.playwright.ElementHandle;
 import com.microsoft.playwright.Page;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.w3c.dom.DOMException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -24,12 +23,14 @@ public class ParserHtmlForWildberries {
     //css элемент для заголовка продукта на его странице
     static final String JSOUP_ELEMENT_WITH_TITLE_PRODUCT = "div[class=brand-and-name j-product-title]";
     static final String PLAYWRIGHT_ELEMENT_WITH_TITLE_PRODUCT = "css=div[class=first-horizontal]";
-    static final String HTMLUNIT_ELEMENT_WITH_TITLE_PRODUCT = "//div[@class='brand-and-name j-product-title']";
+//    static final String HTMLUNIT_ELEMENT_WITH_TITLE_PRODUCT = "//div[@class='brand-and-name j-product-title']";
+    static final String HTMLUNIT_ELEMENT_WITH_TITLE_PRODUCT = "//div[@class='same-part-kt__header-wrap']";
 
     //css элемент для описания и характеристик продукта на его странице
     static final String JSOUP_ELEMENT_WITH_DESCRIPTION_AND_PARAM_PRODUCT = "div[class=card-add-info]";
     static final String PLAYWRIGHT_ELEMENT_WITH_DESCRIPTION_AND_PARAM_PRODUCT = "css=div[class=card-add-info]";
-    static final String HTMLUNIT_ELEMENT_WITH_DESCRIPTION_AND_PARAM_PRODUCT = "//div[@class='card-add-info']";
+//    static final String HTMLUNIT_ELEMENT_WITH_DESCRIPTION_AND_PARAM_PRODUCT = "//div[@class='card-add-info']";
+    static final String HTMLUNIT_ELEMENT_WITH_DESCRIPTION_AND_PARAM_PRODUCT = "//section[@class='product-detail__details details']";
 
     static Document getDocumentPageForVendorCode(String myVendorCodeFromRequest) {
         String url = getString("https://www.wildberries.ru/catalog/", myVendorCodeFromRequest, "/detail.aspx?targetUrl=SP");
@@ -90,7 +91,7 @@ public class ParserHtmlForWildberries {
                 }
             }
         } else if (page instanceof HtmlPage){
-            final HtmlDivision elementDescriptionAndParams = (HtmlDivision) ((HtmlPage)page).getByXPath(HTMLUNIT_ELEMENT_WITH_DESCRIPTION_AND_PARAM_PRODUCT).get(0);
+            final HtmlSection elementDescriptionAndParams = (HtmlSection) ((HtmlPage)page).getByXPath(HTMLUNIT_ELEMENT_WITH_DESCRIPTION_AND_PARAM_PRODUCT).get(0);
             if (elementDescriptionAndParams != null){
                 return elementDescriptionAndParams.asText();
             } else {
@@ -102,7 +103,7 @@ public class ParserHtmlForWildberries {
 
 //получение с помощью Playwright ///////////////////////////////////////////////////////////////////////////////////////
     static Page getPageForCatalogProductsFromPlaywright(String url){
-
+        String selector = "-";
         Page page = null;
         ElementHandle contentElement_searching_results = null;
         String results = "-";
@@ -115,44 +116,29 @@ public class ParserHtmlForWildberries {
         boolean resultQueryIsNotValid = true;
 
         int tried1 = 0;
-        int tried2 = 0;
         while (resultQueryIsNotValid) {
         loggerParserHtmlForWildberries.info("Вход в цикл - resultQueryIsNotValid = " + resultQueryIsNotValid);
-            if (tried1 == 0){
-                page = SupplierHtmlPage.getWBPageFromPlaywright(url);
-                tried1 = 4;
-            }
+
+        page = SupplierHtmlPage.getWBPageFromPlaywrightForJavaScript(url);
 
             //результат запроса
             try {
-                contentElement_searching_results = page.querySelector("css=div[class=searching-results-inner]");
+                Thread.sleep(1000);
+                selector = "css=div[class=searching-results-inner]";
+                contentElement_searching_results = page.waitForSelector(selector);
                 results = contentElement_searching_results.innerText();
-                contentElement_searching_results_count = contentElement_searching_results.querySelector("css=span[class=goods-count]");
+                if (results.contains("По Вашему запросу ничего не найдено.")){
+                    return null;
+                }
+                contentElement_searching_results_count = contentElement_searching_results.waitForSelector("css=span[class=goods-count]");
                 countResults = contentElement_searching_results_count.innerText();
                 count = getIntegerFromString(countResults);
-            } catch (Exception ignored) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                continue;
-            }
 
-            if (results.contains("По Вашему запросу ничего не найдено.")){
-                return null;
-            } else {
-                contentElement_catalog_main_table = page.querySelector("css=div[id=catalog-content]");//работает только с div
+                contentElement_catalog_main_table = page.waitForSelector("css=div[id=catalog-content]");//работает только с div
                 contentElementsForRefProduct = contentElement_catalog_main_table.querySelectorAll("css=div[id=c]");//работает только с div
                 if (count != 0 && contentElementsForRefProduct.size() == 0) {
-                    tried1--;
-
-                    if (tried2 == 1){
-                        return null;
-                    }
-
                     loggerParserHtmlForWildberries.info("Страница получена не полностью - " + tried1);
-                    if (tried1 == 0){
+                    if (tried1 <= 4) {
                         loggerParserHtmlForWildberries.info("меняем Ip и делаем перезапрос страницы - " + url);
                         try {
                             SupplierHtmlPage.switchIpForProxyFromPlaywright();
@@ -160,16 +146,18 @@ public class ParserHtmlForWildberries {
                             e.printStackTrace();
                         }
                         page.close();
-                        tried2++;
-                    }
-
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } else {
+                        resultQueryIsNotValid = false;
                     }
                 } else {
                     resultQueryIsNotValid = false;
+                }
+            } catch (Exception ignored) {
+                selector = "css=p[class=searching-results-text]";
+                contentElement_searching_results = page.waitForSelector(selector);
+                results = contentElement_searching_results.innerText();
+                if (results.contains("По Вашему запросу ничего не найдено.")){
+                    return null;
                 }
             }
         }
@@ -285,16 +273,21 @@ public class ParserHtmlForWildberries {
     }
 
     public static String getSellerNameFromPlaywright(Page page){
-        String sellerName = null;
+        String sellerName = "-";
+        String selector = "css=p[class=seller__content]";
         ElementHandle contentElement_sellerName;
-        boolean resultQueryIsNotValid = true;
-        while (resultQueryIsNotValid) {
+        int tried = 0;
+        while (tried < 5) {
             try {
-                contentElement_sellerName = page.querySelector("css=div[class=seller]");
+                contentElement_sellerName = page.waitForSelector(selector);
                 sellerName =  contentElement_sellerName.innerText();
-                resultQueryIsNotValid = false;
+                tried = 5;
             } catch (Exception ignored) {
-                continue;
+                tried++;
+                ignored.printStackTrace();
+                if (tried == 5){
+                    return sellerName;
+                }
             }
         }
         return sellerName;
@@ -320,36 +313,62 @@ public class ParserHtmlForWildberries {
 //        System.out.println("1 дочерний элемент - " + elementImage.getChildElements().iterator().next().getAttribute("src"));
 
         //получение по xPath
-        final HtmlImage image;
+        HtmlImage image;
         final HtmlDivision divisionImage;
 
         try {
             image = (HtmlImage) page.getByXPath("//img[@class='preview-photo j-zoom-preview']").get(0);
             refMyProductImage = "https:" + image.getAttributes().getNamedItem("src").getNodeValue();
         } catch (Exception ignored) {
-            divisionImage = (HtmlDivision) page.getByXPath("//div[@id='imageContainer']").get(0);
-            refMyProductImage = "https:" + divisionImage.getFirstChild().getAttributes().getNamedItem("src").getNodeValue();
+//            divisionImage = (HtmlDivision) page.getByXPath("//div[@id='imageContainer']").get(0);
+//            refMyProductImage = "https:" + divisionImage.getFirstChild().getFirstChild().getAttributes().getNamedItem("src").getNodeValue();
+            try {
+                image = (HtmlImage) page.getByXPath("//img[@class='photo-zoom__preview j-zoom-preview']").get(0);
+                refMyProductImage = "https:" + image.getAttributes().getNamedItem("src").getNodeValue();
+            } catch (DOMException ignored2) {
+                ignored2.printStackTrace();
+            }
         }
 
         return refMyProductImage;
     }
 
-//получение с помощью Jsoup ////////////////////////////////////////////////////////////////////////////////////////////
-    static String getMySpecActionFromJsoup(Document page) {
-        Element specAction = page.select(Constants.ELEMENT_WITH_SPEC_ACTION_MY_PRODUCT).first();
-        if (specAction != null){
-            return specAction.text();
-        } else {
-            return Constants.NOT_FOUND_HTML_ITEM;
+    static String getMyProductImageFromPlaywright(Page pageForMyProduct, String urlForPageMyProduct) {
+        String refMyProductImage = "-";
+
+        String selector = "text=По Вашему запросу ничего не найдено";
+        if (pageForMyProduct.querySelector(selector) != null){
+            return refMyProductImage;
         }
+
+    try{
+        //получение по id
+        selector = "id=imageContainer";
+        ElementHandle elementImage = pageForMyProduct.waitForSelector(selector);
+        selector = "css=img[src]";
+        elementImage = elementImage.waitForSelector(selector);
+        refMyProductImage = "https:" + elementImage.getAttribute("src");
+    } catch (Exception ignored) {
+        loggerParserHtmlForWildberries.info(Constants.getYellowString("Ошибка при парсинге ссылки на картинку моего товара (элемента " + selector + ") на странице \"WB\" - " + urlForPageMyProduct));
+    }
+        return refMyProductImage;
     }
 
-    static String getMyProductsImageFromJsoup(Document page) {
-        Element elementImage1 = page.select("img[class=j-zoom-photo preview-photo]").first();
-        Element elementImage2 = page.select(Constants.ELEMENT_WITH_PHOTO_MY_PRODUCT).first();
-        if (elementImage2 != null){
-            return "https:" + elementImage2.attr(Constants.ATTRIBUTE_WITH_REF_FOR_IMAGE_1);
-        } else return Constants.NOT_FOUND_HTML_ITEM;
+    public static String getMySpecActionFromPlaywright(Page pageForMyProduct, String urlForPageMyProduct) {
+        String specAction = "-";
+        String selector = "text=По Вашему запросу ничего не найдено";
+        if (pageForMyProduct.querySelector(selector) != null){
+            return specAction;
+        }
+        ElementHandle elementSpecAction;
+        selector = "css=div[class=same-part-kt__spec-action]";
+        try {
+            elementSpecAction = pageForMyProduct.querySelector(selector);
+            specAction = elementSpecAction.innerText();
+        } catch (Exception ignored) {
+            loggerParserHtmlForWildberries.info(Constants.getYellowString("Ошибка при парсинге спецакции моего товара (элемента " + selector + ") на странице \"WB\" - " + urlForPageMyProduct));
+        }
+        return specAction;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

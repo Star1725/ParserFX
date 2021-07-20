@@ -1018,12 +1018,12 @@ public class Constants {
         return (char) 27 + "[34m" + s + (char)27 + "[0m";
     }
 
-    static String getGreenString(String s){
+    static String getWhiteString(String s){
         /*
         Если хочешь другой цвет, то измени "[31mWarning!". Например, на "[35mWarning!". Текст будет пурпурным.
         30 - черный. 31 - красный. 32 - зеленый. 33 - желтый. 34 - синий. 35 - пурпурный. 36 - голубой. 37 - белый.
          */
-        return (char) 27 + "[32m" + s + (char)27 + "[0m";
+        return (char) 27 + "[37m" + s + (char)27 + "[0m";
     }
 
     static String getYellowString(String s){
